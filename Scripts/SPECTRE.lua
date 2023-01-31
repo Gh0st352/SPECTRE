@@ -67,6 +67,7 @@ SPECTRE.POINTMANAGER = {
   },
 }
 
+
 --- Truncate a number's decimal to a specified amount of digits.
 -- @param num number to do work on.
 -- @param digits amount of digits to truncate decimal to.
@@ -76,6 +77,221 @@ function SPECTRE.trunc(num, digits)
   local output = math.modf(num*mult)/mult
   return output
 end
+
+
+
+--- Determines if vec2 is in the zone.
+-- Requires quadpoint zone, defined in ME.
+-- @param vec2 : Vector to check, {x = , y = }
+-- @param zoneName : Name of quadpoint zone.
+-- @return result : true or false
+function  SPECTRE.PointInZone(vec2, zoneName)
+  local DEBUG = 0
+  if DEBUG == 1 then
+    BASE:E("DEBUG - PointInZone - zoneName")
+    BASE:E(zoneName)
+  end
+  local _zone = mist.DBs.zonesByName[zoneName]--trigger.misc.getZone(zoneName)--ZONE:FindByName(zoneName)
+  if DEBUG == 1 then
+    BASE:E("DEBUG - PointInZone - _zone")
+    BASE:E(_zone)
+  end
+  --local p = {x = vec2.x, y = vec2.y }
+  local box =  _zone.verticies
+  local _vec2 = {}
+  if vec2.x == nil then
+    _vec2.x = vec2[1]
+    _vec2.y = vec2[2]
+  else
+    _vec2 = vec2
+  end
+
+
+
+  if DEBUG == 1 then
+    BASE:E("DEBUG - PointInZone - vec2")
+    BASE:E(vec2)
+    BASE:E("DEBUG - PointInZone - _vec2")
+    BASE:E(_vec2)
+    --    BASE:E("DEBUG - PointInZone - p")
+    --    BASE:E(p)
+    BASE:E("DEBUG - PointInZone - box")
+    BASE:E(box)
+  end
+  if SPECTRE.POLY.PointWithinShape(_vec2,box) then--SPECTRE.POLY.PointWithinShape(point,shape)--SPECTRE.PointExistsInBox(p,box) then
+    return true
+  end
+  return false
+    --local result = _zone:IsVec2InZone({vec2[1], vec2[2]})
+    --return result
+end
+
+---Houses POLYGON Manipulation functions
+SPECTRE.POLY = {}
+--- Checks if point is within shape.
+-- @param point
+-- @param shape
+-- @return true or false
+function SPECTRE.POLY.PointWithinShape(point,shape)
+  local DEBUG = 0
+  local tx = point.x
+  local ty = point.y
+  if DEBUG == 1 then
+    BASE:E("DEBUG - SPECTRE.POLY.PointWithinShape - point")
+    BASE:E(point)
+    BASE:E("DEBUG - SPECTRE.POLY.PointWithinShape - shape")
+    BASE:E(shape)
+    BASE:E("DEBUG - SPECTRE.POLY.PointWithinShape - tx")
+    BASE:E(tx)
+    BASE:E("DEBUG - SPECTRE.POLY.PointWithinShape - ty")
+    BASE:E(ty)
+  end
+
+  if #shape == 0 then
+    return false
+  elseif #shape == 1 then
+    return shape[1].x == tx and shape[1].y == ty
+  elseif #shape == 2 then
+    return SPECTRE.POLY.PointWithinLine(shape, tx, ty)
+  else
+    return SPECTRE.POLY.CrossingsMultiplyTest(shape, tx, ty)
+  end
+end
+
+
+function SPECTRE.POLY.BoundingBox(box, tx, ty)
+  return  (box[2].x >= tx and box[2].y >= ty)
+    and (box[1].x <= tx and box[1].y <= ty)
+    or  (box[1].x >= tx and box[2].y >= ty)
+    and (box[2].x <= tx and box[1].y <= ty)
+end
+
+function SPECTRE.POLY.colinear(line, x, y, e)
+  e = e or 0.1
+  m = (line[2].y - line[1].y) / (line[2].x - line[1].x)
+  local function f(x) return line[1].y + m*(x - line[1].x) end
+  return math.abs(y - f(x)) <= e
+end
+
+function SPECTRE.POLY.PointWithinLine(line, tx, ty, e)
+  e = e or 0.66
+  if SPECTRE.POLY.BoundingBox(line, tx, ty) then
+    return SPECTRE.POLY.colinear(line, tx, ty, e)
+  else
+    return false
+  end
+end
+
+function SPECTRE.POLY.CrossingsMultiplyTest(pgon, tx, ty)
+  local DEBUG = 0
+  local i, yflag0, yflag1, inside_flag
+  local vtx0, vtx1
+
+  local numverts = #pgon
+
+  vtx0 = pgon[numverts]
+  vtx1 = pgon[1]
+
+  if DEBUG == 1 then
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - pgon")
+    BASE:E(pgon)
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - tx")
+    BASE:E(tx)
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - ty")
+    BASE:E(ty)
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - numverts")
+    BASE:E(numverts)
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - #pgon")
+    BASE:E(#pgon)
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - vtx0")
+    BASE:E(vtx0)
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - pgon[numverts]")
+    BASE:E(pgon[numverts])
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - vtx1")
+    BASE:E(vtx1)
+    BASE:E("DEBUG - SPECTRE.POLY.CrossingsMultiplyTest - pgon[1]")
+    BASE:E(pgon[1])
+  end
+
+  -- get test bit for above/below X axis
+  yflag0 = ( vtx0.y >= ty )
+  inside_flag = false
+
+  for i=2,numverts+1 do
+    yflag1 = ( vtx1.y >= ty )
+    if ( yflag0 ~= yflag1 ) then
+      if ( ((vtx1.y - ty) * (vtx0.x - vtx1.x) >= (vtx1.x - tx) * (vtx0.y - vtx1.y)) == yflag1 ) then
+        inside_flag =  not inside_flag
+      end
+    end
+
+    -- Move to the next pair of vertices, retaining info as possible.
+    yflag0  = yflag1
+    vtx0    = vtx1
+    vtx1    = pgon[i]
+  end
+
+  return  inside_flag
+end
+
+function SPECTRE.POLY.GetIntersect( points )
+  local g1 = points[1].x
+  local h1 = points[1].y
+
+  local g2 = points[2].x
+  local h2 = points[2].y
+
+  local i1 = points[3].x
+  local j1 = points[3].y
+
+  local i2 = points[4].x
+  local j2 = points[4].y
+
+  local xk = 0
+  local yk = 0
+
+  if SPECTRE.POLY.checkIntersect({x=g1, y=h1}, {x=g2, y=h2}, {x=i1, y=j1}, {x=i2, y=j2}) then
+    local a = h2-h1
+    local b = (g2-g1)
+    local v = ((h2-h1)*g1) - ((g2-g1)*h1)
+
+    local d = i2-i1
+    local c = (j2-j1)
+    local w = ((j2-j1)*i1) - ((i2-i1)*j1)
+
+    xk = (1/((a*d)-(b*c))) * ((d*v)-(b*w))
+    yk = (-1/((a*d)-(b*c))) * ((a*w)-(c*v))
+  end
+  return xk, yk
+end
+
+-----Finds if a Vec2 point falls within box.
+---- @param p : Point vec2 {x=,y=}
+---- @param box : Array of 4 points {[1] = {x=,y=}, ...}
+---- @return true or false : true in in box, false if not
+--function SPECTRE.PointExistsInBox(p,box)
+--
+--  for _i = 1, #box, 1 do
+--
+--    if p.x < box[_i].x and p.y < box[_i].y then
+--    end
+--
+--  end
+--
+--  --  if p.x < box[1] then
+--  --    return true
+--  --  end
+--  --  if p.x > box[2] then
+--  --    return true
+--  --  end
+--  --  if p.y > box[3] then
+--  --    return true
+--  --  end
+--  --  if p.y < box[4] then
+--  --    return true
+--  --  end
+--  return false
+--end
 
 --- Enable/Disable Slot for player aircraft based on a known group naming convention.
 -- Player Aircraft slots must be named in the format:
@@ -1314,18 +1530,67 @@ DynamicSpawner = {
   ClassName = "DynamicSpawner",
 }
 
-local function PointInZone(vec2, zoneName)
+--local function PointInZone(vec2, zoneName)
+--  local DEBUG = 0
+--  if DEBUG == 1 then
+--    BASE:E("DEBUG - PointInZone - zoneName")
+--    BASE:E(zoneName)
+--  end
+--  local _zone = mist.DBs.zonesByName[zoneName]--trigger.misc.getZone(zoneName)--ZONE:FindByName(zoneName)
+--  if DEBUG == 1 then
+--    BASE:E("DEBUG - PointInZone - _zone")
+--    BASE:E(_zone)
+--  end
+--  local p = vec2
+--  local box =  _zone.verticies
+--  if SPECTRE.POLY.PointWithinShape(p,box) then--SPECTRE.POLY.PointWithinShape(point,shape)--SPECTRE.PointExistsInBox(p,box) then
+--    return true
+--  end
+--  return false
+--    --local result = _zone:IsVec2InZone({vec2[1], vec2[2]})
+--    --return result
+--end
+----- Determines if vec2 is in the zone.
+---- Requires quadpoint zone, defined in ME.
+---- @param vec2 : Vector to check
+---- @param zoneName : Name of quadpoint zone.
+---- @return result : true or false
+--DynamicSpawner.PointInZone = PointInZone
 
-
+local function CheckNoGoZone(vec2, zoneNameList)
+  local DEBUG = 0
+  if DEBUG == 1 then
+    BASE:E("DEBUG - CheckNoGoZone - zoneNameList")
+    BASE:E(zoneNameList)
+    BASE:E("DEBUG - CheckNoGoZone - vec2")
+    BASE:E(vec2)
+  end
+  local _vec = {}
+  _vec.x = vec2[1]
+  _vec.y = vec2[2]
+  local result
+  --for _k, _v in pairs(zoneNameList) do
+  for _v = 1, #zoneNameList, 1 do
+    result = SPECTRE.PointInZone(vec2, zoneNameList[_v])
+    if result then
+      return result
+    end
+  end
+  return result
 end
 --- Determines if vec2 is in the zone.
 -- Requires quadpoint zone, defined in ME.
 -- @param vec2 : Vector to check
 -- @param zoneName : Name of quadpoint zone.
--- @return true or false
-DynamicSpawner.PointInZone = PointInZone
+-- @return result : true or false
+DynamicSpawner.CheckNoGoZone = CheckNoGoZone
 
 local function Shuffle(t)
+  local DEBUG = 1
+  if DEBUG == 1 then
+    BASE:E("DEBUG - Shuffle - t")
+    BASE:E(t)
+  end
   local s = {}
   for i = 1, #t do s[i] = t[i] end
   for i = #t, 2, -1 do
@@ -1339,8 +1604,17 @@ end
 -- @return s : Shuffled table
 DynamicSpawner.Shuffle = Shuffle
 
+local function f_distance(p1, p2)
+  return math.sqrt((p1.x - p2.x)^2 + (p1.y - p2.y)^2)
+end
+--- Standard formula for distance between 2 points.
+-- @param p1 : Point 1 {x = , y = }
+-- @param p2 : Point 2 {x = , y = }
+-- @return Distance between p1 and p2
+DynamicSpawner.f_distance = f_distance
+
 local function FindObjectsInZone(zoneName)
-  local DEBUG = 1
+  local DEBUG = 0
   if DEBUG == 1 then
     BASE:E("DEBUG - FindObjectsInZone - zoneName")
     BASE:E(zoneName)
@@ -1464,7 +1738,7 @@ end
 DynamicSpawner.FindObjectsInZone = FindObjectsInZone
 
 local function Weight_ZoneSize(ZoneArray)
-  local DEBUG = 1
+  local DEBUG = 0
   if DEBUG == 1 then
     BASE:E("Dynamic - Weight_ZoneSize : ZoneArray")
     BASE:E(ZoneArray)
@@ -1520,7 +1794,7 @@ end
 DynamicSpawner.Weight_ZoneSize = Weight_ZoneSize
 
 local function UnitSpread(ZoneArray, WeightedArray)
-  local DEBUG = 1
+  local DEBUG = 0
   if DEBUG == 1 then
     BASE:E("Dynamic - UnitSpread")
   end
@@ -1624,7 +1898,7 @@ end
 DynamicSpawner.UnitSpread = UnitSpread
 
 local function GroupSpread(ZoneArray, SpreadArray)
-  local DEBUG = 1
+  local DEBUG = 0
   local Tally_usedUnits = 0
   if DEBUG == 1 then
     BASE:E("Dynamic - GroupSpread")
@@ -1748,7 +2022,7 @@ end
 DynamicSpawner.GroupSpread = GroupSpread
 
 local function ConfigParse(ConfigArray)
-  local DEBUG = 1
+  local DEBUG = 0
   local Config = {}
   for _, value in pairs(ConfigArray) do
     if DEBUG == 1 then
@@ -1787,7 +2061,7 @@ end
 DynamicSpawner.ConfigParse = ConfigParse
 
 local function GroupRandomizer(spawnConfig_Original, spawnConfig, GroupSpreadArray_i)
-  local DEBUG = 1
+  local DEBUG = 0
   --Holds Randomized Group return.
   local RandomizedGroup = {}
   --Holds Structures of group.
@@ -1918,7 +2192,7 @@ end
 DynamicSpawner.GroupRandomizer = GroupRandomizer
 
 local function StructureGroups(spawnConfig_Original, GroupSpreadArray, spawnConfig)
-  local DEBUG = 1
+  local DEBUG = 0
   local StructuredGroups = {}
   local GroupSpreadArray_ = GroupSpreadArray
   local spawnConfig_ = spawnConfig
@@ -1949,7 +2223,14 @@ local function StructureGroups(spawnConfig_Original, GroupSpreadArray, spawnConf
   end
   local zoneArray = GroupSpreadArray_.Main
   GroupSpreadArray_.Main.GroupList = {}
+  local ZoneObjectCoords = DynamicSpawner.FindObjectsInZone(GroupSpreadArray_.Main.name)
+  if DEBUG == 1 then
+    BASE:E("Dynamic - StructureGroups : MAIN ZoneObjectCoords")
+    BASE:E(ZoneObjectCoords)
+  end
+  GroupSpreadArray_.Main.ZoneObjectCoords = ZoneObjectCoords
   for _j = 1, #zoneArray.GroupSpread, 1 do
+
     if DEBUG == 1 then
       BASE:E("Dynamic - StructureGroups : MAIN zoneArray.GroupSpread[_j]")
       BASE:E(zoneArray.GroupSpread[_j])
@@ -1978,8 +2259,8 @@ end
 -- @return StructuredGroups : StructuredGroups Generated for groups per zone
 DynamicSpawner.StructureGroups = StructureGroups
 
-local function GroupGenerator(ZoneArray, GroupSpreadArray)
-  local DEBUG = 1
+local function GroupGenerator(ZoneArray, GroupSpreadArray, ZoneArrayOrig_)
+  local DEBUG = 0
   local GroupsGenerated = {}
   local spawnConfig = DynamicSpawner.ConfigParse(ZoneArray.Units.ConfigTypes)
   local spawnConfig_Original = spawnConfig
@@ -1993,10 +2274,12 @@ end
 -- @return GroupsGenerated : GroupsGenerated for groups per zone
 DynamicSpawner.GroupGenerator = GroupGenerator
 
-local function PointRandomizer_Groups_SubZone(GroupArray, subZone, GroupInfo_Array )
-  local DEBUG = 1
+local function PointRandomizer_Groups_SubZone(ZoneArray, GroupArray, subZone, GroupInfo_Array )
+  local DEBUG = 0
   if DEBUG == 1 then
     BASE:E("Dynamic - PointRandomizer_Groups_SubZone : Start")
+    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : ZoneArray")
+    BASE:E(ZoneArray)
     BASE:E("Dynamic - PointRandomizer_Groups_SubZone : GroupArray")
     BASE:E(GroupArray)
     BASE:E("Dynamic - PointRandomizer_Groups_SubZone : subZone")
@@ -2021,7 +2304,13 @@ local function PointRandomizer_Groups_SubZone(GroupArray, subZone, GroupInfo_Arr
 
     repeat
       if Flag_EmergencyCut == 0 then
-        groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
+        local flag_goodzone = 0
+        while flag_goodzone == 0 do
+          groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
+          if not CheckNoGoZone({groupCenter_possible.x, groupCenter_possible.z}, ZoneArray.NoGoZones) then
+            flag_goodzone = 1
+          end
+        end
       else
         groupCenter_possible = subZone.zone:GetRandomCoordinate(0, subZone.radius)
       end
@@ -2098,6 +2387,7 @@ local function PointRandomizer_Groups_SubZone(GroupArray, subZone, GroupInfo_Arr
     --- END Find possible Group Center Coord.
 end
 --- determines placement for Placement_Groups based on generated groups per zones.
+-- @param ZoneArray
 -- @param subZone :
 -- @param GroupInfo_Array :
 -- @param selectedPointsAll :
@@ -2106,17 +2396,8 @@ end
 -- @return PlacedUnits :
 DynamicSpawner.PointRandomizer_Groups_SubZone = PointRandomizer_Groups_SubZone
 
-local function f_distance(p1, p2)
-  return math.sqrt((p1.x - p2.x)^2 + (p1.y - p2.y)^2)
-end
---- Standard formula for distance between 2 points.
--- @param p1 : Point 1 {x = , y = }
--- @param p2 : Point 2 {x = , y = }
--- @return Distance between p1 and p2
-DynamicSpawner.f_distance = f_distance
-
-local function PointRandomizer_Units_SubZone(GroupArray, GroupInfo_Array, subZone, NumZone, _i, _numgroup)
-  local DEBUG = 1
+local function PointRandomizer_Units_SubZone(ZoneArray, GroupArray, GroupInfo_Array, subZone, NumZone, _i, _numgroup)
+  local DEBUG = 0
   if DEBUG == 1 then
     BASE:E("Dynamic - PointRandomizer_Units_SubZone : Start")
 
@@ -2153,7 +2434,13 @@ local function PointRandomizer_Units_SubZone(GroupArray, GroupInfo_Array, subZon
       end
       flag_goodcoord = 1
       --select random coord in zone
-      possibleVec2 = subZone.zone:GetRandomVec2()
+      local flag_goodzone = 0
+      while flag_goodzone == 0 do
+        possibleVec2 = subZone.zone:GetRandomVec2()
+        if not CheckNoGoZone(possibleVec2, ZoneArray.NoGoZones) then
+          flag_goodzone = 1
+        end
+      end
       --check if coord too close to restricted
       for _k,_v in pairs(restrictedCoords) do
         --set distance restriction
@@ -2188,6 +2475,7 @@ local function PointRandomizer_Units_SubZone(GroupArray, GroupInfo_Array, subZon
   return PlacedUnits
 end
 --- determines placement for PointRandomizer_Units_SubZone based on generated groups per zones.
+-- @param ZoneArray
 -- @param subZone :
 -- @param GroupInfo_Array :
 -- @param selectedPointsAll :
@@ -2196,8 +2484,8 @@ end
 -- @return PlacedUnits :
 DynamicSpawner.PointRandomizer_Units_SubZone = PointRandomizer_Units_SubZone
 
-local function PointRandomizer_Groups_MainZone(GroupArray, subZone, GroupInfo_Array)
-  local DEBUG = 1
+local function PointRandomizer_Groups_MainZone(ZoneArray, GroupArray, subZone, GroupInfo_Array)
+  local DEBUG = 0
   if DEBUG == 1 then
     BASE:E("Dynamic - PointRandomizer_Groups_MainZone : Start")
     BASE:E("Dynamic - PointRandomizer_Groups_MainZone : GroupArray")
@@ -2224,9 +2512,22 @@ local function PointRandomizer_Groups_MainZone(GroupArray, subZone, GroupInfo_Ar
 
     repeat
       if Flag_EmergencyCut == 0 then
-        groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
+        local flag_goodzone = 0
+        while flag_goodzone == 0 do
+          groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
+          if not CheckNoGoZone({groupCenter_possible.x, groupCenter_possible.z}, ZoneArray.NoGoZones) then
+            flag_goodzone = 1
+          end
+        end
       else
-        groupCenter_possible = subZone.zone:GetRandomCoordinate(0, subZone.radius)
+        local flag_goodzone = 0
+        while flag_goodzone == 0 do
+          groupCenter_possible = subZone.zone:GetRandomCoordinate(0, subZone.radius)
+          if not CheckNoGoZone({groupCenter_possible.x, groupCenter_possible.z}, ZoneArray.NoGoZones) then
+            flag_goodzone = 1
+          end
+        end
+
       end
       if DEBUG == 1 then
         BASE:E("Dynamic - PointRandomizer_Groups_MainZone : groupCenter_possible")
@@ -2300,6 +2601,7 @@ local function PointRandomizer_Groups_MainZone(GroupArray, subZone, GroupInfo_Ar
     --- END Find possible Group Center Coord.
 end
 --- determines placement for units based on generated groups per zones.
+-- @param ZoneArray
 -- @param subZone :
 -- @param GroupInfo_Array :
 -- @param selectedPointsAll :
@@ -2308,127 +2610,91 @@ end
 -- @return PlacedUnits :
 DynamicSpawner.PointRandomizer_Groups_MainZone = PointRandomizer_Groups_MainZone
 
-local function PointRandomizer_Units_MainZone(GroupArray, GroupInfo_Array, subZone, _i, _numgroup)
-  local DEBUG = 1
+local function PointRandomizer_Units_MainZone(ZoneArray, GroupArray, GroupInfo_Array, subZone, _i, _numgroup )
+
+  local DEBUG = 0
   if DEBUG == 1 then
-    BASE:E("Dynamic - PointRandomizer_Units_MainZone : Start")
-    BASE:E("Dynamic - PointRandomizer_Units_MainZone : GroupArray")
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : Start")
+
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : GroupArray")
     BASE:E(GroupArray)
-    BASE:E("Dynamic - PointRandomizer_Units_MainZone : GroupInfo_Array")
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : GroupInfo_Array")
     BASE:E(GroupInfo_Array)
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : subZone")
+    BASE:E(subZone)
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : _i")
+    BASE:E(_i)
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : _numgroup")
+    BASE:E(_numgroup)
+
   end
 
-  --- Find possible Group Center Coord.
-  local Flag_GroupTooClose = 0
-  local Flag_GroupIteration_Count = 0
-  local Flag_GroupIteration_Cutoff = 1
-  local unitPlace_possible
-  local possibleVec2
-  local confirmedVec2
-  local distanceFromGroups = GroupInfo_Array.distanceFromGroups
-  local distanceFromUnits = GroupInfo_Array.distanceFromUnits
 
-  repeat
-    Flag_GroupTooClose = 0
-    local Flag_FindRandomPoint = 0
-    local Flag_EmergencyCut = 0
-    local Flag_FindRandomPoint_Counter = 0
-    local Flag_FindRandomPoint_Cutoff = 1
-    if DEBUG == 1 then
-      BASE:E("Dynamic - PointRandomizer_Units_MainZone : subZone.radius")
-      BASE:E(subZone.radius)
-    end
-    repeat
-      if Flag_EmergencyCut == 0 then
-        unitPlace_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
-      else
-        unitPlace_possible = subZone.zone:GetRandomCoordinate(0, subZone.radius)
-      end
+  local PlacedUnits = {}
+  local possibleVec2 = {}
+  local confirmedVec2 = {}
+  local flag_goodcoord = 0
+  local restrictedCoords = GroupArray.Main.ZoneObjectCoords
+  if DEBUG == 1 then
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : restrictedCoords")
+    BASE:E(restrictedCoords)
+  end
+  if restrictedCoords.units == nil then
+    restrictedCoords.units = {}
+  end
+  while #PlacedUnits < GroupInfo_Array.groupSize do
+    local debugcycleCounter = 0
+    flag_goodcoord = 0
+    while flag_goodcoord == 0 do
       if DEBUG == 1 then
-        BASE:E("Dynamic - PointRandomizer_Units_MainZone : unitPlace_possible")
-        BASE:E(unitPlace_possible)
+        BASE:E("Dynamic - PointRandomizer_Units_SubZone : debugcycleCounter")
+        debugcycleCounter = debugcycleCounter + 1
+        BASE:E(debugcycleCounter)
       end
-      if unitPlace_possible then
-        Flag_FindRandomPoint = 1
-        possibleVec2 = {x = unitPlace_possible.x, y = unitPlace_possible.z }
-        if DEBUG == 1 then
-          BASE:E("Dynamic - PointRandomizer_Units_MainZone : possibleVec2")
-          BASE:E(possibleVec2)
+      flag_goodcoord = 1
+      --select random coord in zone
+      local flag_goodzone = 0
+      while flag_goodzone == 0 do
+        possibleVec2 = subZone.zone:GetRandomVec2()
+        if not CheckNoGoZone(possibleVec2, ZoneArray.NoGoZones) then
+          flag_goodzone = 1
         end
       end
-      if Flag_FindRandomPoint_Counter > Flag_FindRandomPoint_Cutoff then
-        Flag_FindRandomPoint_Counter = 0
-        Flag_FindRandomPoint = 0
-        Flag_EmergencyCut = 1
-        if DEBUG == 1 then
-          BASE:E("Dynamic - PointRandomizer_Units_MainZone : possibleVec2 CUTOFF")
+      --check if coord too close to restricted
+      for _k,_v in pairs(restrictedCoords) do
+        --set distance restriction
+        local distance
+        if _k == "units" then
+          distance = GroupInfo_Array.distanceFromUnits
+        else
+          distance = GroupInfo_Array.distanceFromBuildings
         end
-        --  subZone.radius = subZone.radius * 1.15
-        -- GroupInfo_Array.distanceFromBuildings = GroupInfo_Array.distanceFromBuildings * 1.15
-        -------- --groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
-        ---------  -- local dd = subZone.zone:GetRandomCoordinate(0,subZone.radius,surfacetypes)
-      else
-        Flag_FindRandomPoint_Counter = Flag_FindRandomPoint_Counter + 1
-      end
-    until Flag_FindRandomPoint == 1
-    ---Compare to existing group Center points, if within minimum group find another.
-    -- for numSubZone = 1, #GroupArray.Sub, 1 do
-    local _CoordStackGroupCenters = GroupArray.Main.CoordStackGroupCenters
-    local _CoordStack = GroupArray.Main.CoordStack
-    if DEBUG == 1 then
-      BASE:E("Dynamic - PointRandomizer_Units_MainZone :  _CoordStackGroupCenters")
-      BASE:E(_CoordStackGroupCenters)
-      for numGrouping = 1, #_CoordStackGroupCenters, 1 do
-        for numGroupCenter = 1, #_CoordStackGroupCenters[numGrouping], 1 do
-          if _numgroup ~= numGroupCenter then
-            local _GroupCenterCoordsStored =  _CoordStackGroupCenters[numGrouping][numGroupCenter]
-            if _GroupCenterCoordsStored.x and _GroupCenterCoordsStored.y then
-              local _distance = math.sqrt((_GroupCenterCoordsStored.x - possibleVec2.x)^2 + (_GroupCenterCoordsStored.y - possibleVec2.y)^2)
-              if _distance < distanceFromGroups then
-                Flag_GroupTooClose = 1
-                break
-              end
-              for numUnit = 1, #_CoordStack[numGrouping][numGroupCenter], 1 do
-                local _unitPlaceCoordsStored =  _CoordStack[numGrouping][numGroupCenter][numUnit]
-                if _unitPlaceCoordsStored.x and _unitPlaceCoordsStored.y then
-                  local _distance = math.sqrt((_unitPlaceCoordsStored.x - possibleVec2.x)^2 + (_unitPlaceCoordsStored.y - possibleVec2.y)^2)
-                  if _distance < distanceFromUnits then
-                    Flag_GroupTooClose = 1
-                    break
-                  end
-                end
-              end
-            end
-          end
-          if Flag_GroupTooClose == 1 then
+        for _i = 1, #restrictedCoords[_k] do
+          local checkCoord = restrictedCoords[_k][_i]
+          if DynamicSpawner.f_distance(checkCoord,possibleVec2) < distance then
+            flag_goodcoord = 0
             break
           end
         end
-        if Flag_GroupTooClose == 1 then
-          break
-        end
-        --     end
+        if flag_goodcoord == 0 then break end
       end
+
+      PlacedUnits[#PlacedUnits + 1] = possibleVec2
+      if DEBUG == 1 then
+        BASE:E("Dynamic - PointRandomizer_Units_SubZone : PlacedUnits[#PlacedUnits]")
+        BASE:E(PlacedUnits[#PlacedUnits])
+      end
+      restrictedCoords.units[#restrictedCoords.units+1] = possibleVec2
     end
-    if DEBUG == 1 then
-      BASE:E("Dynamic - PointRandomizer_Units_MainZone : Flag_GroupIteration_Count")
-      BASE:E(Flag_GroupIteration_Count)
-      BASE:E("Dynamic - PointRandomizer_Units_MainZone : Flag_GroupTooClose")
-      BASE:E(Flag_GroupTooClose)
-    end
-    if Flag_GroupIteration_Count > Flag_GroupIteration_Cutoff then
-      Flag_GroupTooClose = 0
-    else
-      Flag_GroupIteration_Count = Flag_GroupIteration_Count + 1
-    end
-    if Flag_GroupTooClose == 0 then
-      confirmedVec2 = possibleVec2
-    end
-  until Flag_GroupTooClose == 0
-  return confirmedVec2
-    --- END Find possible Group Center Coord.
+  end
+  if DEBUG == 1 then
+    BASE:E("Dynamic - PointRandomizer_Units_SubZone : PlacedUnits")
+    BASE:E(PlacedUnits)
+  end
+  return PlacedUnits
 end
 --- determines placement for units based on generated groups per zones.
+-- @param ZoneArray
 -- @param subZone :
 -- @param GroupInfo_Array :
 -- @param selectedPointsAll :
@@ -2437,8 +2703,8 @@ end
 -- @return PlacedUnits :
 DynamicSpawner.PointRandomizer_Units_MainZone = PointRandomizer_Units_MainZone
 
-local function Placement_Groups(ZoneArray, GroupArray)
-  local DEBUG = 1
+local function Placement_Groups(ZoneArray, GroupArray, ZoneArrayOrig_)
+  local DEBUG = 0
   --- For each zone in sub
   for NumZone, ZoneArray in pairs(GroupArray.Sub) do
     local subZone = {
@@ -2453,7 +2719,7 @@ local function Placement_Groups(ZoneArray, GroupArray)
       ---Loop through numGroup
       for _numgroup = 1, GroupArray.Sub[NumZone].GroupSpread[_i].numGroup do
         ---Loop through grouplist
-        local randpoints_ = DynamicSpawner.PointRandomizer_Groups_SubZone(GroupArray, subZone, GroupInfo_Array)
+        local randpoints_ = DynamicSpawner.PointRandomizer_Groups_SubZone(ZoneArrayOrig_, GroupArray, subZone, GroupInfo_Array)
         GroupArray.Sub[NumZone].CoordStackGroupCenters[_i][_numgroup] = randpoints_
         if DEBUG == 1 then
           BASE:E("Dynamic - Placement_Groups : GroupArray")
@@ -2475,7 +2741,7 @@ local function Placement_Groups(ZoneArray, GroupArray)
     ---Loop through numGroup
     for _numgroup = 1, GroupArray.Main.GroupSpread[_i].numGroup do
       ---Loop through grouplist
-      local randpoints_ = DynamicSpawner.PointRandomizer_Groups_MainZone(GroupArray, subZone, GroupInfo_Array )
+      local randpoints_ = DynamicSpawner.PointRandomizer_Groups_MainZone(ZoneArrayOrig_, GroupArray, subZone, GroupInfo_Array )
       GroupArray.Main.CoordStackGroupCenters[_i][_numgroup] = randpoints_
       if DEBUG == 1 then
         BASE:E("Dynamic - Placement_Groups : GroupArray")
@@ -2492,8 +2758,8 @@ end
 -- @return PlacedGroupArray : group array with added group coords for groups per zone
 DynamicSpawner.Placement_Groups = Placement_Groups
 
-local function Placement_Units(ZoneArray, PlacedGroups)
-  local DEBUG = 1
+local function Placement_Units(ZoneArray, PlacedGroups, ZoneArrayOrig_)
+  local DEBUG = 0
   local GroupArray = PlacedGroups
   local GroupArray_t = GroupArray
   --- For each zone in sub
@@ -2513,7 +2779,7 @@ local function Placement_Units(ZoneArray, PlacedGroups)
         -- for _numUnit = 1, GroupArray.Sub[NumZone].GroupSpread[_i].groupSize do
         ---Loop through grouplist
         -- local randpoints_ = bridson_sampling({x = tempZoneVec2.x,y = tempZoneVec2.y}, GroupInfo_Array.distanceFromUnits, GroupInfo_Array.groupSize, subZone,GroupInfo_Array.distanceFromBuildings)
-        local randpoints_ = DynamicSpawner.PointRandomizer_Units_SubZone(GroupArray, GroupInfo_Array, subZone, NumZone, _i, _numgroup)
+        local randpoints_ = DynamicSpawner.PointRandomizer_Units_SubZone(ZoneArrayOrig_, GroupArray, GroupInfo_Array, subZone, NumZone, _i, _numgroup)
         GroupArray.Sub[NumZone].CoordStack[_i][_numgroup] = randpoints_--[#GroupArray.Sub[NumZone].CoordStack[_i][_numgroup] + 1] = randpoints_
         if DEBUG == 1 then
           BASE:E("Dynamic - Placement_Units : GroupArray")
@@ -2524,6 +2790,7 @@ local function Placement_Units(ZoneArray, PlacedGroups)
       end
     end
     GroupArray.Sub[NumZone].ZoneObjectCoords = {}
+    GroupArray.Main.ZoneObjectCoords = {}
   end
 
   --- For MainZone
@@ -2542,23 +2809,13 @@ local function Placement_Units(ZoneArray, PlacedGroups)
       local tempZoneRadius = (GroupInfo_Array.distanceFromUnits * GroupInfo_Array.groupSize) + (GroupInfo_Array.distanceFromGroups * GroupInfo_Array.numGroup ) + GroupInfo_Array.distanceFromBuildings
       subZone.zone = ZONE_RADIUS:New(tempZoneName,tempZoneVec2,tempZoneRadius)--ZONE:New(GroupArray.Sub[NumZone].name),
       subZone.radius = tempZoneRadius
-      for _numUnit = 1, GroupArray.Main.GroupSpread[_i].groupSize do
-        ---Loop through grouplist
-        local randpoints_ = DynamicSpawner.PointRandomizer_Units_MainZone(GroupArray, GroupInfo_Array, subZone, _i, _numgroup )
-        GroupArray.Main.CoordStack[_i][_numgroup][#GroupArray.Main.CoordStack[_i][_numgroup] + 1] = randpoints_
-        if DEBUG == 1 then
-          BASE:E("Dynamic - Placement_Units : GroupArray")
-          BASE:E(GroupArray)
-        end
+      ---Loop through grouplist
+      local randpoints_ = DynamicSpawner.PointRandomizer_Units_MainZone(ZoneArrayOrig_, GroupArray, GroupInfo_Array, subZone, _i, _numgroup )
+      GroupArray.Main.CoordStack[_i][_numgroup] = randpoints_ --GroupArray.Main.CoordStack[_i][_numgroup][#GroupArray.Main.CoordStack[_i][_numgroup] + 1] = randpoints_
+      if DEBUG == 1 then
+        BASE:E("Dynamic - Placement_Units : GroupArray")
+        BASE:E(GroupArray)
       end
-      --        ---Loop through grouplist
-      --        local GroupInfo_Array = GroupArray.Main.GroupSpread[_i]
-      --        local randpoints_ = DynamicSpawner.PointRandomizer_Units_MainZone(GroupArray, GroupInfo_Array, subZone, _i, _numgroup )
-      --        GroupArray.Main.CoordStack[_i][_numgroup][#GroupArray.Main.CoordStack[_i][_numgroup] + 1] = randpoints_
-      --        if DEBUG == 1 then
-      --          BASE:E("Dynamic - Placement_Units : GroupArray")
-      --          BASE:E(GroupArray)
-      --        end
     end
   end
   local PlacedGroupArray = GroupArray
@@ -2570,18 +2827,18 @@ end
 -- @return PlacedGroupArray : group array with added group coords for groups per zone
 DynamicSpawner.Placement_Units = Placement_Units
 
-local function DeterminePlacement(ZoneArray, _GroupGenerator)
-  local DEBUG = 1
+local function DeterminePlacement(ZoneArray, _GroupGenerator, ZoneArrayOrig_)
+  local DEBUG = 0
   local PlacedUnits = {}
   local GroupArray = _GroupGenerator
 
 
-  local PlacedGroups = DynamicSpawner.Placement_Groups(ZoneArray, GroupArray)
+  local PlacedGroups = DynamicSpawner.Placement_Groups(ZoneArray, GroupArray, ZoneArrayOrig_)
   if DEBUG == 1 then
     BASE:E("Dynamic - DeterminePlacement : PlacedGroups")
     BASE:E(PlacedGroups)
   end
-  local PlacedUnits = DynamicSpawner.Placement_Units(ZoneArray, PlacedGroups)
+  local PlacedUnits = DynamicSpawner.Placement_Units(ZoneArray, PlacedGroups, ZoneArrayOrig_)
   return PlacedUnits
 end
 --- determines placement for units based on generated groups per zones.
@@ -2676,7 +2933,15 @@ DynamicSpawner.SelectTemplate = SelectTemplate
 local function SelectTemplateU(numGrouping,numGroup,numUnit,SubZoneArray)
   local DEBUG = 1
   if DEBUG == 1 then
-    BASE:E("Dynamic - SelectTemplate : START")
+    BASE:E("Dynamic - SelectTemplateU : START")
+    BASE:E("Dynamic - SelectTemplateU : numGrouping")
+    BASE:E(numGrouping)
+    BASE:E("Dynamic - SelectTemplateU : numGroup")
+    BASE:E(numGroup)
+    BASE:E("Dynamic - SelectTemplateU : numUnit")
+    BASE:E(numUnit)
+    BASE:E("Dynamic - SelectTemplateU : SubZoneArray")
+    BASE:E(SubZoneArray)
   end
   local UnitName
   --- Select Random Unit from appropriate Table
@@ -2685,24 +2950,27 @@ local function SelectTemplateU(numGrouping,numGroup,numUnit,SubZoneArray)
     BASE:E("Dynamic - SelectTemplate : type_")
     BASE:E(type_)
   end
+  if type_ == nil then
+    type_ = "Infantry"
+  end
   local configTemplates = SpawnerTemplates[type_]
   if DEBUG == 1 then
-    BASE:E("Dynamic - SelectTemplate : configTemplates")
+    BASE:E("Dynamic - SelectTemplateU : configTemplates")
     BASE:E(configTemplates)
   end
   local shuffle1 = DynamicSpawner.Shuffle(configTemplates)
   if DEBUG == 1 then
-    BASE:E("Dynamic - SelectTemplate : shuffle1")
+    BASE:E("Dynamic - SelectTemplateU : shuffle1")
     BASE:E(shuffle1)
   end
   local randompick = math.random(1, #shuffle1)
   if DEBUG == 1 then
-    BASE:E("Dynamic - SelectTemplate : randompick")
+    BASE:E("Dynamic - SelectTemplateU : randompick")
     BASE:E(randompick)
   end
   local shuffle2 = DynamicSpawner.Shuffle(shuffle1)
   if DEBUG == 1 then
-    BASE:E("Dynamic - SelectTemplate : shuffle2")
+    BASE:E("Dynamic - SelectTemplateU : shuffle2")
     BASE:E(shuffle2)
   end
   --          TemplateArray[#TemplateArray+1] = shuffle2[randompick]
@@ -2715,6 +2983,7 @@ local function SelectTemplateU(numGrouping,numGroup,numUnit,SubZoneArray)
   --    end
   --    ---Spawn Units Sub.
   UnitName = shuffle2[randompick]
+
   return UnitName
 end
 --- SelectTemplate for units based on generated groups per zones.
@@ -2727,6 +2996,10 @@ local function ActivateUnits(ZoneArray, groupPlacement)
   local DEBUG = 1
   if DEBUG == 1 then
     BASE:E("Dynamic - ActivateUnits : START")
+    BASE:E("Dynamic - ActivateUnits : ZoneArray")
+    BASE:E(ZoneArray)
+    BASE:E("Dynamic - ActivateUnits : groupPlacement")
+    BASE:E(groupPlacement)
   end
   local ActivatedUnits = {}
   local GroupArray = groupPlacement
@@ -2745,7 +3018,7 @@ local function ActivateUnits(ZoneArray, groupPlacement)
 
       for numUnit = 1, #GroupArray.Main.CoordStack[numGroup][numSubGroup], 1 do
         GroupArray.Main.SelectedUnitStack[numGroup][numSubGroup][numUnit] = {}
-        GroupArray.Main.SelectedUnitStack[numGroup][numSubGroup][numUnit] = DynamicSpawner.SelectTemplate(numGroup,numSubGroup,numUnit,SubZoneArray) --ZoneArray, SubZoneArray, GroupArray.Main.GroupList[numGroup][numSubGroup])
+        GroupArray.Main.SelectedUnitStack[numGroup][numSubGroup][numUnit] = DynamicSpawner.SelectTemplateU(numGroup,numSubGroup,numUnit,SubZoneArray)--(numGroup,numSubGroup,numUnit,SubZoneArray) --ZoneArray, SubZoneArray, GroupArray.Main.GroupList[numGroup][numSubGroup]) --numGrouping,numGroup,numUnit,SubZoneArray
 
 
         local _spawnunit = SPAWN:NewWithAlias(GroupArray.Main.SelectedUnitStack[numGroup][numSubGroup][numUnit], GroupArray.Main.name .. "_" .. GroupArray.Main.Counter)
@@ -2805,10 +3078,10 @@ end
 -- @return ActivatedUnits : spawned Units for groups per zone
 DynamicSpawner.ActivateUnits = ActivateUnits
 
-local function SpawnUnits(ZoneArray, _GroupGenerator)
+local function SpawnUnits(ZoneArray, _GroupGenerator, ZoneArrayOrig_)
   local DEBUG = 1
   local T0 = os.time()
-  local groupPlacement =  DynamicSpawner.DeterminePlacement(ZoneArray, _GroupGenerator)
+  local groupPlacement =  DynamicSpawner.DeterminePlacement(ZoneArray, _GroupGenerator, ZoneArrayOrig_)
   if DEBUG == 1 then
     BASE:E("Dynamic - SpawnUnits : groupPlacement")
     BASE:E(groupPlacement)
@@ -2830,7 +3103,8 @@ end
 DynamicSpawner.SpawnUnits = SpawnUnits
 
 local function FillZone(ZoneArray)
-  local DEBUG = 1
+  local DEBUG = 0
+  local ZoneArrayOrig_ = ZoneArray
   local FilledArray = {}
   if DEBUG == 1 then
     BASE:E("Dynamic - FillZone : ZoneArray")
@@ -2866,7 +3140,7 @@ local function FillZone(ZoneArray)
     BASE:E(_GroupGenerator)
   end
 
-  local _SpawnUnits = DynamicSpawner.SpawnUnits(ZoneArray, _GroupGenerator)
+  local _SpawnUnits = DynamicSpawner.SpawnUnits(ZoneArray, _GroupGenerator, ZoneArrayOrig_)
   if DEBUG == 1 then
     BASE:E("Dynamic - FillZone : _SpawnUnits")
     BASE:E(_SpawnUnits)
@@ -2880,4 +3154,3 @@ end
 -- @param ZoneArray : Takes zone array information
 -- @return FilledArray : All information about spawned units/groups for zone
 DynamicSpawner.FillZone = FillZone
-
