@@ -1465,7 +1465,7 @@ do
     "Template_AAA_LC",
     "Template_AAA_ZU232",
   }
-  SpawnerTemplates.SPAAA  = {
+  SpawnerTemplates.SAM_SPAAA  = {
     "Template_SPAAA_Gepard",
     "Template_SPAAA_Vulcan",
     "Template_SPAAA_Shilka",
@@ -2274,116 +2274,199 @@ end
 -- @return GroupsGenerated : GroupsGenerated for groups per zone
 DynamicSpawner.GroupGenerator = GroupGenerator
 
-local function PointRandomizer_Groups_SubZone(ZoneArray, GroupArray, subZone, GroupInfo_Array )
-  local DEBUG = 0
+local function PointRandomizer_Groups_SubZone(ZoneArray, GroupArray, subZone, GroupInfo_Array, NumZone, _i, _numgroup)--ZoneArray, GroupArray, GroupInfo_Array, subZone, NumZone, _i, _numgroup)--ZoneArray, GroupArray, subZone, GroupInfo_Array ) --ZoneArrayOrig_, GroupArray, subZone, GroupInfo_Array
+
+  local DEBUG = 1
   if DEBUG == 1 then
     BASE:E("Dynamic - PointRandomizer_Groups_SubZone : Start")
-    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : ZoneArray")
-    BASE:E(ZoneArray)
+
     BASE:E("Dynamic - PointRandomizer_Groups_SubZone : GroupArray")
     BASE:E(GroupArray)
-    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : subZone")
-    BASE:E(subZone)
     BASE:E("Dynamic - PointRandomizer_Groups_SubZone : GroupInfo_Array")
     BASE:E(GroupInfo_Array)
-  end
-  --- Find possible Group Center Coord.
-  local Flag_GroupTooClose = 0
-  local Flag_GroupIteration_Count = 0
-  local Flag_GroupIteration_Cutoff = 2
-  local groupCenter_possible
-  local possibleVec2
-  local confirmedVec2
-  local distanceFromGroups = GroupInfo_Array.distanceFromGroups
-  repeat
-    Flag_GroupTooClose = 0
-    local Flag_FindRandomPoint = 0
-    local Flag_EmergencyCut = 0
-    local Flag_FindRandomPoint_Counter = 0
-    local Flag_FindRandomPoint_Cutoff = 2
+    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : subZone")
+    BASE:E(subZone)
+    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : NumZone")
+    BASE:E(NumZone)
+    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : _i")
+    BASE:E(_i)
+    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : _numgroup")
+    BASE:E(_numgroup)
 
-    repeat
-      if Flag_EmergencyCut == 0 then
-        local flag_goodzone = 0
-        while flag_goodzone == 0 do
-          groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
-          if not CheckNoGoZone({groupCenter_possible.x, groupCenter_possible.z}, ZoneArray.NoGoZones) then
-            flag_goodzone = 1
-          end
-        end
-      else
-        groupCenter_possible = subZone.zone:GetRandomCoordinate(0, subZone.radius)
-      end
+  end
+
+
+  local PlacedUnits = {}
+  local possibleVec2 = {}
+  local confirmedVec2 = {}
+  local flag_goodcoord = 0
+  local restrictedCoords = GroupArray.Sub[NumZone].ZoneObjectCoords
+
+  while #PlacedUnits < GroupInfo_Array.numGroup do
+    local debugcycleCounter = 0
+    flag_goodcoord = 0
+    while flag_goodcoord == 0 do
       if DEBUG == 1 then
-        BASE:E("Dynamic - PointRandomizer_Groups_SubZone : groupCenter_possible")
-        BASE:E(groupCenter_possible)
+        BASE:E("Dynamic - PointRandomizer_Groups_SubZone : debugcycleCounter")
+        debugcycleCounter = debugcycleCounter + 1
+        BASE:E(debugcycleCounter)
       end
-      if groupCenter_possible then
-        Flag_FindRandomPoint = 1
-        possibleVec2 = {x = groupCenter_possible.x, y = groupCenter_possible.z }
-        if DEBUG == 1 then
-          BASE:E("Dynamic - PointRandomizer_Groups_SubZone : possibleVec2")
-          BASE:E(possibleVec2)
+      flag_goodcoord = 1
+      --select random coord in zone
+      local flag_goodzone = 0
+      while flag_goodzone == 0 do
+        possibleVec2 = subZone.zone:GetRandomVec2()
+        if not CheckNoGoZone(possibleVec2, ZoneArray.NoGoZones) then
+          flag_goodzone = 1
         end
       end
-      if Flag_FindRandomPoint_Counter > Flag_FindRandomPoint_Cutoff then
-        Flag_FindRandomPoint_Counter = 0
-        Flag_FindRandomPoint = 0
-        Flag_EmergencyCut = 1
-        if DEBUG == 1 then
-          BASE:E("Dynamic - PointRandomizer_Groups_SubZone : possibleVec2 CUTOFF")
+      --check if coord too close to restricted
+      for _k,_v in pairs(restrictedCoords) do
+        --set distance restriction
+        local distance
+        if _k == "units" then
+          distance = GroupInfo_Array.distanceFromUnits
+        else
+          distance = GroupInfo_Array.distanceFromBuildings
         end
-        --  subZone.radius = subZone.radius * 1.15
-        -- GroupInfo_Array.distanceFromBuildings = GroupInfo_Array.distanceFromBuildings * 1.15
-        -------- --groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
-        ---------  -- local dd = subZone.zone:GetRandomCoordinate(0,subZone.radius,surfacetypes)
-      else
-        Flag_FindRandomPoint_Counter = Flag_FindRandomPoint_Counter + 1
-      end
-    until Flag_FindRandomPoint == 1
-    ---Compare to existing group Center points, if within minimum group find another.
-    for numSubZone = 1, #GroupArray.Sub, 1 do
-      local _CoordStackGroupCenters = GroupArray.Sub[numSubZone].CoordStackGroupCenters
-      if DEBUG == 1 then
-        BASE:E("Dynamic - PointRandomizer_Groups_SubZone :  _CoordStackGroupCenters")
-        BASE:E(_CoordStackGroupCenters)
-        local _distance
-        for numGrouping = 1, #_CoordStackGroupCenters, 1 do
-          for numGroupCenter = 1, #_CoordStackGroupCenters[numGrouping], 1 do
-            local _GroupCenterCoordsStored =  _CoordStackGroupCenters[numGrouping][numGroupCenter]
-            if _GroupCenterCoordsStored.x and _GroupCenterCoordsStored.y then
-              _distance = math.sqrt((_GroupCenterCoordsStored.x - possibleVec2.x)^2 + (_GroupCenterCoordsStored.y - possibleVec2.y)^2)
-              if _distance < distanceFromGroups then
-                Flag_GroupTooClose = 1
-                break
-              end
-            end
-            if Flag_GroupTooClose == 1 then
-              break
-            end
-          end
-          if Flag_GroupTooClose == 1 then
+        for _i = 1, #restrictedCoords[_k] do
+          local checkCoord = restrictedCoords[_k][_i]
+          if DynamicSpawner.f_distance(checkCoord,possibleVec2) < distance then
+            flag_goodcoord = 0
             break
           end
         end
+        if flag_goodcoord == 0 then break end
       end
+
+      PlacedUnits[#PlacedUnits + 1] = possibleVec2
+      if DEBUG == 1 then
+        BASE:E("Dynamic - PointRandomizer_Groups_SubZone : PlacedUnits[#PlacedUnits]")
+        BASE:E(PlacedUnits[#PlacedUnits])
+      end
+      restrictedCoords.units[#restrictedCoords.units+1] = possibleVec2
     end
-    if DEBUG == 1 then
-      BASE:E("Dynamic - PointRandomizer_Groups_SubZone : Flag_GroupIteration_Count")
-      BASE:E(Flag_GroupIteration_Count)
-      BASE:E("Dynamic - PointRandomizer_Groups_SubZone : Flag_GroupTooClose")
-      BASE:E(Flag_GroupTooClose)
-    end
-    if Flag_GroupIteration_Count > Flag_GroupIteration_Cutoff then
-      Flag_GroupTooClose = 0
-    else
-      Flag_GroupIteration_Count = Flag_GroupIteration_Count + 1
-    end
-    if Flag_GroupTooClose == 0 then
-      confirmedVec2 = possibleVec2
-    end
-  until Flag_GroupTooClose == 0
-  return confirmedVec2
+  end
+  if DEBUG == 1 then
+    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : PlacedUnits")
+    BASE:E(PlacedUnits)
+  end
+  GroupArray.Sub[NumZone].ZoneObjectCoords = restrictedCoords
+  return PlacedUnits
+
+    --  local DEBUG = 1
+    --  if DEBUG == 1 then
+    --    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : Start")
+    --    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : ZoneArray")
+    --    BASE:E(ZoneArray)
+    --    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : GroupArray")
+    --    BASE:E(GroupArray)
+    --    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : subZone")
+    --    BASE:E(subZone)
+    --    BASE:E("Dynamic - PointRandomizer_Groups_SubZone : GroupInfo_Array")
+    --    BASE:E(GroupInfo_Array)
+    --  end
+    --  --- Find possible Group Center Coord.
+    --  local Flag_GroupTooClose = 0
+    --  local Flag_GroupIteration_Count = 0
+    --  local Flag_GroupIteration_Cutoff = 2
+    --  local groupCenter_possible
+    --  local possibleVec2
+    --  local confirmedVec2
+    --  local distanceFromGroups = GroupInfo_Array.distanceFromGroups
+    --  repeat
+    --    Flag_GroupTooClose = 0
+    --    local Flag_FindRandomPoint = 0
+    --    local Flag_EmergencyCut = 0
+    --    local Flag_FindRandomPoint_Counter = 0
+    --    local Flag_FindRandomPoint_Cutoff = 2
+    --
+    --    repeat
+    --      if Flag_EmergencyCut == 0 then
+    --        local flag_goodzone = 0
+    --        while flag_goodzone == 0 do
+    --          groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
+    --          if DEBUG == 1 then
+    --            BASE:E("Dynamic - PointRandomizer_Groups_SubZone : groupCenter_possible")
+    --            BASE:E(groupCenter_possible)
+    --          end
+    --          if not CheckNoGoZone({groupCenter_possible.x, groupCenter_possible.z}, ZoneArray.NoGoZones) then
+    --            flag_goodzone = 1
+    --          end
+    --        end
+    --      else
+    --        groupCenter_possible = subZone.zone:GetRandomCoordinate(0, subZone.radius)
+    --      end
+    --      if DEBUG == 1 then
+    --        BASE:E("Dynamic - PointRandomizer_Groups_SubZone : groupCenter_possible")
+    --        BASE:E(groupCenter_possible)
+    --      end
+    --      if groupCenter_possible then
+    --        Flag_FindRandomPoint = 1
+    --        possibleVec2 = {x = groupCenter_possible.x, y = groupCenter_possible.z }
+    --        if DEBUG == 1 then
+    --          BASE:E("Dynamic - PointRandomizer_Groups_SubZone : possibleVec2")
+    --          BASE:E(possibleVec2)
+    --        end
+    --      end
+    --      if Flag_FindRandomPoint_Counter > Flag_FindRandomPoint_Cutoff then
+    --        Flag_FindRandomPoint_Counter = 0
+    --        Flag_FindRandomPoint = 0
+    --        Flag_EmergencyCut = 1
+    --        if DEBUG == 1 then
+    --          BASE:E("Dynamic - PointRandomizer_Groups_SubZone : possibleVec2 CUTOFF")
+    --        end
+    --        --  subZone.radius = subZone.radius * 1.15
+    --        -- GroupInfo_Array.distanceFromBuildings = GroupInfo_Array.distanceFromBuildings * 1.15
+    --        -------- --groupCenter_possible = subZone.zone:GetRandomCoordinateWithoutBuildings(0, subZone.radius, GroupInfo_Array.distanceFromBuildings)
+    --        ---------  -- local dd = subZone.zone:GetRandomCoordinate(0,subZone.radius,surfacetypes)
+    --      else
+    --        Flag_FindRandomPoint_Counter = Flag_FindRandomPoint_Counter + 1
+    --      end
+    --    until Flag_FindRandomPoint == 1
+    --    ---Compare to existing group Center points, if within minimum group find another.
+    --    for numSubZone = 1, #GroupArray.Sub, 1 do
+    --      local _CoordStackGroupCenters = GroupArray.Sub[numSubZone].CoordStackGroupCenters
+    --      if DEBUG == 1 then
+    --        BASE:E("Dynamic - PointRandomizer_Groups_SubZone :  _CoordStackGroupCenters")
+    --        BASE:E(_CoordStackGroupCenters)
+    --        local _distance
+    --        for numGrouping = 1, #_CoordStackGroupCenters, 1 do
+    --          for numGroupCenter = 1, #_CoordStackGroupCenters[numGrouping], 1 do
+    --            local _GroupCenterCoordsStored =  _CoordStackGroupCenters[numGrouping][numGroupCenter]
+    --            if _GroupCenterCoordsStored.x and _GroupCenterCoordsStored.y then
+    --              _distance = math.sqrt((_GroupCenterCoordsStored.x - possibleVec2.x)^2 + (_GroupCenterCoordsStored.y - possibleVec2.y)^2)
+    --              if _distance < distanceFromGroups then
+    --                Flag_GroupTooClose = 1
+    --                break
+    --              end
+    --            end
+    --            if Flag_GroupTooClose == 1 then
+    --              break
+    --            end
+    --          end
+    --          if Flag_GroupTooClose == 1 then
+    --            break
+    --          end
+    --        end
+    --      end
+    --    end
+    --    if DEBUG == 1 then
+    --      BASE:E("Dynamic - PointRandomizer_Groups_SubZone : Flag_GroupIteration_Count")
+    --      BASE:E(Flag_GroupIteration_Count)
+    --      BASE:E("Dynamic - PointRandomizer_Groups_SubZone : Flag_GroupTooClose")
+    --      BASE:E(Flag_GroupTooClose)
+    --    end
+    --    if Flag_GroupIteration_Count > Flag_GroupIteration_Cutoff then
+    --      Flag_GroupTooClose = 0
+    --    else
+    --      Flag_GroupIteration_Count = Flag_GroupIteration_Count + 1
+    --    end
+    --    if Flag_GroupTooClose == 0 then
+    --      confirmedVec2 = possibleVec2
+    --    end
+    --  until Flag_GroupTooClose == 0
+    --  return confirmedVec2
     --- END Find possible Group Center Coord.
 end
 --- determines placement for Placement_Groups based on generated groups per zones.
@@ -2397,7 +2480,7 @@ end
 DynamicSpawner.PointRandomizer_Groups_SubZone = PointRandomizer_Groups_SubZone
 
 local function PointRandomizer_Units_SubZone(ZoneArray, GroupArray, GroupInfo_Array, subZone, NumZone, _i, _numgroup)
-  local DEBUG = 0
+  local DEBUG = 1
   if DEBUG == 1 then
     BASE:E("Dynamic - PointRandomizer_Units_SubZone : Start")
 
@@ -2416,6 +2499,11 @@ local function PointRandomizer_Units_SubZone(ZoneArray, GroupArray, GroupInfo_Ar
 
   end
 
+  --if subZone.zone.Zone == nil then
+  --
+  --subZone.zone = ZONE:New(ZoneName,Vec2,Radius,DoNotRegisterZone)
+  --
+  --end
 
   local PlacedUnits = {}
   local possibleVec2 = {}
@@ -2437,6 +2525,10 @@ local function PointRandomizer_Units_SubZone(ZoneArray, GroupArray, GroupInfo_Ar
       local flag_goodzone = 0
       while flag_goodzone == 0 do
         possibleVec2 = subZone.zone:GetRandomVec2()
+        if DEBUG == 1 then
+          BASE:E("Dynamic - PointRandomizer_Units_SubZone : possibleVec2")
+          BASE:E(possibleVec2)
+        end
         if not CheckNoGoZone(possibleVec2, ZoneArray.NoGoZones) then
           flag_goodzone = 1
         end
@@ -2472,6 +2564,7 @@ local function PointRandomizer_Units_SubZone(ZoneArray, GroupArray, GroupInfo_Ar
     BASE:E("Dynamic - PointRandomizer_Units_SubZone : PlacedUnits")
     BASE:E(PlacedUnits)
   end
+  GroupArray.Sub[NumZone].ZoneObjectCoords = restrictedCoords
   return PlacedUnits
 end
 --- determines placement for PointRandomizer_Units_SubZone based on generated groups per zones.
@@ -2719,7 +2812,7 @@ local function Placement_Groups(ZoneArray, GroupArray, ZoneArrayOrig_)
       ---Loop through numGroup
       for _numgroup = 1, GroupArray.Sub[NumZone].GroupSpread[_i].numGroup do
         ---Loop through grouplist
-        local randpoints_ = DynamicSpawner.PointRandomizer_Groups_SubZone(ZoneArrayOrig_, GroupArray, subZone, GroupInfo_Array)
+        local randpoints_ = DynamicSpawner.PointRandomizer_Groups_SubZone(ZoneArrayOrig_, GroupArray, subZone, GroupInfo_Array, NumZone, _i, _numgroup)
         GroupArray.Sub[NumZone].CoordStackGroupCenters[_i][_numgroup] = randpoints_
         if DEBUG == 1 then
           BASE:E("Dynamic - Placement_Groups : GroupArray")
@@ -2759,7 +2852,7 @@ end
 DynamicSpawner.Placement_Groups = Placement_Groups
 
 local function Placement_Units(ZoneArray, PlacedGroups, ZoneArrayOrig_)
-  local DEBUG = 0
+  local DEBUG = 1
   local GroupArray = PlacedGroups
   local GroupArray_t = GroupArray
   --- For each zone in sub
@@ -2774,19 +2867,28 @@ local function Placement_Units(ZoneArray, PlacedGroups, ZoneArrayOrig_)
         local tempZoneName = "Temp"
         local tempZoneVec2 = GroupArray.Sub[NumZone].CoordStackGroupCenters[_i][_numgroup]
         local tempZoneRadius = (GroupInfo_Array.distanceFromUnits * GroupInfo_Array.groupSize) + (GroupInfo_Array.distanceFromGroups * GroupInfo_Array.numGroup ) + GroupInfo_Array.distanceFromBuildings
+        if DEBUG == 1 then
+          BASE:E("Dynamic - Placement_Units : tempZoneVec2")
+          BASE:E(tempZoneVec2)
+          BASE:E("Dynamic - Placement_Units : tempZoneRadius")
+          BASE:E(tempZoneRadius)
+          BASE:E("Dynamic - Placement_Units : CoordStackGroupCenters")
+          BASE:E(GroupArray.Sub[NumZone].CoordStackGroupCenters[_i][_numgroup])
+          BASE:E("Dynamic - Placement_Units : GroupArray.Sub[NumZone].CoordStackGroupCenters[_i]")
+          BASE:E(GroupArray.Sub[NumZone].CoordStackGroupCenters[_i])
+          BASE:E("Dynamic - Placement_Units : CoordStackGroupCenters all")
+          BASE:E(GroupArray.Sub[NumZone].CoordStackGroupCenters)
+        end
+
         subZone.zone = ZONE_RADIUS:New(tempZoneName,tempZoneVec2,tempZoneRadius)--ZONE:New(GroupArray.Sub[NumZone].name),
         subZone.radius = tempZoneRadius
-        -- for _numUnit = 1, GroupArray.Sub[NumZone].GroupSpread[_i].groupSize do
         ---Loop through grouplist
-        -- local randpoints_ = bridson_sampling({x = tempZoneVec2.x,y = tempZoneVec2.y}, GroupInfo_Array.distanceFromUnits, GroupInfo_Array.groupSize, subZone,GroupInfo_Array.distanceFromBuildings)
         local randpoints_ = DynamicSpawner.PointRandomizer_Units_SubZone(ZoneArrayOrig_, GroupArray, GroupInfo_Array, subZone, NumZone, _i, _numgroup)
         GroupArray.Sub[NumZone].CoordStack[_i][_numgroup] = randpoints_--[#GroupArray.Sub[NumZone].CoordStack[_i][_numgroup] + 1] = randpoints_
         if DEBUG == 1 then
           BASE:E("Dynamic - Placement_Units : GroupArray")
           BASE:E(GroupArray)
         end
-        --  end
-
       end
     end
     GroupArray.Sub[NumZone].ZoneObjectCoords = {}
@@ -2795,8 +2897,6 @@ local function Placement_Units(ZoneArray, PlacedGroups, ZoneArrayOrig_)
 
   --- For MainZone
   GroupArray_t = GroupArray
-  --    subZone.area = math.pi * (subZone.radius)^2
-  --     subZone.center = subZone.zone:GetVec2()
   --- GroupSpread array for loop iteration.
   for _i = 1, #GroupArray.Main.GroupSpread do
     ---Loop through numGroup
