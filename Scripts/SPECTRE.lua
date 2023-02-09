@@ -1529,7 +1529,8 @@ function SPECTRE.DynamicSpawner:Generate()
   self:ConfigParse()
   self:WeightZones()
   self:SetNumTypesPerZone()
-  self:SetGroupSizesPerZone()
+  self:SetGroupsPerZone()
+
 
   return self
 end
@@ -1665,12 +1666,130 @@ function SPECTRE.DynamicSpawner:SetNumTypesPerZone()
 end
 
 
-function SPECTRE.DynamicSpawner:SetGroupSizesPerZone()
+function SPECTRE.DynamicSpawner:SetGroupsPerZone()
+  local DEBUG = 1
+  local GroupSizesSubZone = self.Config.GroupSizes
+  local GroupSizesMainZone = self.Config.GroupSizesMainZone
+  local _GroupSpacingSettings = self.Config.GroupSpacingSettings
 
+  self.Zones.Main.GroupSettings = {}
 
+  local Units_MainZone = self.Zones.Main.numUnits
+  for _i = 1, #GroupSizesMainZone, 1 do
+    local numGroupSize = math.floor(Units_MainZone/GroupSizesMainZone[_i])
+    if numGroupSize ~= 0 then
+      Units_MainZone = Units_MainZone - (numGroupSize * GroupSizesMainZone[_i])
+      self.Zones.Main.GroupSettings[#self.Zones.Main.GroupSettings + 1] = {
+        GroupSize = GroupSizesMainZone[_i],
+        NumberGroups = numGroupSize,
+        minSeparation_Groups = _GroupSpacingSettings[GroupSizesMainZone[_i]].minSeparation_Groups or _GroupSpacingSettings.General.minSeparation_Groups,
+        minSeperation = _GroupSpacingSettings[GroupSizesMainZone[_i]].minSeperation or _GroupSpacingSettings.General.minSeperation,
+        maxSeperation = _GroupSpacingSettings[GroupSizesMainZone[_i]].maxSeperation or _GroupSpacingSettings.General.maxSeperation,
+      }
+    end
+  end
+  if DEBUG == 1 then
+     BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupsPerZone - self.Zones.Main")
+    BASE:E(self.Zones.Main)
+    BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupsPerZone - self.Zones.Main.GroupSettings")
+    BASE:E(self.Zones.Main.GroupSettings)
+  end
 
-
+  for _j = 1, #self.Zones.Sub, 1 do
+    self.Zones.Sub[_j].GroupSettings = {}
+    local Units_SubZone = self.Zones.Sub[_j].numUnits
+    for _i = 1, #GroupSizesSubZone, 1 do
+      local numGroupSize = math.floor(Units_SubZone/GroupSizesSubZone[_i])
+      if numGroupSize ~= 0 then
+        Units_SubZone = Units_SubZone - (numGroupSize * GroupSizesSubZone[_i])
+        self.Zones.Sub[_j].GroupSettings[#self.Zones.Sub[_j].GroupSettings + 1] = {
+          GroupSize = GroupSizesSubZone[_i],
+          NumberGroups = numGroupSize,
+          minSeparation_Groups = _GroupSpacingSettings[GroupSizesSubZone[_i]].minSeparation_Groups or _GroupSpacingSettings.General.minSeparation_Groups,
+          minSeperation = _GroupSpacingSettings[GroupSizesSubZone[_i]].minSeperation or _GroupSpacingSettings.General.minSeperation,
+          maxSeperation = _GroupSpacingSettings[GroupSizesSubZone[_i]].maxSeperation or _GroupSpacingSettings.General.maxSeperation,
+        }
+      end
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupsPerZone - self.Zones.Sub[_j]")
+      BASE:E(self.Zones.Sub[_j])
+      BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupsPerZone - self.Zones.Sub[_j].GroupSettings")
+      BASE:E(self.Zones.Sub[_j].GroupSettings)
+    end
+  end
+  return self
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
