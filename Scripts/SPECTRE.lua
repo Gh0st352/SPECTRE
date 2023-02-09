@@ -1530,6 +1530,7 @@ function SPECTRE.DynamicSpawner:Generate()
   self:WeightZones()
   self:SetNumTypesPerZone()
   self:SetGroupsPerZone()
+  self:SetGroupTypes()
 
 
   return self
@@ -1689,7 +1690,7 @@ function SPECTRE.DynamicSpawner:SetGroupsPerZone()
     end
   end
   if DEBUG == 1 then
-     BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupsPerZone - self.Zones.Main")
+    BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupsPerZone - self.Zones.Main")
     BASE:E(self.Zones.Main)
     BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupsPerZone - self.Zones.Main.GroupSettings")
     BASE:E(self.Zones.Main.GroupSettings)
@@ -1721,140 +1722,15 @@ function SPECTRE.DynamicSpawner:SetGroupsPerZone()
   return self
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function SPECTRE.DynamicSpawner:SetGroupTypes()
+  local DEBUG = 1
+  
+  
+  
+  
+  
+  return self
+end
 
 
 
