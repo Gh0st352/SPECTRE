@@ -1134,6 +1134,26 @@ function SPECTRE.merge(t1, t2)
   return t1
 end
 
+---Shuffles a Table.
+-- @param t : Table to be shuffled
+-- @return s : Shuffled table
+function SPECTRE.Shuffle(t)
+  local DEBUG = 1
+  if DEBUG == 1 then
+    BASE:E("DEBUG - Shuffle - t")
+    BASE:E(t)
+  end
+  local s = {}
+  for i = 1, #t do s[i] = t[i] end
+  for i = #t, 2, -1 do
+    local j = math.random(i)
+    s[i], s[j] = s[j], s[i]
+  end
+  return s
+end
+
+
+
 ---File Manipulation
 --Export Table to File
 --Import Table from file
@@ -1467,6 +1487,7 @@ function SPECTRE.DynamicSpawner:SetTypeAmount(typeName, min, max)
   max = max or 0
   self.Config.Types[typeName].amounts.min = min
   self.Config.Types[typeName].amounts.max = max
+  self.Config.Types[typeName].amounts.numUsed = 0
   if DEBUG == 1 then
     BASE:E("DEBUG - SPECTRE DynamicSpawner : SetTypeAmount - self.Config.Types[typeName].amounts")
     BASE:E(self.Config.Types[typeName].amounts)
@@ -1724,13 +1745,33 @@ end
 
 function SPECTRE.DynamicSpawner:SetGroupTypes()
   local DEBUG = 1
-  
-  
-  
-  
-  
+
+
+  local typeList = {}
+  for _k, _v in pairs(self.ParsedTypes) do
+    typeList[#typeList + 1] = _k
+  end
+
+
+
+
+
   return self
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
