@@ -1152,7 +1152,26 @@ function SPECTRE.Shuffle(t)
   return s
 end
 
+---Pick Random From Table.
+-- @param t : Table
+-- @return s : picked value
+function SPECTRE.PickRandomFromTable(t)
+  local DEBUG = 1
+  local s = t[ math.random( #t )]
+  return s
+end
 
+
+
+function SPECTRE.getIndex(tab, val)
+  local index = nil
+  for i, v in ipairs (tab) do
+    if (v == val) then
+      index = i
+    end
+  end
+  return index
+end
 
 ---File Manipulation
 --Export Table to File
@@ -1552,7 +1571,8 @@ function SPECTRE.DynamicSpawner:Generate()
   self:SetNumTypesPerZone()
   self:SetGroupsPerZone()
   self:SetGroupTypes()
-
+  self:SetGroupTypesTemplates()
+  self:DetermineCoordinates()
 
   return self
 end
@@ -1746,18 +1766,530 @@ end
 function SPECTRE.DynamicSpawner:SetGroupTypes()
   local DEBUG = 1
 
+  --TODO fix min units. not distributing min amounts
 
   local typeList = {}
   for _k, _v in pairs(self.ParsedTypes) do
     typeList[#typeList + 1] = _k
   end
 
+  if DEBUG == 1 then
+    BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - ")
+    BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - typeList")
+    BASE:E(typeList)
+  end
 
+  for _i = 1, #self.Zones.Sub, 1 do
+    self.Zones.Sub[_i].BuiltSpawner = {}
+    for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
+      self.Zones.Sub[_i].BuiltSpawner[_j]= {}
+      for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
+        self.Zones.Sub[_i].BuiltSpawner[_j][_k] = {}
+        typeList = SPECTRE.Shuffle(typeList)
+        local _groupTypes = {}
+        for _t = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+
+          local randType = SPECTRE.PickRandomFromTable(typeList)
+          local amount_min = self.ParsedTypes[randType].amounts.min
+          local amount_max = self.ParsedTypes[randType].amounts.max
+          local amount_numUsed = self.ParsedTypes[randType].amounts.numUsed
+          local limited = self.ParsedTypes[randType].limited
+
+          amount_numUsed = amount_numUsed + 1
+          self.ParsedTypes[randType].amounts.numUsed = amount_numUsed
+
+
+          if DEBUG == 1 then
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled typeList")
+            BASE:E(typeList)
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled randType")
+            BASE:E(randType)
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_min")
+            BASE:E(amount_min)
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_max")
+            BASE:E(amount_max)
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_numUsed")
+            BASE:E(amount_numUsed)
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled limited")
+            BASE:E(limited)
+          end
+
+
+          if amount_max ~= 0 and amount_numUsed >= amount_max then
+            local idx = SPECTRE.getIndex(typeList, randType)
+            if DEBUG == 1 then
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
+              BASE:E(idx)
+            end
+            if idx == nil then
+            else
+              table.remove(typeList, idx)
+            end
+          end
+          if amount_numUsed >= amount_min and limited == 1 then
+            local idx = SPECTRE.getIndex(typeList, randType)
+            if DEBUG == 1 then
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
+              BASE:E(idx)
+            end
+            if idx == nil then
+            else
+              table.remove(typeList, idx)
+            end
+          end
+
+          _groupTypes[#_groupTypes + 1] = randType
+        end
+        self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types = _groupTypes
+      end
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - self.Zones.Sub[_i]")
+      BASE:E(self.Zones.Sub[_i])
+    end
+  end
+
+  self.Zones.Main.BuiltSpawner = {}
+  for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+    self.Zones.Main.BuiltSpawner[_j]= {}
+    for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+      self.Zones.Main.BuiltSpawner[_j][_k] = {}
+      typeList = SPECTRE.Shuffle(typeList)
+      local _groupTypes = {}
+      for _t = 1, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+
+        local randType = SPECTRE.PickRandomFromTable(typeList)
+        local amount_min = self.ParsedTypes[randType].amounts.min
+        local amount_max = self.ParsedTypes[randType].amounts.max
+        local amount_numUsed = self.ParsedTypes[randType].amounts.numUsed
+        local limited = self.ParsedTypes[randType].limited
+
+        amount_numUsed = amount_numUsed + 1
+        self.ParsedTypes[randType].amounts.numUsed = amount_numUsed
+
+
+        if DEBUG == 1 then
+          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled typeList")
+          BASE:E(typeList)
+          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled randType")
+          BASE:E(randType)
+          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_min")
+          BASE:E(amount_min)
+          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_max")
+          BASE:E(amount_max)
+          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_numUsed")
+          BASE:E(amount_numUsed)
+          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled limited")
+          BASE:E(limited)
+        end
+
+
+        if amount_max ~= 0 and amount_numUsed >= amount_max then
+          local idx = SPECTRE.getIndex(typeList, randType)
+          if DEBUG == 1 then
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
+            BASE:E(idx)
+          end
+          if idx == nil then
+          else
+            table.remove(typeList, idx)
+          end
+        end
+        if amount_numUsed >= amount_min and limited == 1 then
+          local idx = SPECTRE.getIndex(typeList, randType)
+          if DEBUG == 1 then
+            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
+            BASE:E(idx)
+          end
+          if idx == nil then
+          else
+            table.remove(typeList, idx)
+          end
+        end
+
+        _groupTypes[#_groupTypes + 1] = randType
+      end
+      self.Zones.Main.BuiltSpawner[_j][_k].Types = _groupTypes
+    end
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - self.Zones.Main")
+    BASE:E(self.Zones.Main)
+  end
+
+  if DEBUG == 1 then
+    BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - TOTAL COUNT")
+    for _k, _v in pairs(self.ParsedTypes) do
+      BASE:E("DEBUG - SPECTRE DynamicSpawner : TOTAL COUNT - " .. _k)
+      BASE:E(self.ParsedTypes[_k].amounts.numUsed)
+    end
+  end
+
+  return self
+end
+
+function SPECTRE.DynamicSpawner:SetGroupTypesTemplates()
+  local DEBUG = 1
+  for _i = 1, #self.Zones.Sub, 1 do
+    for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
+      for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
+        local _groupTypes = {}
+        for _t = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+          local Type_ =  self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types[_t]
+          local TypeTable_ = self.ParsedTypes[Type_].names
+          TypeTable_ = SPECTRE.Shuffle(TypeTable_)
+          local randType = SPECTRE.PickRandomFromTable(TypeTable_)
+          _groupTypes[#_groupTypes + 1] = randType
+        end
+        self.Zones.Sub[_i].BuiltSpawner[_j][_k].TemplateNames = _groupTypes
+      end
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypesTemplates - self.Zones.Sub[_i]")
+      BASE:E(self.Zones.Sub[_i])
+    end
+  end
+  for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+    for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+      local _groupTypes = {}
+      for _t = 1, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+        local Type_ =  self.Zones.Main.BuiltSpawner[_j][_k].Types[_t]
+        local TypeTable_ = self.ParsedTypes[Type_].names
+        TypeTable_ = SPECTRE.Shuffle(TypeTable_)
+        local randType = SPECTRE.PickRandomFromTable(TypeTable_)
+        _groupTypes[#_groupTypes + 1] = randType
+      end
+      self.Zones.Main.BuiltSpawner[_j][_k].TemplateNames = _groupTypes
+    end
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypesTemplates - self.Zones.Main")
+    BASE:E(self.Zones.Main)
+  end
+  return self
+end
+
+
+function SPECTRE.DynamicSpawner:DetermineCoordinates()
+  local DEBUG = 1
+  self:FindObjects()
+  self:Set_Vec2_GroupCenters()
+  self:Set_Vec2_Types()
+  return self
+end
+
+function SPECTRE.DynamicSpawner:FindObjects()
+  local DEBUG = 1
+
+  for _i = 1, #self.Zones.Sub, 1 do
+    self.Zones.Sub[_i].ObjectCoords = {
+      buildings = {},
+      others = {},
+      units = {},
+    }
+    local objects = {}
+    local buildings = {}
+    local others = {}
+    local units = {}
+
+  self.Zones.Sub[_i].zone:Scan({Object.Category.SCENERY, Object.Category.STATIC, Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
+
+  --SCENERY
+  if self.Zones.Sub[_i].zone.ScanData and self.Zones.Sub[_i].zone.ScanData.Scenery and #self.Zones.Sub[_i].zone.ScanData.Scenery > 0 then
+    objects = self.Zones.Sub[_i].zone.ScanData.Scenery
+    for _,_object in pairs (objects) do
+      for _,_scen in pairs (_object) do
+        local scenery = _scen
+        if DEBUG == 1 then
+          BASE:E("DEBUG - FindObjectsInZone - scenery")
+          BASE:E(scenery)
+        end
+        local description=scenery:GetDesc()
+        if description and description.attributes and description.attributes.Buildings then
+          buildings[#buildings+1] = scenery:GetCoordinate()
+        else
+          others[#others+1] = scenery.SceneryObject:getPosition()
+        end
+      end
+    end
+  end
+  --UNITS
+  if self.Zones.Sub[_i].zone.ScanData and self.Zones.Sub[_i].zone.ScanData.Units and #self.Zones.Sub[_i].zone.ScanData.Units > 0 then
+    objects = self.Zones.Sub[_i].zone.ScanData.Units
+    if DEBUG == 1 then
+      BASE:E("DEBUG - FindObjectsInZone - unit - objects")
+      BASE:E(objects)
+    end
+    for _,_object in pairs (objects) do
+      if DEBUG == 1 then
+        BASE:E("DEBUG - FindObjectsInZone - unit")
+        BASE:E(_object)
+      end
+      units[#units+1] = UNIT:FindByName( _object:getName() ):GetPosition()--UNIT.--UNIT:Find(unit):GetCoordinate()
+    end
+  end
+  --SCENERY TABLE
+  if self.Zones.Sub[_i].zone.ScanData and self.Zones.Sub[_i].zone.ScanData.SceneryTable and #self.Zones.Sub[_i].zone.ScanData.SceneryTable > 0 then
+    objects = self.Zones.Sub[_i].zone.ScanData.SceneryTable
+    for _i = 1, #objects, 1 do
+      others[#others+1] = objects[_i].SceneryObject:getPosition()
+      if DEBUG == 1 then
+        BASE:E("DEBUG - FindObjectsInZone - SCENERY TABLE")
+        BASE:E(others[#others])
+      end
+    end
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - objects")
+    BASE:E(objects)
+    BASE:E("DEBUG - FindObjectsInZone - buildings")
+    BASE:E(buildings)
+    BASE:E("DEBUG - FindObjectsInZone - others")
+    BASE:E(others)
+    BASE:E("DEBUG - FindObjectsInZone - units")
+    BASE:E(units)
+  end
+  for _i = 1, #buildings, 1 do
+    self.Zones.Sub[_i].ObjectCoords.buildings[#self.Zones.Sub[_i].ObjectCoords.buildings + 1] = {x = buildings[_i].x, y = buildings[_i].z}
+  end
+  for _i = 1, #others, 1 do
+    self.Zones.Sub[_i].ObjectCoords.others[#self.Zones.Sub[_i].ObjectCoords.others + 1] = {x = others[_i].p.x, y = others[_i].p.z}
+  end
+  for _i = 1, #units, 1 do
+    self.Zones.Sub[_i].ObjectCoords.units[#self.Zones.Sub[_i].ObjectCoords.units + 1] = {x = units[_i].p.x, y = units[_i].p.z}
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords")
+    BASE:E(self.Zones.Sub[_i].ObjectCoords)
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.buildings")
+    BASE:E(self.Zones.Sub[_i].ObjectCoords.buildings)
+    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.buildings")
+    BASE:E(#self.Zones.Sub[_i].ObjectCoords.buildings)
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.others")
+    BASE:E(self.Zones.Sub[_i].ObjectCoords.others)
+    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.others")
+    BASE:E(#self.Zones.Sub[_i].ObjectCoords.others)
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.units")
+    BASE:E(self.Zones.Sub[_i].ObjectCoords.units)
+    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.units")
+    BASE:E(#self.Zones.Sub[_i].ObjectCoords.units)
+  end
+  end
+
+  ----local function FindObjectsInZone(zoneName)
+  --  if DEBUG == 1 then
+  --    BASE:E("DEBUG - FindObjectsInZone - zoneName")
+  --    BASE:E(zoneName)
+  --  end
+  --
+  --  local ObjectCoords = {}
+  --  ObjectCoords.buildings = {}
+  --  ObjectCoords.others = {}
+  --  ObjectCoords.units = {}
+  --  local objects = {}
+  --  local buildings = {}
+  --  local others = {}
+  --  local units = {}
+  --
+  --  local _zone = ZONE:FindByName(zoneName)
+  --
+  --  if DEBUG == 1 then
+  --    BASE:E("DEBUG - FindObjectsInZone - zone")
+  --    BASE:E(_zone)
+  --  end
+  --  _zone:Scan({Object.Category.SCENERY, Object.Category.STATIC, Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
+  --  if DEBUG == 1 then
+  --    local foundObjects = _zone.ScanData
+  --    BASE:E("DEBUG - FindObjectsInZone - foundObjects")
+  --    BASE:E(foundObjects)
+  --    BASE:E("DEBUG - FindObjectsInZone - ScanData")
+  --    for _key,_value in pairs(_zone.ScanData) do
+  --      BASE:E("DEBUG - FindObjectsInZone - ScanData - _key")
+  --      BASE:E(_key)
+  --      BASE:E("DEBUG - FindObjectsInZone - ScanData - _value")
+  --      BASE:E(_value)
+  --    end
+  --  end
+  --  --SCENERY
+  --  if _zone.ScanData and _zone.ScanData.Scenery and #_zone.ScanData.Scenery > 0 then
+  --    objects = _zone.ScanData.Scenery
+  --    for _,_object in pairs (objects) do
+  --      for _,_scen in pairs (_object) do
+  --        local scenery = _scen
+  --        if DEBUG == 1 then
+  --          BASE:E("DEBUG - FindObjectsInZone - scenery")
+  --          BASE:E(scenery)
+  --        end
+  --        local description=scenery:GetDesc()
+  --        if description and description.attributes and description.attributes.Buildings then
+  --          buildings[#buildings+1] = scenery:GetCoordinate()
+  --        else
+  --          others[#others+1] = scenery.SceneryObject:getPosition()
+  --        end
+  --      end
+  --    end
+  --  end
+  --  --UNITS
+  --  if _zone.ScanData and _zone.ScanData.Units and #_zone.ScanData.Units > 0 then
+  --    objects = _zone.ScanData.Units
+  --    if DEBUG == 1 then
+  --      BASE:E("DEBUG - FindObjectsInZone - unit - objects")
+  --      BASE:E(objects)
+  --    end
+  --    for _,_object in pairs (objects) do
+  --      if DEBUG == 1 then
+  --        BASE:E("DEBUG - FindObjectsInZone - unit")
+  --        BASE:E(_object)
+  --      end
+  --      units[#units+1] = UNIT:FindByName( _object:getName() ):GetPosition()--UNIT.--UNIT:Find(unit):GetCoordinate()
+  --    end
+  --  end
+  --  --SCENERY TABLE
+  --  if _zone.ScanData and _zone.ScanData.SceneryTable and #_zone.ScanData.SceneryTable > 0 then
+  --    objects = _zone.ScanData.SceneryTable
+  --    for _i = 1, #objects, 1 do
+  --      others[#others+1] = objects[_i].SceneryObject:getPosition()
+  --      if DEBUG == 1 then
+  --        BASE:E("DEBUG - FindObjectsInZone - SCENERY TABLE")
+  --        BASE:E(others[#others])
+  --      end
+  --    end
+  --  end
+  --  if DEBUG == 1 then
+  --    BASE:E("DEBUG - FindObjectsInZone - objects")
+  --    BASE:E(objects)
+  --    BASE:E("DEBUG - FindObjectsInZone - buildings")
+  --    BASE:E(buildings)
+  --    BASE:E("DEBUG - FindObjectsInZone - others")
+  --    BASE:E(others)
+  --    BASE:E("DEBUG - FindObjectsInZone - units")
+  --    BASE:E(units)
+  --  end
+  --  for _i = 1, #buildings, 1 do
+  --    ObjectCoords.buildings[#ObjectCoords.buildings + 1] = {x = buildings[_i].x, y = buildings[_i].z}
+  --  end
+  --  for _i = 1, #others, 1 do
+  --    ObjectCoords.others[#ObjectCoords.others + 1] = {x = others[_i].p.x, y = others[_i].p.z}
+  --  end
+  --  for _i = 1, #units, 1 do
+  --    ObjectCoords.units[#ObjectCoords.units + 1] = {x = units[_i].p.x, y = units[_i].p.z}
+  --  end
+  --  if DEBUG == 1 then
+  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords")
+  --    BASE:E(ObjectCoords)
+  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.buildings")
+  --    BASE:E(ObjectCoords.buildings)
+  --    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.buildings")
+  --    BASE:E(#ObjectCoords.buildings)
+  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.others")
+  --    BASE:E(ObjectCoords.others)
+  --    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.others")
+  --    BASE:E(#ObjectCoords.others)
+  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.units")
+  --    BASE:E(ObjectCoords.units)
+  --    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.units")
+  --    BASE:E(#ObjectCoords.units)
+  --  end
+  --  --return ObjectCoords
 
 
 
   return self
 end
+
+function SPECTRE.DynamicSpawner:Set_Vec2_GroupCenters()
+  local DEBUG = 1
+
+  return self
+end
+
+function SPECTRE.DynamicSpawner:Set_Vec2_Types()
+  local DEBUG = 1
+
+  return self
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
