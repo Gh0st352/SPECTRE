@@ -1161,7 +1161,32 @@ function SPECTRE.PickRandomFromTable(t)
   return s
 end
 
+function SPECTRE.CheckNoGoZone(vec2, zoneNameList)
+  local DEBUG = 0
+  if DEBUG == 1 then
+    BASE:E("DEBUG - CheckNoGoZone - zoneNameList")
+    BASE:E(zoneNameList)
+    BASE:E("DEBUG - CheckNoGoZone - vec2")
+    BASE:E(vec2)
+  end
+  local _vec = {}
+  _vec.x = vec2[1]
+  _vec.y = vec2[2]
+  local result
+  --for _k, _v in pairs(zoneNameList) do
+  for _v = 1, #zoneNameList, 1 do
+    result = SPECTRE.PointInZone(vec2, zoneNameList[_v])
+    if result then
+      return result
+    end
+  end
+  return result
+end
 
+
+function SPECTRE.f_distance(p1, p2)
+  return math.sqrt((p1.x - p2.x)^2 + (p1.y - p2.y)^2)
+end
 
 function SPECTRE.getIndex(tab, val)
   local index = nil
@@ -1462,10 +1487,10 @@ function SPECTRE.DynamicSpawner:ZoneAdd(ZoneName, Type)
     }
   end
   if Type == "restricted" then
-    self.Zones.Restricted[#self.Zones.Restricted + 1] = {
-      name = ZoneName,
+    self.Zones.Restricted[#self.Zones.Restricted + 1] = ZoneName--{
+    -- name = ZoneName,
     --DistanceFromBuildings = self.Config.GroupSpacingSettings.General.DistanceFromBuildings,
-    }
+    --}
   end
   if DEBUG == 1 then
     BASE:E("DEBUG - SPECTRE DynamicSpawner : ZoneMainAdd - self")
@@ -1982,21 +2007,152 @@ function SPECTRE.DynamicSpawner:FindObjects()
   local DEBUG = 1
 
   for _i = 1, #self.Zones.Sub, 1 do
-    self.Zones.Sub[_i].ObjectCoords = {
-      buildings = {},
-      others = {},
-      units = {},
-    }
+    local ObjectCoords = {}
+    ObjectCoords.buildings = {}
+    ObjectCoords.others = {}
+    ObjectCoords.units = {}
     local objects = {}
     local buildings = {}
     local others = {}
     local units = {}
 
-  self.Zones.Sub[_i].zone:Scan({Object.Category.SCENERY, Object.Category.STATIC, Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
+    local _zone = self.Zones.Sub[_i].zone
 
+    if DEBUG == 1 then
+      BASE:E("DEBUG - FindObjectsInZone - zone")
+      BASE:E(_zone)
+    end
+    _zone:Scan({Object.Category.SCENERY, Object.Category.STATIC, Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
+    if DEBUG == 1 then
+      local foundObjects = _zone.ScanData
+      BASE:E("DEBUG - FindObjectsInZone - foundObjects")
+      BASE:E(foundObjects)
+      BASE:E("DEBUG - FindObjectsInZone - ScanData")
+      for _key,_value in pairs(_zone.ScanData) do
+        BASE:E("DEBUG - FindObjectsInZone - ScanData - _key")
+        BASE:E(_key)
+        BASE:E("DEBUG - FindObjectsInZone - ScanData - _value")
+        BASE:E(_value)
+      end
+    end
+    --SCENERY
+    if _zone.ScanData and _zone.ScanData.Scenery and #_zone.ScanData.Scenery > 0 then
+      objects = _zone.ScanData.Scenery
+      for _,_object in pairs (objects) do
+        for _,_scen in pairs (_object) do
+          local scenery = _scen
+          if DEBUG == 1 then
+            BASE:E("DEBUG - FindObjectsInZone - scenery")
+            BASE:E(scenery)
+          end
+          local description=scenery:GetDesc()
+          if description and description.attributes and description.attributes.Buildings then
+            buildings[#buildings+1] = scenery:GetCoordinate()
+          else
+            others[#others+1] = scenery.SceneryObject:getPosition()
+          end
+        end
+      end
+    end
+    --UNITS
+    if _zone.ScanData and _zone.ScanData.Units and #_zone.ScanData.Units > 0 then
+      objects = _zone.ScanData.Units
+      if DEBUG == 1 then
+        BASE:E("DEBUG - FindObjectsInZone - unit - objects")
+        BASE:E(objects)
+      end
+      for _,_object in pairs (objects) do
+        if DEBUG == 1 then
+          BASE:E("DEBUG - FindObjectsInZone - unit")
+          BASE:E(_object)
+        end
+        units[#units+1] = UNIT:FindByName( _object:getName() ):GetPosition()--UNIT.--UNIT:Find(unit):GetCoordinate()
+      end
+    end
+    --SCENERY TABLE
+    if _zone.ScanData and _zone.ScanData.SceneryTable and #_zone.ScanData.SceneryTable > 0 then
+      objects = _zone.ScanData.SceneryTable
+      for _i = 1, #objects, 1 do
+        others[#others+1] = objects[_i].SceneryObject:getPosition()
+        if DEBUG == 1 then
+          BASE:E("DEBUG - FindObjectsInZone - SCENERY TABLE")
+          BASE:E(others[#others])
+        end
+      end
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - FindObjectsInZone - objects")
+      BASE:E(objects)
+      BASE:E("DEBUG - FindObjectsInZone - buildings")
+      BASE:E(buildings)
+      BASE:E("DEBUG - FindObjectsInZone - others")
+      BASE:E(others)
+      BASE:E("DEBUG - FindObjectsInZone - units")
+      BASE:E(units)
+    end
+    for _i = 1, #buildings, 1 do
+      ObjectCoords.buildings[#ObjectCoords.buildings + 1] = {x = buildings[_i].x, y = buildings[_i].z}
+    end
+    for _i = 1, #others, 1 do
+      ObjectCoords.others[#ObjectCoords.others + 1] = {x = others[_i].p.x, y = others[_i].p.z}
+    end
+    for _i = 1, #units, 1 do
+      ObjectCoords.units[#ObjectCoords.units + 1] = {x = units[_i].p.x, y = units[_i].p.z}
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - FindObjectsInZone - ObjectCoords")
+      BASE:E(ObjectCoords)
+      BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.buildings")
+      BASE:E(ObjectCoords.buildings)
+      BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.buildings")
+      BASE:E(#ObjectCoords.buildings)
+      BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.others")
+      BASE:E(ObjectCoords.others)
+      BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.others")
+      BASE:E(#ObjectCoords.others)
+      BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.units")
+      BASE:E(ObjectCoords.units)
+      BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.units")
+      BASE:E(#ObjectCoords.units)
+    end
+    self.Zones.Sub[_i].ObjectCoords = ObjectCoords
+    if DEBUG == 1 then
+      BASE:E("DEBUG - FindObjectsInZone - 12312 sub")
+      BASE:E(self.Zones.Sub[_i].ObjectCoords)
+    end
+  end
+
+  local ObjectCoords = {}
+  ObjectCoords.buildings = {}
+  ObjectCoords.others = {}
+  ObjectCoords.units = {}
+  local objects = {}
+  local buildings = {}
+  local others = {}
+  local units = {}
+
+  local _zone = self.Zones.Main.zone
+
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - zone")
+    BASE:E(_zone)
+  end
+  _zone:Scan({Object.Category.SCENERY, Object.Category.STATIC, Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
+  if DEBUG == 1 then
+    local foundObjects = _zone.ScanData
+    BASE:E("DEBUG - FindObjectsInZone - foundObjects")
+    BASE:E(foundObjects)
+    BASE:E("DEBUG - FindObjectsInZone - ScanData")
+    for _key,_value in pairs(_zone.ScanData) do
+      BASE:E("DEBUG - FindObjectsInZone - ScanData - _key")
+      BASE:E(_key)
+      BASE:E("DEBUG - FindObjectsInZone - ScanData - _value")
+      BASE:E(_value)
+    end
+  end
   --SCENERY
-  if self.Zones.Sub[_i].zone.ScanData and self.Zones.Sub[_i].zone.ScanData.Scenery and #self.Zones.Sub[_i].zone.ScanData.Scenery > 0 then
-    objects = self.Zones.Sub[_i].zone.ScanData.Scenery
+  if _zone.ScanData and _zone.ScanData.Scenery and #_zone.ScanData.Scenery > 0 then
+    objects = _zone.ScanData.Scenery
     for _,_object in pairs (objects) do
       for _,_scen in pairs (_object) do
         local scenery = _scen
@@ -2014,8 +2170,8 @@ function SPECTRE.DynamicSpawner:FindObjects()
     end
   end
   --UNITS
-  if self.Zones.Sub[_i].zone.ScanData and self.Zones.Sub[_i].zone.ScanData.Units and #self.Zones.Sub[_i].zone.ScanData.Units > 0 then
-    objects = self.Zones.Sub[_i].zone.ScanData.Units
+  if _zone.ScanData and _zone.ScanData.Units and #_zone.ScanData.Units > 0 then
+    objects = _zone.ScanData.Units
     if DEBUG == 1 then
       BASE:E("DEBUG - FindObjectsInZone - unit - objects")
       BASE:E(objects)
@@ -2029,8 +2185,8 @@ function SPECTRE.DynamicSpawner:FindObjects()
     end
   end
   --SCENERY TABLE
-  if self.Zones.Sub[_i].zone.ScanData and self.Zones.Sub[_i].zone.ScanData.SceneryTable and #self.Zones.Sub[_i].zone.ScanData.SceneryTable > 0 then
-    objects = self.Zones.Sub[_i].zone.ScanData.SceneryTable
+  if _zone.ScanData and _zone.ScanData.SceneryTable and #_zone.ScanData.SceneryTable > 0 then
+    objects = _zone.ScanData.SceneryTable
     for _i = 1, #objects, 1 do
       others[#others+1] = objects[_i].SceneryObject:getPosition()
       if DEBUG == 1 then
@@ -2050,155 +2206,167 @@ function SPECTRE.DynamicSpawner:FindObjects()
     BASE:E(units)
   end
   for _i = 1, #buildings, 1 do
-    self.Zones.Sub[_i].ObjectCoords.buildings[#self.Zones.Sub[_i].ObjectCoords.buildings + 1] = {x = buildings[_i].x, y = buildings[_i].z}
+    ObjectCoords.buildings[#ObjectCoords.buildings + 1] = {x = buildings[_i].x, y = buildings[_i].z}
   end
   for _i = 1, #others, 1 do
-    self.Zones.Sub[_i].ObjectCoords.others[#self.Zones.Sub[_i].ObjectCoords.others + 1] = {x = others[_i].p.x, y = others[_i].p.z}
+    ObjectCoords.others[#ObjectCoords.others + 1] = {x = others[_i].p.x, y = others[_i].p.z}
   end
   for _i = 1, #units, 1 do
-    self.Zones.Sub[_i].ObjectCoords.units[#self.Zones.Sub[_i].ObjectCoords.units + 1] = {x = units[_i].p.x, y = units[_i].p.z}
+    ObjectCoords.units[#ObjectCoords.units + 1] = {x = units[_i].p.x, y = units[_i].p.z}
   end
   if DEBUG == 1 then
     BASE:E("DEBUG - FindObjectsInZone - ObjectCoords")
-    BASE:E(self.Zones.Sub[_i].ObjectCoords)
+    BASE:E(ObjectCoords)
     BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.buildings")
-    BASE:E(self.Zones.Sub[_i].ObjectCoords.buildings)
+    BASE:E(ObjectCoords.buildings)
     BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.buildings")
-    BASE:E(#self.Zones.Sub[_i].ObjectCoords.buildings)
+    BASE:E(#ObjectCoords.buildings)
     BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.others")
-    BASE:E(self.Zones.Sub[_i].ObjectCoords.others)
+    BASE:E(ObjectCoords.others)
     BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.others")
-    BASE:E(#self.Zones.Sub[_i].ObjectCoords.others)
+    BASE:E(#ObjectCoords.others)
     BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.units")
-    BASE:E(self.Zones.Sub[_i].ObjectCoords.units)
+    BASE:E(ObjectCoords.units)
     BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.units")
-    BASE:E(#self.Zones.Sub[_i].ObjectCoords.units)
+    BASE:E(#ObjectCoords.units)
   end
+  self.Zones.Main.ObjectCoords = ObjectCoords
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - 12312 main")
+    BASE:E(self.Zones.Main.ObjectCoords)
   end
-
-  ----local function FindObjectsInZone(zoneName)
-  --  if DEBUG == 1 then
-  --    BASE:E("DEBUG - FindObjectsInZone - zoneName")
-  --    BASE:E(zoneName)
-  --  end
-  --
-  --  local ObjectCoords = {}
-  --  ObjectCoords.buildings = {}
-  --  ObjectCoords.others = {}
-  --  ObjectCoords.units = {}
-  --  local objects = {}
-  --  local buildings = {}
-  --  local others = {}
-  --  local units = {}
-  --
-  --  local _zone = ZONE:FindByName(zoneName)
-  --
-  --  if DEBUG == 1 then
-  --    BASE:E("DEBUG - FindObjectsInZone - zone")
-  --    BASE:E(_zone)
-  --  end
-  --  _zone:Scan({Object.Category.SCENERY, Object.Category.STATIC, Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
-  --  if DEBUG == 1 then
-  --    local foundObjects = _zone.ScanData
-  --    BASE:E("DEBUG - FindObjectsInZone - foundObjects")
-  --    BASE:E(foundObjects)
-  --    BASE:E("DEBUG - FindObjectsInZone - ScanData")
-  --    for _key,_value in pairs(_zone.ScanData) do
-  --      BASE:E("DEBUG - FindObjectsInZone - ScanData - _key")
-  --      BASE:E(_key)
-  --      BASE:E("DEBUG - FindObjectsInZone - ScanData - _value")
-  --      BASE:E(_value)
-  --    end
-  --  end
-  --  --SCENERY
-  --  if _zone.ScanData and _zone.ScanData.Scenery and #_zone.ScanData.Scenery > 0 then
-  --    objects = _zone.ScanData.Scenery
-  --    for _,_object in pairs (objects) do
-  --      for _,_scen in pairs (_object) do
-  --        local scenery = _scen
-  --        if DEBUG == 1 then
-  --          BASE:E("DEBUG - FindObjectsInZone - scenery")
-  --          BASE:E(scenery)
-  --        end
-  --        local description=scenery:GetDesc()
-  --        if description and description.attributes and description.attributes.Buildings then
-  --          buildings[#buildings+1] = scenery:GetCoordinate()
-  --        else
-  --          others[#others+1] = scenery.SceneryObject:getPosition()
-  --        end
-  --      end
-  --    end
-  --  end
-  --  --UNITS
-  --  if _zone.ScanData and _zone.ScanData.Units and #_zone.ScanData.Units > 0 then
-  --    objects = _zone.ScanData.Units
-  --    if DEBUG == 1 then
-  --      BASE:E("DEBUG - FindObjectsInZone - unit - objects")
-  --      BASE:E(objects)
-  --    end
-  --    for _,_object in pairs (objects) do
-  --      if DEBUG == 1 then
-  --        BASE:E("DEBUG - FindObjectsInZone - unit")
-  --        BASE:E(_object)
-  --      end
-  --      units[#units+1] = UNIT:FindByName( _object:getName() ):GetPosition()--UNIT.--UNIT:Find(unit):GetCoordinate()
-  --    end
-  --  end
-  --  --SCENERY TABLE
-  --  if _zone.ScanData and _zone.ScanData.SceneryTable and #_zone.ScanData.SceneryTable > 0 then
-  --    objects = _zone.ScanData.SceneryTable
-  --    for _i = 1, #objects, 1 do
-  --      others[#others+1] = objects[_i].SceneryObject:getPosition()
-  --      if DEBUG == 1 then
-  --        BASE:E("DEBUG - FindObjectsInZone - SCENERY TABLE")
-  --        BASE:E(others[#others])
-  --      end
-  --    end
-  --  end
-  --  if DEBUG == 1 then
-  --    BASE:E("DEBUG - FindObjectsInZone - objects")
-  --    BASE:E(objects)
-  --    BASE:E("DEBUG - FindObjectsInZone - buildings")
-  --    BASE:E(buildings)
-  --    BASE:E("DEBUG - FindObjectsInZone - others")
-  --    BASE:E(others)
-  --    BASE:E("DEBUG - FindObjectsInZone - units")
-  --    BASE:E(units)
-  --  end
-  --  for _i = 1, #buildings, 1 do
-  --    ObjectCoords.buildings[#ObjectCoords.buildings + 1] = {x = buildings[_i].x, y = buildings[_i].z}
-  --  end
-  --  for _i = 1, #others, 1 do
-  --    ObjectCoords.others[#ObjectCoords.others + 1] = {x = others[_i].p.x, y = others[_i].p.z}
-  --  end
-  --  for _i = 1, #units, 1 do
-  --    ObjectCoords.units[#ObjectCoords.units + 1] = {x = units[_i].p.x, y = units[_i].p.z}
-  --  end
-  --  if DEBUG == 1 then
-  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords")
-  --    BASE:E(ObjectCoords)
-  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.buildings")
-  --    BASE:E(ObjectCoords.buildings)
-  --    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.buildings")
-  --    BASE:E(#ObjectCoords.buildings)
-  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.others")
-  --    BASE:E(ObjectCoords.others)
-  --    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.others")
-  --    BASE:E(#ObjectCoords.others)
-  --    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.units")
-  --    BASE:E(ObjectCoords.units)
-  --    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.units")
-  --    BASE:E(#ObjectCoords.units)
-  --  end
-  --  --return ObjectCoords
-
-
-
   return self
 end
 
 function SPECTRE.DynamicSpawner:Set_Vec2_GroupCenters()
   local DEBUG = 1
+
+
+  --TODO Group center distance check, distance from other groups
+self.Zones.Main.ObjectCoords.groupcenters = {}
+
+
+  for _i = 1, #self.Zones.Sub, 1 do
+    self.Zones.Sub[_i].ObjectCoords.groupcenters = {}
+    for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
+      for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
+
+        local possibleVec2 = {}
+        local flag_goodcoord = 0
+
+        while flag_goodcoord == 0 do
+          flag_goodcoord = 1
+          --select random coord in zone
+          local flag_goodzone = 0
+          while flag_goodzone == 0 do
+            possibleVec2 = self.Zones.Sub[_i].zone:GetRandomVec2()
+            if not SPECTRE.CheckNoGoZone(possibleVec2, self.Zones.Restricted) then
+              flag_goodzone = 1
+            end
+          end
+          --check if coord too close to restricted
+          for _k,_v in pairs(self.Zones.Sub[_i].ObjectCoords) do
+            --set distance restriction
+            local distance
+            if _k == "units" then
+              distance = self.Zones.Sub[_i].GroupSettings[_j].minSeperation
+            elseif _k == "groupcenters" then
+              distance = self.Zones.Sub[_i].GroupSettings[_j].minSeparation_Groups
+            else
+              distance = self.Zones.Sub[_i].DistanceFromBuildings
+            end
+            for _ii = 1, #self.Zones.Sub[_i].ObjectCoords[_k] do
+              local checkCoord = self.Zones.Sub[_i].ObjectCoords[_k][_ii]
+              if DEBUG == 1 then
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Sub[_i].ObjectCoords")
+                BASE:E(self.Zones.Sub[_i].ObjectCoords)
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - _k")
+                BASE:E(_k)
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - _i")
+                BASE:E(_i)
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - _ii")
+                BASE:E(_ii)
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - checkCoord")
+                BASE:E(checkCoord)
+              end
+              if SPECTRE.f_distance(checkCoord,possibleVec2) < distance then
+                flag_goodcoord = 0
+                break
+              end
+            end
+            if flag_goodcoord == 0 then break end
+          end
+
+          self.Zones.Sub[_i].BuiltSpawner[_j][_k].GroupCenterVec2 = possibleVec2
+          self.Zones.Sub[_i].ObjectCoords.groupcenters[#self.Zones.Sub[_i].ObjectCoords.groupcenters+1] = possibleVec2
+          self.Zones.Main.ObjectCoords.groupcenters[#self.Zones.Main.ObjectCoords.groupcenters+1] = possibleVec2
+        end
+      end
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Sub[_i].BuiltSpawner")
+      BASE:E(self.Zones.Sub[_i].BuiltSpawner)
+    end
+  end
+
+
+    for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+      for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+
+        local possibleVec2 = {}
+        local flag_goodcoord = 0
+
+        while flag_goodcoord == 0 do
+          flag_goodcoord = 1
+          --select random coord in zone
+          local flag_goodzone = 0
+          while flag_goodzone == 0 do
+            possibleVec2 = self.Zones.Main.zone:GetRandomVec2()
+            if not SPECTRE.CheckNoGoZone(possibleVec2, self.Zones.Restricted) then
+              flag_goodzone = 1
+            end
+          end
+          --check if coord too close to restricted
+          for _k,_v in pairs(self.Zones.Main.ObjectCoords) do
+            --set distance restriction
+            local distance
+            if _k == "units" then
+              distance = self.Zones.Main.GroupSettings[_j].minSeperation
+            elseif _k == "groupcenters" then
+              distance = self.Zones.Main.GroupSettings[_j].minSeparation_Groups
+            else
+              distance = self.Zones.Main.DistanceFromBuildings
+            end
+            for _ii = 1, #self.Zones.Main.ObjectCoords[_k] do
+              local checkCoord = self.Zones.Main.ObjectCoords[_k][_ii]
+              if DEBUG == 1 then
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Main.ObjectCoords")
+                BASE:E(self.Zones.Main.ObjectCoords)
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - _k")
+                BASE:E(_k)
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - _ii")
+                BASE:E(_ii)
+                BASE:E("DEBUG - Set_Vec2_GroupCenters - checkCoord")
+                BASE:E(checkCoord)
+              end
+              if SPECTRE.f_distance(checkCoord,possibleVec2) < distance then
+                flag_goodcoord = 0
+                break
+              end
+            end
+            if flag_goodcoord == 0 then break end
+          end
+
+          self.Zones.Main.BuiltSpawner[_j][_k].GroupCenterVec2 = possibleVec2
+          self.Zones.Main.ObjectCoords.groupcenters[#self.Zones.Main.ObjectCoords.groupcenters+1] = possibleVec2
+        end
+      end
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Main.BuiltSpawner")
+      BASE:E(self.Zones.Main.BuiltSpawner)
+    end
+  
 
   return self
 end
@@ -2208,6 +2376,2239 @@ function SPECTRE.DynamicSpawner:Set_Vec2_Types()
 
   return self
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
