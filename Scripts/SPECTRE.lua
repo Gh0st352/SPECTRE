@@ -1415,6 +1415,8 @@ function SPECTRE.DynamicSpawner:New()
   self.Config = {
     UnitsMin          = 30,
     UnitsMax          = 50,
+    operationLimit = 200,
+    operationInterval = 3,
     NumGroupsMin = 9,  --non functional
     NumGroupsMax = 12, -- non functional
     LimitedSpawnStrings = {},
@@ -1589,7 +1591,7 @@ function SPECTRE.DynamicSpawner:ConfigImport(ZoneNames, Config, Types)
 end
 
 
-function SPECTRE.DynamicSpawner:Generate()
+function SPECTRE.DynamicSpawner.Generate_(self)
 
   self:ConfigParse()
   self:WeightZones()
@@ -1599,6 +1601,37 @@ function SPECTRE.DynamicSpawner:Generate()
   self:SetGroupTypesTemplates()
   self:DetermineCoordinates()
 
+  return self
+end
+
+function SPECTRE.DynamicSpawner:Generate()
+  local DEBUG = 1
+  local done = false
+  if self.Co_MultiGenerate == nil then
+    self.Co_MultiGenerate = coroutine.create(SPECTRE.DynamicSpawner.Generate_)
+  elseif coroutine.status(self.Co_MultiGenerate) == "dead" then
+    done = true
+  end
+  self.Co_MultiGenerate_Scheduler = SCHEDULER:New(nil, function()
+    if DEBUG == 1 then
+      BASE:E("DEBUG - SPECTRE DynamicSpawner : MultiGenerate - self.Co_MultiGenerate_Scheduler")
+      BASE:E(self.Co_MultiGenerate_Scheduler)
+    end
+    if coroutine.status(self.Co_MultiGenerate) == "suspended" then
+      coroutine.resume(self.Co_MultiGenerate, self)
+    end
+    if coroutine.status(self.Co_MultiGenerate) == "dead" then
+      done = true
+      self.Co_MultiGenerate_Scheduler:Stop()
+      self.Co_MultiGenerate_Scheduler = nil
+    end
+
+    if done == true then
+      self.Co_MultiGenerate = nil
+      return self
+    end
+
+  end, {self}, 0, self.Config.operationInterval)
   return self
 end
 
@@ -2005,7 +2038,7 @@ end
 
 function SPECTRE.DynamicSpawner:FindObjects()
   local DEBUG = 1
-
+  local counter_operation = 0
   for _i = 1, #self.Zones.Sub, 1 do
     local ObjectCoords = {}
     ObjectCoords.buildings = {}
@@ -2040,6 +2073,7 @@ function SPECTRE.DynamicSpawner:FindObjects()
       objects = _zone.ScanData.Scenery
       for _,_object in pairs (objects) do
         for _,_scen in pairs (_object) do
+          counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
           local scenery = _scen
           if DEBUG == 1 then
             BASE:E("DEBUG - FindObjectsInZone - scenery")
@@ -2062,6 +2096,7 @@ function SPECTRE.DynamicSpawner:FindObjects()
         BASE:E(objects)
       end
       for _,_object in pairs (objects) do
+        counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
         if DEBUG == 1 then
           BASE:E("DEBUG - FindObjectsInZone - unit")
           BASE:E(_object)
@@ -2073,6 +2108,7 @@ function SPECTRE.DynamicSpawner:FindObjects()
     if _zone.ScanData and _zone.ScanData.SceneryTable and #_zone.ScanData.SceneryTable > 0 then
       objects = _zone.ScanData.SceneryTable
       for _i = 1, #objects, 1 do
+        counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
         others[#others+1] = objects[_i].SceneryObject:getPosition()
         if DEBUG == 1 then
           BASE:E("DEBUG - FindObjectsInZone - SCENERY TABLE")
@@ -2155,6 +2191,14 @@ function SPECTRE.DynamicSpawner:FindObjects()
     objects = _zone.ScanData.Scenery
     for _,_object in pairs (objects) do
       for _,_scen in pairs (_object) do
+        counter_operation = counter_operation + 1
+        if counter_operation > self.Config.operationLimit then
+          counter_operation = 0
+          if DEBUG == 1 then
+            BASE:E("DEBUG - Set_Vec2_GroupCenters - coroutine.yield")
+          end
+          coroutine.yield()
+        end
         local scenery = _scen
         if DEBUG == 1 then
           BASE:E("DEBUG - FindObjectsInZone - scenery")
@@ -2177,6 +2221,14 @@ function SPECTRE.DynamicSpawner:FindObjects()
       BASE:E(objects)
     end
     for _,_object in pairs (objects) do
+      counter_operation = counter_operation + 1
+      if counter_operation > self.Config.operationLimit then
+        counter_operation = 0
+        if DEBUG == 1 then
+          BASE:E("DEBUG - Set_Vec2_GroupCenters - coroutine.yield")
+        end
+        coroutine.yield()
+      end
       if DEBUG == 1 then
         BASE:E("DEBUG - FindObjectsInZone - unit")
         BASE:E(_object)
@@ -2188,6 +2240,14 @@ function SPECTRE.DynamicSpawner:FindObjects()
   if _zone.ScanData and _zone.ScanData.SceneryTable and #_zone.ScanData.SceneryTable > 0 then
     objects = _zone.ScanData.SceneryTable
     for _i = 1, #objects, 1 do
+      counter_operation = counter_operation + 1
+      if counter_operation > self.Config.operationLimit then
+        counter_operation = 0
+        if DEBUG == 1 then
+          BASE:E("DEBUG - Set_Vec2_GroupCenters - coroutine.yield")
+        end
+        coroutine.yield()
+      end
       others[#others+1] = objects[_i].SceneryObject:getPosition()
       if DEBUG == 1 then
         BASE:E("DEBUG - FindObjectsInZone - SCENERY TABLE")
@@ -2238,12 +2298,139 @@ function SPECTRE.DynamicSpawner:FindObjects()
   return self
 end
 
-function SPECTRE.DynamicSpawner:Set_Vec2_GroupCenters()
+
+function SPECTRE.DynamicSpawner.FindObjectsInZone(_zone)
   local DEBUG = 1
+  local counter_operation = 0
+  --  for _i = 1, #self.Zones.Sub, 1 do
+  local ObjectCoords = {}
+  ObjectCoords.buildings = {}
+  ObjectCoords.others = {}
+  ObjectCoords.units = {}
+  local objects = {}
+  local buildings = {}
+  local others = {}
+  local units = {}
+
+  --local _zone = self.Zones.Sub[_i].zone
+
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - zone")
+    BASE:E(_zone)
+  end
+  _zone:Scan({Object.Category.SCENERY, Object.Category.STATIC, Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
+  if DEBUG == 1 then
+    local foundObjects = _zone.ScanData
+    BASE:E("DEBUG - FindObjectsInZone - foundObjects")
+    BASE:E(foundObjects)
+    BASE:E("DEBUG - FindObjectsInZone - ScanData")
+    for _key,_value in pairs(_zone.ScanData) do
+      BASE:E("DEBUG - FindObjectsInZone - ScanData - _key")
+      BASE:E(_key)
+      BASE:E("DEBUG - FindObjectsInZone - ScanData - _value")
+      BASE:E(_value)
+    end
+  end
+  --SCENERY
+  if _zone.ScanData and _zone.ScanData.Scenery and #_zone.ScanData.Scenery > 0 then
+    objects = _zone.ScanData.Scenery
+    for _,_object in pairs (objects) do
+      for _,_scen in pairs (_object) do
+        counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, 200)
+        local scenery = _scen
+        if DEBUG == 1 then
+          BASE:E("DEBUG - FindObjectsInZone - scenery")
+          BASE:E(scenery)
+        end
+        local description=scenery:GetDesc()
+        if description and description.attributes and description.attributes.Buildings then
+          buildings[#buildings+1] = scenery:GetCoordinate()
+        else
+          others[#others+1] = scenery.SceneryObject:getPosition()
+        end
+      end
+    end
+  end
+  --UNITS
+  if _zone.ScanData and _zone.ScanData.Units and #_zone.ScanData.Units > 0 then
+    objects = _zone.ScanData.Units
+    if DEBUG == 1 then
+      BASE:E("DEBUG - FindObjectsInZone - unit - objects")
+      BASE:E(objects)
+    end
+    for _,_object in pairs (objects) do
+      counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, 200)
+      if DEBUG == 1 then
+        BASE:E("DEBUG - FindObjectsInZone - unit")
+        BASE:E(_object)
+      end
+      units[#units+1] = UNIT:FindByName( _object:getName() ):GetPosition()--UNIT.--UNIT:Find(unit):GetCoordinate()
+    end
+  end
+  --SCENERY TABLE
+  if _zone.ScanData and _zone.ScanData.SceneryTable and #_zone.ScanData.SceneryTable > 0 then
+    objects = _zone.ScanData.SceneryTable
+    for _i = 1, #objects, 1 do
+      counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, 200)
+      others[#others+1] = objects[_i].SceneryObject:getPosition()
+      if DEBUG == 1 then
+        BASE:E("DEBUG - FindObjectsInZone - SCENERY TABLE")
+        BASE:E(others[#others])
+      end
+    end
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - objects")
+    BASE:E(objects)
+    BASE:E("DEBUG - FindObjectsInZone - buildings")
+    BASE:E(buildings)
+    BASE:E("DEBUG - FindObjectsInZone - others")
+    BASE:E(others)
+    BASE:E("DEBUG - FindObjectsInZone - units")
+    BASE:E(units)
+  end
+  for _i = 1, #buildings, 1 do
+    ObjectCoords.buildings[#ObjectCoords.buildings + 1] = {x = buildings[_i].x, y = buildings[_i].z}
+  end
+  for _i = 1, #others, 1 do
+    ObjectCoords.others[#ObjectCoords.others + 1] = {x = others[_i].p.x, y = others[_i].p.z}
+  end
+  for _i = 1, #units, 1 do
+    ObjectCoords.units[#ObjectCoords.units + 1] = {x = units[_i].p.x, y = units[_i].p.z}
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords")
+    BASE:E(ObjectCoords)
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.buildings")
+    BASE:E(ObjectCoords.buildings)
+    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.buildings")
+    BASE:E(#ObjectCoords.buildings)
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.others")
+    BASE:E(ObjectCoords.others)
+    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.others")
+    BASE:E(#ObjectCoords.others)
+    BASE:E("DEBUG - FindObjectsInZone - ObjectCoords.units")
+    BASE:E(ObjectCoords.units)
+    BASE:E("DEBUG - FindObjectsInZone - #ObjectCoords.units")
+    BASE:E(#ObjectCoords.units)
+  end
+  -- self.Zones.Sub[_i].ObjectCoords = ObjectCoords
+  if DEBUG == 1 then
+    BASE:E("DEBUG - FindObjectsInZone - 12312 sub")
+    BASE:E(ObjectCoords)
+  end
+  return ObjectCoords
+end
 
 
-  --TODO Group center distance check, distance from other groups
-self.Zones.Main.ObjectCoords.groupcenters = {}
+
+
+function SPECTRE.DynamicSpawner:Set_Vec2_GroupCenters()--SPECTRE.DynamicSpawner:Set_Vec2_GroupCenters()
+  local DEBUG = 1
+  local counter_operation = 0
+
+
+  self.Zones.Main.ObjectCoords.groupcenters = {}
 
 
   for _i = 1, #self.Zones.Sub, 1 do
@@ -2263,6 +2450,7 @@ self.Zones.Main.ObjectCoords.groupcenters = {}
             if not SPECTRE.CheckNoGoZone(possibleVec2, self.Zones.Restricted) then
               flag_goodzone = 1
             end
+            counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
           end
           --check if coord too close to restricted
           for _k,_v in pairs(self.Zones.Sub[_i].ObjectCoords) do
@@ -2276,6 +2464,7 @@ self.Zones.Main.ObjectCoords.groupcenters = {}
               distance = self.Zones.Sub[_i].DistanceFromBuildings
             end
             for _ii = 1, #self.Zones.Sub[_i].ObjectCoords[_k] do
+              counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
               local checkCoord = self.Zones.Sub[_i].ObjectCoords[_k][_ii]
               if DEBUG == 1 then
                 BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Sub[_i].ObjectCoords")
@@ -2309,35 +2498,36 @@ self.Zones.Main.ObjectCoords.groupcenters = {}
     end
   end
 
+  for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+    for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+      local possibleVec2 = {}
+      local flag_goodcoord = 0
 
-    for _j = 1, #self.Zones.Main.GroupSettings, 1 do
-      for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
-
-        local possibleVec2 = {}
-        local flag_goodcoord = 0
-
-        while flag_goodcoord == 0 do
-          flag_goodcoord = 1
-          --select random coord in zone
-          local flag_goodzone = 0
-          while flag_goodzone == 0 do
-            possibleVec2 = self.Zones.Main.zone:GetRandomVec2()
-            if not SPECTRE.CheckNoGoZone(possibleVec2, self.Zones.Restricted) then
-              flag_goodzone = 1
-            end
+      while flag_goodcoord == 0 do
+        flag_goodcoord = 1
+        --select random coord in zone
+        local flag_goodzone = 0
+        while flag_goodzone == 0 do
+          possibleVec2 = self.Zones.Main.zone:GetRandomVec2()
+          if not SPECTRE.CheckNoGoZone(possibleVec2, self.Zones.Restricted) then
+            flag_goodzone = 1
           end
-          --check if coord too close to restricted
-          for _k,_v in pairs(self.Zones.Main.ObjectCoords) do
-            --set distance restriction
-            local distance
-            if _k == "units" then
-              distance = self.Zones.Main.GroupSettings[_j].minSeperation
-            elseif _k == "groupcenters" then
-              distance = self.Zones.Main.GroupSettings[_j].minSeparation_Groups
-            else
-              distance = self.Zones.Main.DistanceFromBuildings
-            end
+          counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
+        end
+        --check if coord too close to restricted
+        for _k,_v in pairs(self.Zones.Main.ObjectCoords) do
+          --set distance restriction
+          local distance
+          if _k == "units" then
+            distance = self.Zones.Main.GroupSettings[_j].minSeperation
+          elseif _k == "groupcenters" then
+            distance = self.Zones.Main.GroupSettings[_j].minSeparation_Groups
+          else
+            distance = self.Zones.Main.DistanceFromBuildings
+          end
+          if _k ~= "others" then
             for _ii = 1, #self.Zones.Main.ObjectCoords[_k] do
+              counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
               local checkCoord = self.Zones.Main.ObjectCoords[_k][_ii]
               if DEBUG == 1 then
                 BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Main.ObjectCoords")
@@ -2354,28 +2544,1814 @@ self.Zones.Main.ObjectCoords.groupcenters = {}
                 break
               end
             end
-            if flag_goodcoord == 0 then break end
           end
-
-          self.Zones.Main.BuiltSpawner[_j][_k].GroupCenterVec2 = possibleVec2
-          self.Zones.Main.ObjectCoords.groupcenters[#self.Zones.Main.ObjectCoords.groupcenters+1] = possibleVec2
+          if flag_goodcoord == 0 then break end
         end
+
+        self.Zones.Main.BuiltSpawner[_j][_k].GroupCenterVec2 = possibleVec2
+        self.Zones.Main.ObjectCoords.groupcenters[#self.Zones.Main.ObjectCoords.groupcenters+1] = possibleVec2
       end
     end
-    if DEBUG == 1 then
-      BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Main.BuiltSpawner")
-      BASE:E(self.Zones.Main.BuiltSpawner)
-    end
-  
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - Set_Vec2_GroupCenters - self.Zones.Main.BuiltSpawner")
+    BASE:E(self.Zones.Main.BuiltSpawner)
+  end
+
 
   return self
 end
 
 function SPECTRE.DynamicSpawner:Set_Vec2_Types()
   local DEBUG = 1
+  local counter_operation = 0
 
+  if DEBUG == 1 then
+    BASE:E("DEBUG - Set_Vec2_Types - ENTER")
+    --BASE:E()
+  end
+
+  for _i = 1, #self.Zones.Sub, 1 do
+    for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
+      for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
+        local _distanceFromUnits = self.Zones.Sub[_i].GroupSettings[_j].maxSeperation
+        local _distanceFromGroups = self.Zones.Sub[_i].GroupSettings[_j].minSeparation_Groups
+        local _distanceFromBuildings = self.Zones.Sub[_i].DistanceFromBuildings
+        local _groupSize = self.Zones.Sub[_i].GroupSettings[_j].GroupSize
+        local _numGroup = self.Zones.Sub[_i].GroupSettings[_j].NumberGroups
+        local tempZoneName = self.Zones.Sub[_i].name .. "z".. _i .. "j" .. _j .. "k" .. _k
+        local tempZoneVec2 = self.Zones.Sub[_i].BuiltSpawner[_j][_k].GroupCenterVec2
+        local tempZoneRadius = (_distanceFromUnits * _groupSize) + (_distanceFromGroups * _numGroup ) + _distanceFromBuildings
+        self.Zones.Sub[_i].BuiltSpawner[_j][_k].zone = ZONE_RADIUS:New(tempZoneName,tempZoneVec2,tempZoneRadius)
+        self.Zones.Sub[_i].BuiltSpawner[_j][_k].Vec2Types = {}
+        for _typeNum = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+          if DEBUG == 1 then
+            BASE:E("DEBUG - Set_Vec2_Types - _typeNum")
+            BASE:E(_typeNum)
+          end
+          local possibleVec2 = {}
+          local flag_goodcoord = 0
+          while flag_goodcoord == 0 do
+            flag_goodcoord = 1
+            --select random coord in zone
+            local flag_goodzone = 0
+            while flag_goodzone == 0 do
+              possibleVec2 = self.Zones.Sub[_i].BuiltSpawner[_j][_k].zone:GetRandomVec2()
+              if not SPECTRE.CheckNoGoZone(possibleVec2, self.Zones.Restricted) then
+                flag_goodzone = 1
+              end
+            end
+            --check if coord too close to restricted
+            for _k,_v in pairs(self.Zones.Sub[_i].ObjectCoords) do
+              --set distance restriction
+              local distance
+              if _k == "units" then
+                distance = self.Zones.Sub[_i].GroupSettings[_j].minSeperation
+              elseif _k == "groupcenters" then
+                distance = self.Zones.Sub[_i].GroupSettings[_j].minSeparation_Groups
+              else
+                distance = self.Zones.Sub[_i].DistanceFromBuildings
+              end
+              for _ii = 1, #self.Zones.Sub[_i].ObjectCoords[_k] do
+                counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
+                local checkCoord = self.Zones.Sub[_i].ObjectCoords[_k][_ii]
+                if DEBUG == 1 then
+                  BASE:E("DEBUG - Set_Vec2_Types - self.Zones.Sub[_i].ObjectCoords")
+                  BASE:E(self.Zones.Sub[_i].ObjectCoords)
+                  BASE:E("DEBUG - Set_Vec2_Types - _k")
+                  BASE:E(_k)
+                  BASE:E("DEBUG - Set_Vec2_Types - _i")
+                  BASE:E(_i)
+                  BASE:E("DEBUG - Set_Vec2_Types - _ii")
+                  BASE:E(_ii)
+                  BASE:E("DEBUG - Set_Vec2_Types - checkCoord")
+                  BASE:E(checkCoord)
+                end
+                if SPECTRE.f_distance(checkCoord,possibleVec2) < distance then
+                  flag_goodcoord = 0
+                  break
+                end
+              end
+              if flag_goodcoord == 0 then break end
+            end
+            self.Zones.Sub[_i].BuiltSpawner[_j][_k].Vec2Types[_typeNum] = possibleVec2
+            self.Zones.Sub[_i].ObjectCoords.units[#self.Zones.Sub[_i].ObjectCoords.units+1] = possibleVec2
+            self.Zones.Main.ObjectCoords.units[#self.Zones.Main.ObjectCoords.units+1] = possibleVec2
+          end
+        end
+
+      end
+
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - Set_Vec2_Types - self.Zones.Sub[_i].BuiltSpawner")
+      BASE:E(self.Zones.Sub[_i].BuiltSpawner)
+    end
+  end
+  for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+    if DEBUG == 1 then
+      BASE:E("DEBUG - Set_Vec2_Types - _j")
+      BASE:E(_j)
+    end
+    for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+      if DEBUG == 1 then
+        BASE:E("DEBUG - Set_Vec2_Types - _k")
+        BASE:E(_k)
+      end
+      local _distanceFromUnits = self.Zones.Main.GroupSettings[_j].maxSeperation
+      local _distanceFromGroups = self.Zones.Main.GroupSettings[_j].minSeparation_Groups
+      local _distanceFromBuildings = self.Zones.Main.DistanceFromBuildings
+      local _groupSize = self.Zones.Main.GroupSettings[_j].GroupSize
+      local _numGroup = self.Zones.Main.GroupSettings[_j].NumberGroups
+      local tempZoneName = self.Zones.Main.name .. "j" .. _j .. "k" .. _k
+      local tempZoneVec2 = self.Zones.Main.BuiltSpawner[_j][_k].GroupCenterVec2
+      local tempZoneRadius = (_distanceFromUnits * _groupSize) + (_distanceFromGroups * _numGroup ) + _distanceFromBuildings
+      self.Zones.Main.BuiltSpawner[_j][_k].zone = ZONE_RADIUS:New(tempZoneName,tempZoneVec2,tempZoneRadius)
+      self.Zones.Main.BuiltSpawner[_j][_k].ObjectCoords = SPECTRE.DynamicSpawner.FindObjectsInZone(self.Zones.Main.BuiltSpawner[_j][_k].zone)
+      self.Zones.Main.BuiltSpawner[_j][_k].Vec2Types = {}
+      for _typeNum = 1, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+        if DEBUG == 1 then
+          BASE:E("DEBUG - Set_Vec2_Types - _typeNum")
+          BASE:E(_typeNum)
+        end
+        local possibleVec2 = {}
+        local flag_goodcoord = 0
+        while flag_goodcoord == 0 do
+          flag_goodcoord = 1
+          --select random coord in zone
+          local flag_goodzone = 0
+          while flag_goodzone == 0 do
+            if DEBUG == 1 then
+              BASE:E("DEBUG - Set_Vec2_Types main - prevec2")
+            end
+            possibleVec2 = self.Zones.Main.BuiltSpawner[_j][_k].zone:GetRandomVec2()
+            if DEBUG == 1 then
+              BASE:E("DEBUG - Set_Vec2_Types main - postvec2")
+              BASE:E(possibleVec2)
+            end
+            if not SPECTRE.CheckNoGoZone(possibleVec2, self.Zones.Restricted) then
+              flag_goodzone = 1
+            end
+            counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
+          end
+          --check if coord too close to restricted
+          for _ke,_v in pairs(self.Zones.Main.BuiltSpawner[_j][_k].ObjectCoords) do
+            --set distance restriction
+            local distance
+            if _ke == "units" then
+              distance = self.Zones.Main.GroupSettings[_j].minSeperation
+            elseif _ke == "groupcenters" then
+              distance = self.Zones.Main.GroupSettings[_j].minSeparation_Groups
+            else
+              distance = self.Zones.Main.DistanceFromBuildings
+            end
+            for _ii = 1, #self.Zones.Main.BuiltSpawner[_j][_k].ObjectCoords[_ke] do
+              counter_operation = SPECTRE.DynamicSpawner.CO_Yield(counter_operation, self.Config.operationLimit)
+              local checkCoord = self.Zones.Main.BuiltSpawner[_j][_k].ObjectCoords[_ke][_ii]
+              if DEBUG == 1 then
+                BASE:E("DEBUG - Set_Vec2_Types - self.Zones.Main.ObjectCoords")
+                BASE:E(self.Zones.Main.ObjectCoords)
+                BASE:E("DEBUG - Set_Vec2_Types - _k")
+                BASE:E(_k)
+                BASE:E("DEBUG - Set_Vec2_Types - _ke")
+                BASE:E(_ke)
+                BASE:E("DEBUG - Set_Vec2_Types - _ii")
+                BASE:E(_ii)
+                BASE:E("DEBUG - Set_Vec2_Types - checkCoord")
+                BASE:E(checkCoord)
+              end
+              if SPECTRE.f_distance(checkCoord,possibleVec2) < distance then
+                flag_goodcoord = 0
+                break
+              end
+            end
+            if flag_goodcoord == 0 then break end
+          end
+          self.Zones.Main.BuiltSpawner[_j][_k].Vec2Types[_typeNum] = possibleVec2
+          self.Zones.Main.BuiltSpawner[_j][_k].ObjectCoords.units[#self.Zones.Main.BuiltSpawner[_j][_k].ObjectCoords.units+1] = possibleVec2
+        end
+      end
+    end
+  end
+  if DEBUG == 1 then
+    BASE:E("DEBUG - Set_Vec2_Types - self.Zones.Main.BuiltSpawner")
+    BASE:E(self.Zones.Main.BuiltSpawner)
+  end
   return self
 end
+
+function SPECTRE.DynamicSpawner.CO_Yield(counter_operation, limit)
+  local DEBUG = 1
+  if DEBUG == 1 then
+    BASE:E("DEBUG - CO_Yield (Enter) -")
+  end
+  counter_operation = counter_operation + 1
+  if counter_operation > limit then
+    counter_operation = 0
+    if DEBUG == 1 then
+      BASE:E("DEBUG - CO_Yield - (Yield)")
+    end
+    coroutine.yield()
+  end
+  return counter_operation
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
