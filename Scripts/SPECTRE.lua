@@ -1989,6 +1989,33 @@ function SPECTRE.DynamicSpawner:SetGroupTypes()
     end
   end
 
+
+--  if self.AddTypesToGroups ~= nil then
+--    for _tt = 1, #self.AddTypesToGroups, 1 do
+--      local _type = self.AddTypesToGroups[_tt].type
+--      local _numtype = self.AddTypesToGroups[_tt].numtype
+--      for _i = 1, #self.Zones.Sub, 1 do
+--        for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
+--          for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
+--            self.Zones.Sub[_i].GroupSettings[_j].GroupSize = self.Zones.Sub[_i].GroupSettings[_j].GroupSize + _numtype
+--            for _khh = self.Zones.Sub[_i].GroupSettings[_j].GroupSize - _numtype, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+--              self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types[_khh] = _type
+--            end
+--          end
+--        end
+--      end
+--
+--      for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+--        for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+--          self.Zones.Main.GroupSettings[_j].GroupSize = self.Zones.Main.GroupSettings[_j].GroupSize + _numtype
+--          for _khh = self.Zones.Main.GroupSettings[_j].GroupSize - _numtype, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+--            self.Zones.Main.BuiltSpawner[_j][_k].Types[_khh] = _type
+--          end
+--        end
+--      end
+--
+--    end
+--  end
   return self
 end
 
@@ -2593,6 +2620,12 @@ function SPECTRE.DynamicSpawner:Set_Vec2_Types()
         self.Zones.Sub[_i].BuiltSpawner[_j][_k].zone = ZONE_RADIUS:New(tempZoneName,tempZoneVec2,tempZoneRadius)
         self.Zones.Sub[_i].BuiltSpawner[_j][_k].ObjectCoords = SPECTRE.DynamicSpawner.FindObjectsInZone(self.Zones.Sub[_i].BuiltSpawner[_j][_k].zone)
         self.Zones.Sub[_i].BuiltSpawner[_j][_k].Vec2Types = {}
+        
+        
+        
+        
+        
+        
         for _typeNum = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
           if DEBUG == 1 then
             BASE:E("DEBUG - Set_Vec2_Types - _typeNum")
