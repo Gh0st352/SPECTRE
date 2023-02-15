@@ -1419,6 +1419,8 @@ function SPECTRE.DynamicSpawner:New()
     operationInterval = 3,
     NumGroupsMin = 9,  --non functional
     NumGroupsMax = 12, -- non functional
+    numExtraTypes = 0,
+    numExtraUnits = 0,
     LimitedSpawnStrings = {},
     Types = {},
     GroupSpacingSettings = {
@@ -1851,17 +1853,102 @@ function SPECTRE.DynamicSpawner:SetGroupTypes()
         self.Zones.Sub[_i].BuiltSpawner[_j][_k] = {}
         typeList = SPECTRE.Shuffle(typeList)
         local _groupTypes = {}
-        for _t = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+        for _t = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize + self.Config.numExtraUnits, 1 do
+          if _t <= self.Zones.Sub[_i].GroupSettings[_j].GroupSize then
 
+
+            local randType = SPECTRE.PickRandomFromTable(typeList)
+            local amount_min = self.ParsedTypes[randType].amounts.min
+            local amount_max = self.ParsedTypes[randType].amounts.max
+            local amount_numUsed = self.ParsedTypes[randType].amounts.numUsed
+            local limited = self.ParsedTypes[randType].limited
+            amount_numUsed = amount_numUsed + 1
+            self.ParsedTypes[randType].amounts.numUsed = amount_numUsed
+
+            if DEBUG == 1 then
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled typeList")
+              BASE:E(typeList)
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled randType")
+              BASE:E(randType)
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_min")
+              BASE:E(amount_min)
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_max")
+              BASE:E(amount_max)
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_numUsed")
+              BASE:E(amount_numUsed)
+              BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled limited")
+              BASE:E(limited)
+            end
+
+            if amount_max ~= 0 and amount_numUsed >= amount_max then
+              local idx = SPECTRE.getIndex(typeList, randType)
+              if DEBUG == 1 then
+                BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
+                BASE:E(idx)
+              end
+              if idx == nil then
+              else
+                table.remove(typeList, idx)
+              end
+            end
+            if amount_numUsed >= amount_min and limited == 1 then
+              local idx = SPECTRE.getIndex(typeList, randType)
+              if DEBUG == 1 then
+                BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
+                BASE:E(idx)
+              end
+              if idx == nil then
+              else
+                table.remove(typeList, idx)
+              end
+            end
+            _groupTypes[#_groupTypes + 1] = randType
+
+
+          else
+            local curNumExtraUnit = _t - self.Zones.Sub[_i].GroupSettings[_j].GroupSize
+            local extraType
+            local tempCounter = 0
+            for _iTemp = 1, #self.ExtraTypesToGroups, 1 do
+              for _x = 1, self.ExtraTypesToGroups[_iTemp].numtype, 1 do
+                tempCounter = tempCounter + 1
+                if tempCounter == curNumExtraUnit then
+                  extraType = self.ExtraTypesToGroups[_iTemp].type
+                  break
+                end
+              end
+              if tempCounter == curNumExtraUnit then break end
+            end
+            _groupTypes[#_groupTypes + 1] = extraType
+          end
+        end
+        self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types = _groupTypes
+      end
+    end
+    if DEBUG == 1 then
+      BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - self.Zones.Sub[_i]")
+      BASE:E(self.Zones.Sub[_i])
+    end
+  end
+
+  self.Zones.Main.BuiltSpawner = {}
+  for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+    self.Zones.Main.BuiltSpawner[_j]= {}
+    for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+      self.Zones.Main.BuiltSpawner[_j][_k] = {}
+      typeList = SPECTRE.Shuffle(typeList)
+      local _groupTypes = {}
+      for _t = 1, self.Zones.Main.GroupSettings[_j].GroupSize + self.Config.numExtraUnits, 1 do
+        if _t <= self.Zones.Main.GroupSettings[_j].GroupSize then
+        
+        
           local randType = SPECTRE.PickRandomFromTable(typeList)
           local amount_min = self.ParsedTypes[randType].amounts.min
           local amount_max = self.ParsedTypes[randType].amounts.max
           local amount_numUsed = self.ParsedTypes[randType].amounts.numUsed
           local limited = self.ParsedTypes[randType].limited
-
           amount_numUsed = amount_numUsed + 1
           self.ParsedTypes[randType].amounts.numUsed = amount_numUsed
-
 
           if DEBUG == 1 then
             BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled typeList")
@@ -1877,7 +1964,6 @@ function SPECTRE.DynamicSpawner:SetGroupTypes()
             BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled limited")
             BASE:E(limited)
           end
-
 
           if amount_max ~= 0 and amount_numUsed >= amount_max then
             local idx = SPECTRE.getIndex(typeList, randType)
@@ -1903,75 +1989,24 @@ function SPECTRE.DynamicSpawner:SetGroupTypes()
           end
 
           _groupTypes[#_groupTypes + 1] = randType
+
+        else
+            local curNumExtraUnit = _t - self.Zones.Main.GroupSettings[_j].GroupSize
+            local extraType
+            local tempCounter = 0
+            for _iTemp = 1, #self.ExtraTypesToGroups, 1 do
+              for _x = 1, self.ExtraTypesToGroups[_iTemp].numtype, 1 do
+                tempCounter = tempCounter + 1
+                if tempCounter == curNumExtraUnit then
+                  extraType = self.ExtraTypesToGroups[_iTemp].type
+                  break
+                end
+              end
+              if tempCounter == curNumExtraUnit then break end
+            end
+            _groupTypes[#_groupTypes + 1] = extraType
+
         end
-        self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types = _groupTypes
-      end
-    end
-    if DEBUG == 1 then
-      BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - self.Zones.Sub[_i]")
-      BASE:E(self.Zones.Sub[_i])
-    end
-  end
-
-  self.Zones.Main.BuiltSpawner = {}
-  for _j = 1, #self.Zones.Main.GroupSettings, 1 do
-    self.Zones.Main.BuiltSpawner[_j]= {}
-    for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
-      self.Zones.Main.BuiltSpawner[_j][_k] = {}
-      typeList = SPECTRE.Shuffle(typeList)
-      local _groupTypes = {}
-      for _t = 1, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
-
-        local randType = SPECTRE.PickRandomFromTable(typeList)
-        local amount_min = self.ParsedTypes[randType].amounts.min
-        local amount_max = self.ParsedTypes[randType].amounts.max
-        local amount_numUsed = self.ParsedTypes[randType].amounts.numUsed
-        local limited = self.ParsedTypes[randType].limited
-
-        amount_numUsed = amount_numUsed + 1
-        self.ParsedTypes[randType].amounts.numUsed = amount_numUsed
-
-
-        if DEBUG == 1 then
-          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled typeList")
-          BASE:E(typeList)
-          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled randType")
-          BASE:E(randType)
-          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_min")
-          BASE:E(amount_min)
-          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_max")
-          BASE:E(amount_max)
-          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled amount_numUsed")
-          BASE:E(amount_numUsed)
-          BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - shuffled limited")
-          BASE:E(limited)
-        end
-
-
-        if amount_max ~= 0 and amount_numUsed >= amount_max then
-          local idx = SPECTRE.getIndex(typeList, randType)
-          if DEBUG == 1 then
-            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
-            BASE:E(idx)
-          end
-          if idx == nil then
-          else
-            table.remove(typeList, idx)
-          end
-        end
-        if amount_numUsed >= amount_min and limited == 1 then
-          local idx = SPECTRE.getIndex(typeList, randType)
-          if DEBUG == 1 then
-            BASE:E("DEBUG - SPECTRE DynamicSpawner : SetGroupTypes - idx")
-            BASE:E(idx)
-          end
-          if idx == nil then
-          else
-            table.remove(typeList, idx)
-          end
-        end
-
-        _groupTypes[#_groupTypes + 1] = randType
       end
       self.Zones.Main.BuiltSpawner[_j][_k].Types = _groupTypes
     end
@@ -1990,37 +2025,43 @@ function SPECTRE.DynamicSpawner:SetGroupTypes()
   end
 
 
---  if self.AddTypesToGroups ~= nil then
---    for _tt = 1, #self.AddTypesToGroups, 1 do
---      local _type = self.AddTypesToGroups[_tt].type
---      local _numtype = self.AddTypesToGroups[_tt].numtype
---      for _i = 1, #self.Zones.Sub, 1 do
---        for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
---          for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
---            self.Zones.Sub[_i].GroupSettings[_j].GroupSize = self.Zones.Sub[_i].GroupSettings[_j].GroupSize + _numtype
---            for _khh = self.Zones.Sub[_i].GroupSettings[_j].GroupSize - _numtype, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
---              self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types[_khh] = _type
---            end
---          end
---        end
---      end
---
---      for _j = 1, #self.Zones.Main.GroupSettings, 1 do
---        for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
---          self.Zones.Main.GroupSettings[_j].GroupSize = self.Zones.Main.GroupSettings[_j].GroupSize + _numtype
---          for _khh = self.Zones.Main.GroupSettings[_j].GroupSize - _numtype, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
---            self.Zones.Main.BuiltSpawner[_j][_k].Types[_khh] = _type
---          end
---        end
---      end
---
---    end
---  end
+  --  if self.AddTypesToGroups ~= nil then
+  --    for _tt = 1, #self.AddTypesToGroups, 1 do
+  --      local _type = self.AddTypesToGroups[_tt].type
+  --      local _numtype = self.AddTypesToGroups[_tt].numtype
+  --      for _i = 1, #self.Zones.Sub, 1 do
+  --        for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
+  --          for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
+  --            self.Zones.Sub[_i].GroupSettings[_j].GroupSize = self.Zones.Sub[_i].GroupSettings[_j].GroupSize + _numtype
+  --            for _khh = self.Zones.Sub[_i].GroupSettings[_j].GroupSize - _numtype, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+  --              self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types[_khh] = _type
+  --            end
+  --          end
+  --        end
+  --      end
+  --
+  --      for _j = 1, #self.Zones.Main.GroupSettings, 1 do
+  --        for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
+  --          self.Zones.Main.GroupSettings[_j].GroupSize = self.Zones.Main.GroupSettings[_j].GroupSize + _numtype
+  --          for _khh = self.Zones.Main.GroupSettings[_j].GroupSize - _numtype, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+  --            self.Zones.Main.BuiltSpawner[_j][_k].Types[_khh] = _type
+  --          end
+  --        end
+  --      end
+  --
+  --    end
+  --  end
   return self
 end
 
 function SPECTRE.DynamicSpawner:AddTypesToGroups(nTypes)
-  self.AddTypesToGroups = nTypes
+  self.ExtraTypesToGroups = nTypes
+  if self.ExtraTypesToGroups ~= nil then
+    self.Config.numExtraTypes = #self.ExtraTypesToGroups
+    for _temp = 1, self.Config.numExtraTypes, 1 do
+      self.Config.numExtraUnits = self.Config.numExtraUnits + self.ExtraTypesToGroups[_temp].numtype
+    end
+  end
   return self
 end
 
@@ -2033,7 +2074,7 @@ function SPECTRE.DynamicSpawner:SetGroupTypesTemplates()
 
       for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
         local _groupTypes = {}
-        for _t = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+        for _t = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize + self.Config.numExtraUnits, 1 do
           local Type_ =  self.Zones.Sub[_i].BuiltSpawner[_j][_k].Types[_t]
           local TypeTable_ = self.ParsedTypes[Type_].names
           TypeTable_ = SPECTRE.Shuffle(TypeTable_)
@@ -2051,7 +2092,7 @@ function SPECTRE.DynamicSpawner:SetGroupTypesTemplates()
   for _j = 1, #self.Zones.Main.GroupSettings, 1 do
     for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
       local _groupTypes = {}
-      for _t = 1, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+      for _t = 1, self.Zones.Main.GroupSettings[_j].GroupSize  + self.Config.numExtraUnits, 1 do
         local Type_ =  self.Zones.Main.BuiltSpawner[_j][_k].Types[_t]
         local TypeTable_ = self.ParsedTypes[Type_].names
         TypeTable_ = SPECTRE.Shuffle(TypeTable_)
@@ -2620,13 +2661,9 @@ function SPECTRE.DynamicSpawner:Set_Vec2_Types()
         self.Zones.Sub[_i].BuiltSpawner[_j][_k].zone = ZONE_RADIUS:New(tempZoneName,tempZoneVec2,tempZoneRadius)
         self.Zones.Sub[_i].BuiltSpawner[_j][_k].ObjectCoords = SPECTRE.DynamicSpawner.FindObjectsInZone(self.Zones.Sub[_i].BuiltSpawner[_j][_k].zone)
         self.Zones.Sub[_i].BuiltSpawner[_j][_k].Vec2Types = {}
-        
-        
-        
-        
-        
-        
-        for _typeNum = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+
+        for _typeNum = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize + self.Config.numExtraUnits, 1 do
+
           if DEBUG == 1 then
             BASE:E("DEBUG - Set_Vec2_Types - _typeNum")
             BASE:E(_typeNum)
@@ -2687,6 +2724,7 @@ function SPECTRE.DynamicSpawner:Set_Vec2_Types()
             self.Zones.Sub[_i].BuiltSpawner[_j][_k].ObjectCoords.units[#self.Zones.Sub[_i].BuiltSpawner[_j][_k].ObjectCoords.units+1] = possibleVec2
             --self.Zones.Main.ObjectCoords.units[#self.Zones.Main.ObjectCoords.units+1] = possibleVec2
           end
+
         end
 
       end
@@ -2718,7 +2756,7 @@ function SPECTRE.DynamicSpawner:Set_Vec2_Types()
       self.Zones.Main.BuiltSpawner[_j][_k].zone = ZONE_RADIUS:New(tempZoneName,tempZoneVec2,tempZoneRadius)
       self.Zones.Main.BuiltSpawner[_j][_k].ObjectCoords = SPECTRE.DynamicSpawner.FindObjectsInZone(self.Zones.Main.BuiltSpawner[_j][_k].zone)
       self.Zones.Main.BuiltSpawner[_j][_k].Vec2Types = {}
-      for _typeNum = 1, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+      for _typeNum = 1, self.Zones.Main.GroupSettings[_j].GroupSize + self.Config.numExtraUnits, 1 do
         if DEBUG == 1 then
           BASE:E("DEBUG - Set_Vec2_Types - _typeNum")
           BASE:E(_typeNum)
@@ -2800,7 +2838,7 @@ function SPECTRE.DynamicSpawner:Spawn()
     for _j = 1, #self.Zones.Sub[_i].GroupSettings, 1 do
       for _k = 1, self.Zones.Sub[_i].GroupSettings[_j].NumberGroups, 1 do
         self.Zones.Sub[_i].BuiltSpawner[_j][_k].ActivatedUnits = {}
-        for _m = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize, 1 do
+        for _m = 1, self.Zones.Sub[_i].GroupSettings[_j].GroupSize + self.Config.numExtraUnits, 1 do
           local name_ = self.Zones.Sub[_i].name
           local template_ = self.Zones.Sub[_i].BuiltSpawner[_j][_k].TemplateNames[_m]
           local vec2_ = self.Zones.Sub[_i].BuiltSpawner[_j][_k].Vec2Types[_m]
@@ -2818,7 +2856,7 @@ function SPECTRE.DynamicSpawner:Spawn()
   for _j = 1, #self.Zones.Main.GroupSettings, 1 do
     for _k = 1, self.Zones.Main.GroupSettings[_j].NumberGroups, 1 do
       self.Zones.Main.BuiltSpawner[_j][_k].ActivatedUnits = {}
-      for _m = 1, self.Zones.Main.GroupSettings[_j].GroupSize, 1 do
+      for _m = 1, self.Zones.Main.GroupSettings[_j].GroupSize + self.Config.numExtraUnits, 1 do
         local name_ = self.Zones.Main.name
         local template_ = self.Zones.Main.BuiltSpawner[_j][_k].TemplateNames[_m]
         local vec2_ = self.Zones.Main.BuiltSpawner[_j][_k].Vec2Types[_m]
