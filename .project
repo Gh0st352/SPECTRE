@@ -3,8 +3,6 @@
 	<name>SPECTRE</name>
 	<comment></comment>
 	<projects>
-		<project>Damned_Training</project>
-		<project>MOOSE_INCLUDE</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
