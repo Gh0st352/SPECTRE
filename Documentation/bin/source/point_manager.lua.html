@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/dynamic_spawner.lua.html">dynamic_spawner.lua</a></li>
+  <li><a href="../source/fileio.lua.html">fileio.lua</a></li>
+  <li><a href="../source/object.lua.html">object.lua</a></li>
+  <li><a href="../source/player_manager.lua.html">player_manager.lua</a></li>
+  <li><strong>point_manager.lua</strong></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/DYNAMIC_SPAWNER.html">DYNAMIC_SPAWNER</a></li>
+  <li><a href="../modules/FileIO.html">FileIO</a></li>
+  <li><a href="../modules/OBJECT.html">OBJECT</a></li>
+  <li><a href="../modules/PLAYER_MANAGER.html">PLAYER_MANAGER</a></li>
+  <li><a href="../modules/POINT_MANAGER.html">POINT_MANAGER</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/Utils.html">Utils</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>point_manager.lua</h2>
+<pre>
+<span class="comment">--- **SPECTRE.POINT_MANAGER**
+</span><span class="comment">--
+</span><span class="comment">-- All operations involving points earned/redeemed by a player.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--      <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; ???
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--  ***POINT_MANAGER for SPECTRE.***
+</span><span class="comment">--
+</span><span class="comment">--   * The POINT_MANAGER Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the POINT_MANAGER are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">--     -- Lorem Ipsum.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--
+</span><span class="comment">-- @module POINT_MANAGER
+</span><span class="comment">-- @extends SPECTRE
+</span>
+env.info(<span class="string">" *** LOAD S.P.E.C.T.R.E. - POINT_MANAGER *** "</span>)
+
+<span class="comment">---POINT_MANAGER.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- *All operations involving points earned/redeemed by a player.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section POINT_MANAGER
+</span>
+<span class="comment">--- ###POINT_MANAGER
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--      All operations involving points earned/redeemed by a player.
+</span><span class="comment">--
+</span><span class="comment">-- * POINT_MANAGER for SPECTRE
+</span><span class="comment">--
+</span><span class="comment">--   * The POINT_MANAGER Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the POINT_MANAGER are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">-- @field #POINT_MANAGER
+</span><span class="comment">-- @field ClassName SPECTRE.OBJECT.POINT_MANAGER
+</span><a id="47"></a><span class="comment">-- @field ClassID The ID number of the class.
+</span>SPECTRE.POINT_MANAGER = {
+  ClassName = <span class="string">"POINT_MANAGER"</span>,
+  ClassID = <span class="number">0</span>,
+}
+
+<span class="comment">---POINT_MANAGER.Config.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- *Settings for a point based redeem system.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section POINT_MANAGER.Config
+</span>
+<span class="comment">---Settings for a point based redeem system.
+</span><span class="comment">--
+</span><span class="comment">-- Point cost for redeems + Point Reward for Kills based on type.
+</span><a id="64"></a><span class="comment">-- @field #POINT_MANAGER.Config
+</span>SPECTRE.POINT_MANAGER.Config = {
+  _PointsPerKill_AA = <span class="number">10</span>,
+  _PointsPerKill_Heli = <span class="number">4</span>,
+  _PointsPerKill_AWACS = <span class="number">30</span>,
+  _PointsPerKill_AG = {
+    _General = <span class="number">2</span>,
+    _Buildings = <span class="number">7</span>,
+    _Tanks = <span class="number">6</span>,
+    _APC = <span class="number">3</span>,
+    _IFV = <span class="number">5</span>,
+  },
+  _PointsPerKill_SAM = {
+    _General = <span class="number">7</span>,
+    _LRSam = <span class="number">20</span>,
+    _MRSam = <span class="number">15</span>,
+    _SRSam = <span class="number">10</span>,
+    _EWR = <span class="number">50</span>,
+  },
+  _PointsPerKill_AAA = <span class="number">8</span>,
+  _KillTypes_Air = {
+    <span class="string">"Helicopters"</span>,
+    <span class="string">"Planes"</span>,
+    <span class="string">"AWACS"</span>,
+  },
+  _KillTypes_Ground = {
+    <span class="string">"Buildings"</span>,
+    <span class="string">"SAM elements"</span>,
+    <span class="string">"AAA"</span>,
+    <span class="string">"Tanks"</span>,
+    <span class="string">"APC"</span>,
+    <span class="string">"IFV"</span>,
+    <span class="string">"EWR"</span>,
+  },
+  _KillTypes_SAM = {
+    <span class="string">"SR SAM"</span>,
+    <span class="string">"MR SAM"</span>,
+    <span class="string">"LR SAM"</span>,
+  },
+  _PointsPerCSAR = <span class="number">5</span>,
+  _PointCost_CAP = <span class="number">100</span>,
+  _PointCost_Bomber = <span class="number">50</span>,
+  _PointCost_Strike = <span class="number">55</span>,
+  _PointCost_Tomahawk = <span class="number">70</span>,
+  _PointCost_Escort = <span class="number">75</span>,
+  _PointCost_Airdrop = {
+    _Artillery = <span class="number">50</span>,
+    _IFV = <span class="number">30</span>,
+    _Tank = <span class="number">50</span>,
+    _AAA = <span class="number">60</span>,
+    _SAM_IR = <span class="number">70</span>,
+    _SAM_RDR = <span class="number">150</span>,
+    _EWR = <span class="number">250</span>,
+    _Supply = <span class="number">30</span>,
+  },
+}
+
+<span class="comment">---POINT_MANAGER.func.
+</span><span class="comment">-- ===
+</span><span class="comment">-- All Functions associated with the class.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section POINT_MANAGER.func
+</span>
+<span class="comment">--- Disperse Points from kill.
+</span><a id="129"></a><span class="comment">-- @param EventData : Data from event triggering point disperse
+</span><span class="keyword">function</span> SPECTRE.POINT_MANAGER.DispersePoints(EventData)
+  EventData = EventData <span class="keyword">or</span> <span class="keyword">nil</span>
+  <span class="keyword">local</span> ShooterName = EventData.IniPlayerName
+  <span class="keyword">local</span> ShooterCoalition = EventData.IniCoalition
+  <span class="keyword">local</span> TargetCoalition = EventData.TgtCoalition
+  <span class="keyword">local</span> TargetType = EventData.TgtTypeName <span class="comment">--or nil"MiG-25PD"
+</span>  <span class="keyword">if</span> EventData.TgtUnitName == <span class="string">"No target object for Event ID 28"</span> <span class="keyword">then</span>
+    <span class="keyword">if</span> DEBUG == <span class="number">1</span> <span class="keyword">then</span>
+      BASE:E(<span class="string">"DEBUG: mist.DBs.deadObjects[EventData.TgtDCSUnit.id_]"</span>)
+      BASE:E(mist.DBs.deadObjects[EventData.TgtDCSUnit.id_])
+    <span class="keyword">end</span>
+    TargetType = mist.DBs.deadObjects[EventData.TgtDCSUnit.id_].objectData.<span class="global">type</span>
+    TargetCoalition = mist.DBs.deadObjects[EventData.TgtDCSUnit.id_].objectData.coalition
+    <span class="keyword">if</span> TargetCoalition == <span class="string">"blue"</span> <span class="keyword">then</span> TargetCoalition = <span class="number">2</span> <span class="keyword">end</span>
+    <span class="keyword">if</span> TargetCoalition == <span class="string">"red"</span> <span class="keyword">then</span> TargetCoalition = <span class="number">1</span> <span class="keyword">end</span>
+    <span class="keyword">if</span> TargetCoalition == <span class="string">"neutral"</span> <span class="keyword">then</span> TargetCoalition = <span class="number">0</span> <span class="keyword">end</span>
+    mist.DBs.deadObjects[EventData.TgtDCSUnit.id_] = <span class="keyword">nil</span>
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> DEBUG == <span class="number">1</span> <span class="keyword">then</span>
+    BASE:E(<span class="string">"DEBUG: Shooter Name"</span>)
+    BASE:E(ShooterName)
+    BASE:E(<span class="string">"DEBUG: TYPE:"</span>)
+    BASE:E(TargetType)
+  <span class="keyword">end</span>
+  <span class="keyword">local</span> TargetDesc = Unit.getDescByName(TargetType )
+  <span class="keyword">local</span> TargetAttributes = TargetDesc.attributes
+  <span class="keyword">if</span> DEBUG == <span class="number">1</span> <span class="keyword">then</span>
+    BASE:E(<span class="string">"DEBUG: TargetAttributes"</span>)
+    BASE:E(TargetAttributes)
+  <span class="keyword">end</span>
+
+  <span class="keyword">local</span> PointReward = <span class="number">0</span>
+  <span class="comment">--AIR CHECK AND DISPERSE
+</span>  <span class="keyword">if</span> SPECTRE.Utils.table_contains(TargetAttributes, <span class="string">"Air"</span>) <span class="keyword">then</span>
+    <span class="keyword">for</span> _i = <span class="number">1</span>, #SPECTRE.POINT_MANAGER.Config._KillTypes_Air,<span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">if</span> SPECTRE.Utils.table_contains(TargetAttributes, SPECTRE.POINT_MANAGER.Config._KillTypes_Air[_i]) <span class="keyword">then</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Air[_i] == <span class="string">"Helicopters"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_Heli <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_Heli <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Air[_i] == <span class="string">"Planes"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AA <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AA <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Air[_i] == <span class="string">"AWACS"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AWACS <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AWACS <span class="keyword">end</span>
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">else</span>
+    PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._General
+    <span class="keyword">for</span> _i = <span class="number">1</span>, #SPECTRE.POINT_MANAGER.Config._KillTypes_Ground,<span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">if</span> SPECTRE.Utils.table_contains(TargetAttributes, SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i]) <span class="keyword">then</span>
+
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"Buildings"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._Buildings <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._Buildings <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"AAA"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AAA <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AAA <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"Buildings"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._Buildings <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._Buildings <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"Tanks"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._Tanks <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._Tanks <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"APC"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._APC <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._APC <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"IFV"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._IFV <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_AG._IFV <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"EWR"</span> <span class="keyword">then</span>
+          <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._EWR <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._EWR <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_Ground[_i] == <span class="string">"SAM elements"</span> <span class="keyword">then</span>
+          PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._General
+          <span class="keyword">for</span> _i = <span class="number">1</span>, #SPECTRE.POINT_MANAGER.Config._KillTypes_SAM ,<span class="number">1</span> <span class="keyword">do</span>
+            <span class="keyword">if</span> SPECTRE.Utils.table_contains(TargetAttributes, SPECTRE.POINT_MANAGER.Config._KillTypes_SAM[_i]) <span class="keyword">then</span>
+              <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_SAM[_i] == <span class="string">"SR SAM"</span> <span class="keyword">then</span>
+                <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._SRSam <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._SRSam <span class="keyword">end</span>
+              <span class="keyword">end</span>
+              <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_SAM[_i] == <span class="string">"MR SAM"</span> <span class="keyword">then</span>
+                <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._MRSam <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._MRSam <span class="keyword">end</span>
+              <span class="keyword">end</span>
+              <span class="keyword">if</span>   SPECTRE.POINT_MANAGER.Config._KillTypes_SAM[_i] == <span class="string">"LR SAM"</span> <span class="keyword">then</span>
+                <span class="keyword">if</span> PointReward &lt; SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._LRSam <span class="keyword">then</span> PointReward = SPECTRE.POINT_MANAGER.Config._PointsPerKill_SAM._LRSam <span class="keyword">end</span>
+              <span class="keyword">end</span>
+            <span class="keyword">end</span>
+          <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+  <span class="keyword">end</span>
+
+
+  <span class="keyword">local</span> oldPoints = <span class="number">0</span>
+  <span class="keyword">if</span> G[<span class="string">"Player_"</span>.. ShooterName].Coalition == <span class="string">"RED"</span> <span class="keyword">then</span>
+    oldPoints = G[<span class="string">"Player_"</span>.. ShooterName].Points.Red
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> G[<span class="string">"Player_"</span>.. ShooterName].Coalition == <span class="string">"BLUE"</span> <span class="keyword">then</span>
+    oldPoints = G[<span class="string">"Player_"</span>.. ShooterName].Points.Blue
+  <span class="keyword">end</span>
+
+  <span class="keyword">if</span> ShooterCoalition ~= TargetCoalition <span class="keyword">then</span>
+    oldPoints = oldPoints + PointReward
+  <span class="keyword">else</span>
+    PointReward = <span class="global">math</span>.ceil(PointReward/<span class="number">2</span>)
+    oldPoints = oldPoints - PointReward
+    <span class="keyword">if</span> oldPoints &lt; <span class="number">0</span> <span class="keyword">then</span>
+    oldPoints = <span class="number">0</span>
+    <span class="keyword">end</span>
+    trigger.action.outTextForGroup( _G[<span class="string">"Player_"</span>.. ShooterName].GroupID_, <span class="string">"Destroying friendly assets is a court martialable offense! Deducting "</span> .. PointReward .. <span class="string">" points."</span> ,<span class="number">10</span>)
+  <span class="keyword">end</span>
+  _G[<span class="string">"Player_"</span>.. ShooterName].Points = oldPoints
+
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-06-15 13:10:10 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

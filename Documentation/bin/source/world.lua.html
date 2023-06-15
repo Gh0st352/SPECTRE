@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/dynamic_spawner.lua.html">dynamic_spawner.lua</a></li>
+  <li><a href="../source/fileio.lua.html">fileio.lua</a></li>
+  <li><a href="../source/object.lua.html">object.lua</a></li>
+  <li><a href="../source/player_manager.lua.html">player_manager.lua</a></li>
+  <li><a href="../source/point_manager.lua.html">point_manager.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><strong>world.lua</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/DYNAMIC_SPAWNER.html">DYNAMIC_SPAWNER</a></li>
+  <li><a href="../modules/FileIO.html">FileIO</a></li>
+  <li><a href="../modules/OBJECT.html">OBJECT</a></li>
+  <li><a href="../modules/PLAYER_MANAGER.html">PLAYER_MANAGER</a></li>
+  <li><a href="../modules/POINT_MANAGER.html">POINT_MANAGER</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/Utils.html">Utils</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>world.lua</h2>
+<pre>
+<span class="comment">--- **SPECTRE.WORLD**
+</span><span class="comment">--
+</span><span class="comment">-- WORLD operations for tracking game data and state.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--      <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; ???
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--  ***WORLD for SPECTRE.***
+</span><span class="comment">--
+</span><span class="comment">--   * The WORLD Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the WORLD are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">--     -- WORLD operations for tracking game data and state.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--
+</span><span class="comment">-- @module WORLD
+</span><span class="comment">-- @extends SPECTRE
+</span>
+env.info(<span class="string">" *** LOAD S.P.E.C.T.R.E. - World *** "</span>)
+
+<span class="comment">---WORLD.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *WORLD operations for tracking game data and state.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section WORLD
+</span>
+<span class="comment">--- ###WORLD
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--      WORLD operations for tracking game data and state.
+</span><span class="comment">--
+</span><span class="comment">-- * WORLD for SPECTRE
+</span><span class="comment">--
+</span><span class="comment">--   * The WORLD Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the WORLD are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">-- @field #WORLD
+</span><span class="comment">-- @field ClassName SPECTRE.OBJECT.WORLD
+</span><a id="47"></a><span class="comment">-- @field ClassID The ID number of the class.
+</span>SPECTRE.WORLD = {
+  ClassName = <span class="string">"WORLD"</span>,
+  ClassID = <span class="number">0</span>,
+}
+
+<span class="comment">---WORLD Zone.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Functions for tracking zone game data and state.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section WORLD Zone
+</span>
+<span class="comment">--- Determines if vec2 is in the zone.
+</span><span class="comment">-- Requires quadpoint zone, defined in ME.
+</span><span class="comment">-- @param vec2 : Vec2 to check, {x = , y = }
+</span><span class="comment">-- @param zoneName : Name of quadpoint zone, defined in Mission Editor.
+</span><a id="65"></a><span class="comment">-- @return result : true or false
+</span><span class="keyword">function</span>  SPECTRE.WORLD.PointInZone(vec2, zoneName)
+  <span class="keyword">local</span> _zone = mist.DBs.zonesByName[zoneName]
+  <span class="keyword">local</span> box =  _zone.verticies
+  <span class="keyword">local</span> _vec2 = {}
+  <span class="keyword">if</span> vec2.x == <span class="keyword">nil</span> <span class="keyword">then</span>
+    _vec2.x = vec2[<span class="number">1</span>]
+    _vec2.y = vec2[<span class="number">2</span>]
+  <span class="keyword">else</span>
+    _vec2 = vec2
+  <span class="keyword">end</span>
+  <span class="keyword">local</span> result = SPECTRE.POLY.PointWithinShape(_vec2, box)
+  <span class="keyword">return</span> result
+<span class="keyword">end</span>
+
+<span class="comment">--- Determines if vec2 is in a list of zones.
+</span><span class="comment">-- Requires quadpoint zones, defined in ME.
+</span><span class="comment">-- @param vec2 : Vec2 to check, {x = , y = }
+</span><span class="comment">-- @param zoneList : List of Names of quadpoint zone, defined in Mission Editor.
+</span><span class="comment">--
+</span><span class="comment">--        zoneList = {"name1","name2",...,n,}
+</span><span class="comment">-- @return 1 = not in zones
+</span><a id="87"></a><span class="comment">-- @return 0 = Vec2 is in Nogo zones
+</span><span class="keyword">function</span> SPECTRE.WORLD.CheckVec2_NoGoZones(possibleVec2,zoneList)
+  <span class="keyword">local</span> result
+  <span class="keyword">for</span> _v = <span class="number">1</span>, #zoneList, <span class="number">1</span> <span class="keyword">do</span>
+    result = SPECTRE.WORLD.PointInZone(possibleVec2, zoneList[_v])
+    <span class="keyword">if</span> result <span class="keyword">then</span>
+      <span class="keyword">return</span> <span class="number">0</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> <span class="number">1</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Creates a Red Circle and Marker at the desired coord for specific team if specific units are detected in a zone
+</span><span class="comment">-- @param ZoneName Name of Zone to check if units exist within, EX. "Zone_Damascus"
+</span><span class="comment">-- @param ObjectCategory Object Category to scan for within zone, EX. Object.Category.UNIT
+</span><span class="comment">-- @param Table_UnitCategory Table of units types to scan for, EX. {Unit.Category.GROUND\_UNIT}
+</span><span class="comment">-- @param UnitCoalition Coalition of units to scan for, EX. coalition.side.RED
+</span><span class="comment">-- @param Coordinate Coordinate to center Marker on
+</span><span class="comment">-- @param MarkCoalition Coalition to create the marker for, Coalition: All=-1, Neutral=0, Red=1, Blue=2. Default -1=All.
+</span><span class="comment">-- @param MarkerRadius Radium for the marker (meters)
+</span><span class="comment">-- @param MarkText Text to include in the marker
+</span><a id="108"></a><span class="comment">-- @return ReturnTable : {MarkerID,CircleID} - Table containing ID for created Marker and Circle
+</span><span class="keyword">function</span> SPECTRE.WORLD.TargetMarker_CreateAtPointIfUnitsExistInZone(ZoneName, ObjectCategory, Table_UnitCategory, UnitCoalition, Coordinate, MarkCoalition, MarkerRadius, MarkText)
+  MarkCoalition = MarkCoalition <span class="keyword">or</span> -<span class="number">1</span>
+  MarkText = MarkText <span class="keyword">or</span> <span class="string">""</span>
+  MarkerRadius = MarkerRadius <span class="keyword">or</span> <span class="number">5000</span>
+  <span class="keyword">local</span> CircleID = <span class="keyword">nil</span>
+  <span class="keyword">local</span> MarkerID = <span class="keyword">nil</span>
+  <span class="keyword">local</span> zoneCheck = ZONE:FindByName ( ZoneName )
+  zoneCheck:Scan(ObjectCategory, Table_UnitCategory  )
+  <span class="keyword">if</span>     zoneCheck:CheckScannedCoalition(UnitCoalition) == <span class="keyword">true</span> <span class="keyword">then</span>
+    CircleID = Coordinate:CircleToAll(MarkerRadius,MarkCoalition,{<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>},<span class="number">1</span>,{<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>},<span class="number">0.4</span>,<span class="number">4</span>,<span class="keyword">true</span>)
+    MarkerID = Coordinate:MarkToCoalition(MarkText,MarkCoalition,<span class="keyword">true</span>)
+  <span class="keyword">end</span>
+  <span class="keyword">local</span> ReturnTable = {MarkerID,CircleID}
+  <span class="keyword">return</span> ReturnTable
+<span class="keyword">end</span>
+
+<span class="comment">---WORLD Airbase.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Functions for tracking Airbase game data and state.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section WORLD Airbase
+</span>
+<span class="comment">---Finds closest airbase to vec2.
+</span><span class="comment">-- @param AirbaseList List of airbase names to evaluate
+</span><span class="comment">-- @param _vec2 for check
+</span><a id="136"></a><span class="comment">-- @return ClosestAirbase : {Name, Vec3} of closest airbase from list to desired Vec2
+</span><span class="keyword">function</span> SPECTRE.WORLD.FindNearestAirbaseToPointVec2(AirbaseList, _vec2)
+  <span class="keyword">local</span> distance = <span class="number">99999999999</span>
+  <span class="keyword">local</span> ClosestAirbase
+  <span class="keyword">local</span> PointCoord = COORDINATE:NewFromVec2(_vec2)
+  <span class="keyword">for</span> _i = <span class="number">1</span>, #AirbaseList , <span class="number">1</span> <span class="keyword">do</span>
+    <span class="keyword">local</span> airbaseVec3 = AIRBASE:FindByName(AirbaseList[_i]):GetVec3()<span class="comment">--:GetVec2()
+</span>    <span class="keyword">local</span> AirbaseCoord = COORDINATE:NewFromVec3(airbaseVec3)
+    <span class="keyword">local</span> _distance = PointCoord:Get2DDistance(AirbaseCoord)
+    <span class="keyword">if</span> _distance &lt; distance <span class="keyword">then</span>
+      distance = _distance
+      ClosestAirbase = {AirbaseList[_i], airbaseVec3}
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> ClosestAirbase
+<span class="keyword">end</span>
+
+<span class="comment">--- Get and create list of all airbases owned by coalition.
+</span><span class="comment">-- @param coal coalition
+</span><span class="comment">-- @param map Map, takes "Syria", "Persia", "Sinai" or "Caucasus"
+</span><a id="156"></a><span class="comment">-- @return _AirbaseListOwned : List of owned airfields
+</span><span class="keyword">function</span> SPECTRE.WORLD.GetOwnedAirbaseCoal(coal,map)
+  <span class="keyword">local</span> _AirbaseListTheatre = {}
+  <span class="keyword">local</span> _AirbaseListOwned = {}
+  <span class="keyword">if</span> map == <span class="string">"Syria"</span> <span class="keyword">then</span>
+    _AirbaseListTheatre = AIRBASE.Syria
+  <span class="keyword">elseif</span> map == <span class="string">"Persia"</span> <span class="keyword">then</span>
+    _AirbaseListTheatre = AIRBASE.PersianGulf
+  <span class="keyword">elseif</span> map == <span class="string">"Caucasus"</span> <span class="keyword">then</span>
+    _AirbaseListTheatre = AIRBASE.Caucasus
+  <span class="keyword">elseif</span> map == <span class="string">"Sinai"</span> <span class="keyword">then</span>
+    _AirbaseListTheatre = AIRBASE.Sinai
+  <span class="keyword">end</span>
+  <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="global">pairs</span>(_AirbaseListTheatre) <span class="keyword">do</span>
+    <span class="keyword">local</span> airbase_ = AIRBASE:FindByName(value)
+    <span class="keyword">local</span> airbase_Coal = airbase_:GetCoalition()
+    <span class="keyword">if</span> airbase_Coal == coal <span class="keyword">then</span>
+      _AirbaseListOwned[#_AirbaseListOwned+<span class="number">1</span>]= value
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> _AirbaseListOwned
+<span class="keyword">end</span>
+
+<span class="comment">--- Find closest friendly airfield to vec2.
+</span><span class="comment">-- @param coal : Takes 0, 1, 2 (2=blue, 1 = red, 0 = neutral)
+</span><span class="comment">-- @param _vec2 vec2 to check for closest friendly airbase
+</span><span class="comment">-- @param map : theatre of war, "Persia", "Syria", Caucuses"
+</span><a id="183"></a><span class="comment">-- @return NearestAirbaseInfo The closest airfield to the player
+</span><span class="keyword">function</span> SPECTRE.WORLD.ClosestAirfieldVec2(coal, _vec2, map)
+  <span class="keyword">local</span> _Airfields = SPECTRE.WORLD.GetOwnedAirbaseCoal(coal, map)
+  <span class="keyword">if</span> coal == <span class="number">2</span> <span class="keyword">then</span> coal = <span class="string">"blue"</span> <span class="keyword">end</span>
+  <span class="keyword">if</span> coal == <span class="number">1</span> <span class="keyword">then</span> coal = <span class="string">"red"</span> <span class="keyword">end</span>
+  <span class="keyword">if</span> coal == <span class="number">0</span> <span class="keyword">then</span> coal = <span class="string">"neutral"</span> <span class="keyword">end</span>
+  <span class="keyword">local</span> NearestAirbase = SPECTRE.WORLD.FindNearestAirbaseToPointVec2(_Airfields, _vec2)
+  <span class="keyword">local</span> NearestAirbaseInfo = {
+    Name = NearestAirbase[<span class="number">1</span>],
+    Vec3 = NearestAirbase[<span class="number">2</span>],
+  }
+  <span class="keyword">return</span> NearestAirbaseInfo
+<span class="keyword">end</span>
+
+<span class="comment">---WORLD Misc.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Misc Functions for tracking game data and state.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section WORLD Misc
+</span>
+<span class="comment">--- Find distance between two different Vec2.
+</span><span class="comment">-- @param p1 : Vec2
+</span><span class="comment">--
+</span><span class="comment">--        p1 = { x = #, y = #}
+</span><span class="comment">-- @param p2 : Vec2
+</span><span class="comment">--
+</span><span class="comment">--        p2 = { x = #, y = #}
+</span><a id="212"></a><span class="comment">-- @return distance
+</span><span class="keyword">function</span> SPECTRE.WORLD.f_distance(p1, p2)
+  <span class="keyword">return</span> <span class="global">math</span>.sqrt((p1.x - p2.x)^<span class="number">2</span> + (p1.y - p2.y)^<span class="number">2</span>)
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-06-15 13:10:10 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

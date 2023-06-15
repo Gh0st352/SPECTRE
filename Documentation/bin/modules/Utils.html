@@ -1,0 +1,610 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Utils">Utils </a></li>
+<li><a href="#Utils_Table_Functions">Utils Table Functions </a></li>
+<li><a href="#Utils_Misc_Functions">Utils Misc Functions </a></li>
+<li><a href="#Utils_SSB_Functions">Utils SSB Functions </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/DYNAMIC_SPAWNER.html">DYNAMIC_SPAWNER</a></li>
+  <li><a href="../modules/FileIO.html">FileIO</a></li>
+  <li><a href="../modules/OBJECT.html">OBJECT</a></li>
+  <li><a href="../modules/PLAYER_MANAGER.html">PLAYER_MANAGER</a></li>
+  <li><a href="../modules/POINT_MANAGER.html">POINT_MANAGER</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><strong>Utils</strong></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>Utils</code></h1>
+<p><strong>SPECTRE.Utils</strong></p>
+
+<p> Utilities included in and part of SPECTRE.</p>
+<p>
+
+
+<hr/>
+
+<pre>
+<a href="../modules/SPECTRE.html#">SPECTRE</a> <span class="comment">---&gt; <a href="../modules/Utils.html#SPECTRE.Utils">SPECTRE.Utils</a></span>
+</pre>
+
+<hr/>
+
+<p>  <strong><em>Utils for SPECTRE.</em></strong></p>
+
+<ul>
+    <li><p>The Utils Class.</p></li>
+    <li><p>All aspects of the Utils are accessed via this class.</p></li>
+</ul>
+
+
+<pre>
+<span class="comment">-- lorem ipsum</span>
+</pre>
+
+<hr/>
+
+</p>
+
+
+<h2><a href="#Utils">Utils </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils">SPECTRE.Utils</a></td>
+	<td class="summary">
+<h3>Utils</h3>
+<hr/>
+
+<pre><code>  Utilities included in and part of SPECTRE.
+</code></pre>
+</td>
+	</tr>
+</table>
+<h2><a href="#Utils_Table_Functions">Utils Table Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.table_contains">SPECTRE.Utils.table_contains(table, Key_element)</a></td>
+	<td class="summary">Check if table contains element.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.merge">SPECTRE.Utils.merge(t1, t2)</a></td>
+	<td class="summary">Merge 2 Tables.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.CountValues">SPECTRE.Utils.CountValues(table)</a></td>
+	<td class="summary">Counts occurances of values in a Table.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.Shuffle">SPECTRE.Utils.Shuffle(t)</a></td>
+	<td class="summary">Shuffles a Table.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.PickRandomFromTable">SPECTRE.Utils.PickRandomFromTable(t)</a></td>
+	<td class="summary">Pick Random From Table.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.getIndex">SPECTRE.Utils.getIndex(tab, val)</a></td>
+	<td class="summary">Gets the index of a value in a table.</td>
+	</tr>
+</table>
+<h2><a href="#Utils_Misc_Functions">Utils Misc Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.DeleteUnitsInZone">SPECTRE.Utils.DeleteUnitsInZone(zoneName, coalition, eventFlag)</a></td>
+	<td class="summary">Deletes all ground units of a coalition in a zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.Ticker">SPECTRE.Utils.Ticker(Resource, Operation)</a></td>
+	<td class="summary">Modify a Counter.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.AirfieldNameConvert">SPECTRE.Utils.AirfieldNameConvert(PlaceName)</a></td>
+	<td class="summary">Convert PlaceName from OnEventBaseCaptured to match AirfieldName in AIRBASE class.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.trunc">SPECTRE.Utils.trunc(num, digits)</a></td>
+	<td class="summary">Truncate a number's decimal to a specified amount of digits.</td>
+	</tr>
+</table>
+<h2><a href="#Utils_SSB_Functions">Utils SSB Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.Utils.SlotEnableDisable">SPECTRE.Utils.SlotEnableDisable(AircraftList, field, flag, startNum, endNum)</a></td>
+	<td class="summary">Enable/Disable Slot for player aircraft based on a known group naming convention.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Utils"></a>Utils </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Utilities included in and part of SPECTRE.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.Utils"></a>
+    <strong>SPECTRE.Utils</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#47">line 47</a>
+    </dt>
+    <dd>
+
+<h3>Utils</h3>
+<hr/>
+
+<pre><code>  Utilities included in and part of SPECTRE.
+</code></pre>
+
+<ul>
+    <li><p>Utils for SPECTRE</p></li>
+    <li><p>The Utils Class.</p></li>
+    <li><p>All aspects of the Utils are accessed via this class.</p></li>
+</ul>
+
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">Utils</span>
+
+
+
+        </li>
+        <li><span class="parameter">ClassName</span>
+         SPECTRE.OBJECT.Utils
+        </li>
+        <li><span class="parameter">ClassID</span>
+         The ID number of the class.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Utils_Table_Functions"></a>Utils Table Functions </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Table Manipulation Functions associated with the class.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.Utils.table_contains"></a>
+    <strong>SPECTRE.Utils.table_contains(table, Key_element)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#65">line 65</a>
+    </dt>
+    <dd>
+    Check if table contains element.
+ If contains, Return True
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">table</span>
+         table to check
+        </li>
+        <li><span class="parameter">Key_element</span>
+         what to check for
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        return true or false
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.merge"></a>
+    <strong>SPECTRE.Utils.merge(t1, t2)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#78">line 78</a>
+    </dt>
+    <dd>
+    Merge 2 Tables.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t1</span>
+         : Table 1 (to be added to)
+        </li>
+        <li><span class="parameter">t2</span>
+         : Table 2 (To be added to Table 1)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        t1
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.CountValues"></a>
+    <strong>SPECTRE.Utils.CountValues(table)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#96">line 96</a>
+    </dt>
+    <dd>
+    Counts occurances of values in a Table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">table</span>
+
+<p> : Table to be checked</p>
+
+<pre><code>  Table t = {"string", "string", ..., n,}
+</code></pre>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<p>counts : table of occurances</p>
+
+<pre><code>  Table: counts = { [occurance1] = #times occured, ... }
+</code></pre>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.Shuffle"></a>
+    <strong>SPECTRE.Utils.Shuffle(t)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#107">line 107</a>
+    </dt>
+    <dd>
+    Shuffles a Table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+         : Table to be shuffled
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        s : Shuffled table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.PickRandomFromTable"></a>
+    <strong>SPECTRE.Utils.PickRandomFromTable(t)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#120">line 120</a>
+    </dt>
+    <dd>
+    Pick Random From Table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">t</span>
+         : Table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        s : picked value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.getIndex"></a>
+    <strong>SPECTRE.Utils.getIndex(tab, val)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#129">line 129</a>
+    </dt>
+    <dd>
+    Gets the index of a value in a table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tab</span>
+         : table
+        </li>
+        <li><span class="parameter">val</span>
+         : value
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        index : index of value in table or nil
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Utils_Misc_Functions"></a>Utils Misc Functions </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Misc Functions associated with the class.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.Utils.DeleteUnitsInZone"></a>
+    <strong>SPECTRE.Utils.DeleteUnitsInZone(zoneName, coalition, eventFlag)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#156">line 156</a>
+    </dt>
+    <dd>
+    Deletes all ground units of a coalition in a zone. </p>
+
+<p> Provide a ZONE_RADIUS zoneName, and a coalition.</p>
+
+<p> May also provide an eventFlag to raise event when destroying units.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">zoneName</span>
+         : ZONE_RADIUS zoneName
+        </li>
+        <li><span class="parameter">coalition</span>
+         : Takes "red" or "blue" or "neutral"
+        </li>
+        <li><span class="parameter">eventFlag</span>
+         : optional true, false, or nil
+ Defaults to true if not provided.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.Ticker"></a>
+    <strong>SPECTRE.Utils.Ticker(Resource, Operation)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#172">line 172</a>
+    </dt>
+    <dd>
+    Modify a Counter.
+ add or subtract 1
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Resource</span>
+         : The counter to be modified
+        </li>
+        <li><span class="parameter">Operation</span>
+         : Takes "add" or "sub"
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value : new value of resource
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.AirfieldNameConvert"></a>
+    <strong>SPECTRE.Utils.AirfieldNameConvert(PlaceName)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#188">line 188</a>
+    </dt>
+    <dd>
+    Convert PlaceName from OnEventBaseCaptured to match AirfieldName in AIRBASE class.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">PlaceName</span>
+         Paramter returned from OnEventBaseCaptured.place event data
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        output : Converted name to Airfield name list format
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.Utils.trunc"></a>
+    <strong>SPECTRE.Utils.trunc(num, digits)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#202">line 202</a>
+    </dt>
+    <dd>
+    Truncate a number's decimal to a specified amount of digits.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">num</span>
+         number to do work on.
+        </li>
+        <li><span class="parameter">digits</span>
+         amount of digits to truncate decimal to.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        output : worked on number
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Utils_SSB_Functions"></a>Utils SSB Functions </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with SSB.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.Utils.SlotEnableDisable"></a>
+    <strong>SPECTRE.Utils.SlotEnableDisable(AircraftList, field, flag, startNum, endNum)</strong>
+    <a style="float:right;" href="../source/Utils.lua.html#229">line 229</a>
+    </dt>
+    <dd>
+    Enable/Disable Slot for player aircraft based on a known group naming convention. </p>
+
+<p> Player Aircraft slots must be named in the format:</p>
+
+<pre><code>   "field .. aircraft .. number"
+</code></pre>
+
+<p> EX. Name of group to be enabled: "Abu_F18-1"
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">AircraftList</span>
+         Table of all aircraft types names, EX. {"_F18-", "_F16-", ... }
+        </li>
+        <li><span class="parameter">field</span>
+         The airfield denotation of group name, EX. "Abu"
+        </li>
+        <li><span class="parameter">flag</span>
+         Flag value for SSB enable/Disable, EX. 0
+        </li>
+        <li><span class="parameter">startNum</span>
+         starting number value, EX. 1
+        </li>
+        <li><span class="parameter">endNum</span>
+         End Number Value, EX. 4
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-06-15 13:10:10 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/dynamic_spawner.lua.html">dynamic_spawner.lua</a></li>
+  <li><a href="../source/fileio.lua.html">fileio.lua</a></li>
+  <li><a href="../source/object.lua.html">object.lua</a></li>
+  <li><a href="../source/player_manager.lua.html">player_manager.lua</a></li>
+  <li><a href="../source/point_manager.lua.html">point_manager.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><strong>utils.lua</strong></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/DYNAMIC_SPAWNER.html">DYNAMIC_SPAWNER</a></li>
+  <li><a href="../modules/FileIO.html">FileIO</a></li>
+  <li><a href="../modules/OBJECT.html">OBJECT</a></li>
+  <li><a href="../modules/PLAYER_MANAGER.html">PLAYER_MANAGER</a></li>
+  <li><a href="../modules/POINT_MANAGER.html">POINT_MANAGER</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/Utils.html">Utils</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>utils.lua</h2>
+<pre>
+<span class="comment">--- **SPECTRE.Utils**
+</span><span class="comment">--
+</span><span class="comment">-- Utilities included in and part of SPECTRE.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--      <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; ???
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--  ***Utils for SPECTRE.***
+</span><span class="comment">--
+</span><span class="comment">--   * The Utils Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the Utils are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">--     -- lorem ipsum
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--
+</span><span class="comment">-- @module Utils
+</span><span class="comment">-- @extends SPECTRE
+</span>
+env.info(<span class="string">" *** LOAD S.P.E.C.T.R.E. - Utils *** "</span>)
+
+<span class="comment">---Utils.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Utilities included in and part of SPECTRE.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section Utils
+</span>
+<span class="comment">--- ###Utils
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--      Utilities included in and part of SPECTRE.
+</span><span class="comment">--
+</span><span class="comment">-- * Utils for SPECTRE
+</span><span class="comment">--
+</span><span class="comment">--   * The Utils Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the Utils are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">-- @field #Utils
+</span><span class="comment">-- @field ClassName SPECTRE.OBJECT.Utils
+</span><a id="47"></a><span class="comment">-- @field ClassID The ID number of the class.
+</span>SPECTRE.Utils = {
+  ClassName = <span class="string">"Utils"</span>,
+  ClassID = <span class="number">0</span>,
+}
+
+<span class="comment">---Utils Table Functions.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *All Table Manipulation Functions associated with the class.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section Utils Table Functions
+</span>
+<span class="comment">--- Check if table contains element.
+</span><span class="comment">-- If contains, Return True
+</span><span class="comment">-- @param table table to check
+</span><span class="comment">-- @param Key_element what to check for
+</span><a id="65"></a><span class="comment">-- @return return true or false
+</span><span class="keyword">function</span> SPECTRE.Utils.table_contains(<span class="global">table</span>, Key_element)
+  <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="global">pairs</span>(<span class="global">table</span>) <span class="keyword">do</span>
+    <span class="keyword">if</span> key == Key_element <span class="keyword">then</span>
+      <span class="keyword">return</span> <span class="keyword">true</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> <span class="keyword">false</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Merge 2 Tables.
+</span><span class="comment">-- @param t1 : Table 1 (to be added to)
+</span><span class="comment">-- @param t2 : Table 2 (To be added to Table 1)
+</span><a id="78"></a><span class="comment">-- @return t1
+</span><span class="keyword">function</span> SPECTRE.Utils.merge(t1, t2)
+  <span class="keyword">for</span> k, v <span class="keyword">in</span> <span class="global">pairs</span>(t2) <span class="keyword">do</span>
+    <span class="keyword">if</span> (<span class="global">type</span>(v) == <span class="string">"table"</span>) <span class="keyword">and</span> (<span class="global">type</span>(t1[k] <span class="keyword">or</span> <span class="keyword">false</span>) == <span class="string">"table"</span>) <span class="keyword">then</span>
+      SPECTRE.Utils.merge(t1[k], t2[k])
+    <span class="keyword">else</span>
+      t1[k] = v
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> t1
+<span class="keyword">end</span>
+
+<span class="comment">---Counts occurances of values in a Table.
+</span><span class="comment">-- @param table : Table to be checked
+</span><span class="comment">--
+</span><span class="comment">--      Table t = {"string", "string", ..., n,}
+</span><span class="comment">-- @return counts : table of occurances
+</span><span class="comment">--
+</span><a id="96"></a><span class="comment">--      Table: counts = { [occurance1] = #times occured, ... }
+</span><span class="keyword">function</span> SPECTRE.Utils.CountValues(<span class="global">table</span>)
+  <span class="keyword">local</span> counts = {}
+  <span class="keyword">for</span> _, v <span class="keyword">in</span> <span class="global">ipairs</span>(<span class="global">table</span>) <span class="keyword">do</span>
+    counts[v] = counts[v] <span class="keyword">and</span> counts[v] + <span class="number">1</span> <span class="keyword">or</span> <span class="number">1</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> counts
+<span class="keyword">end</span>
+
+<span class="comment">---Shuffles a Table.
+</span><span class="comment">-- @param t : Table to be shuffled
+</span><a id="107"></a><span class="comment">-- @return s : Shuffled table
+</span><span class="keyword">function</span> SPECTRE.Utils.Shuffle(t)
+  <span class="keyword">local</span> s = {}
+  <span class="keyword">for</span> i = <span class="number">1</span>, #t <span class="keyword">do</span> s[i] = t[i] <span class="keyword">end</span>
+  <span class="keyword">for</span> i = #t, <span class="number">2</span>, -<span class="number">1</span> <span class="keyword">do</span>
+    <span class="keyword">local</span> j = <span class="global">math</span>.random(i)
+    s[i], s[j] = s[j], s[i]
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> s
+<span class="keyword">end</span>
+
+<span class="comment">---Pick Random From Table.
+</span><span class="comment">-- @param t : Table
+</span><a id="120"></a><span class="comment">-- @return s : picked value
+</span><span class="keyword">function</span> SPECTRE.Utils.PickRandomFromTable(t)
+  <span class="keyword">local</span> s = t[ <span class="global">math</span>.random( #t )]
+  <span class="keyword">return</span> s
+<span class="keyword">end</span>
+
+<span class="comment">---Gets the index of a value in a table.
+</span><span class="comment">-- @param tab : table
+</span><span class="comment">-- @param val : value
+</span><a id="129"></a><span class="comment">-- @return index : index of value in table or nil
+</span><span class="keyword">function</span> SPECTRE.Utils.getIndex(tab, val)
+  <span class="keyword">local</span> index = <span class="keyword">nil</span>
+  <span class="keyword">for</span> i, v <span class="keyword">in</span> <span class="global">ipairs</span> (tab) <span class="keyword">do</span>
+    <span class="keyword">if</span> (v == val) <span class="keyword">then</span>
+      index = i
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> index
+<span class="keyword">end</span>
+
+<span class="comment">---Utils Misc Functions.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *All Misc Functions associated with the class.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section Utils Misc Functions
+</span>
+<span class="comment">--- Deletes all ground units of a coalition in a zone.
+</span><span class="comment">--
+</span><span class="comment">-- Provide a ZONE_RADIUS zoneName, and a coalition.
+</span><span class="comment">--
+</span><span class="comment">-- May also provide an eventFlag to raise event when destroying units.
+</span><span class="comment">-- @param zoneName : ZONE_RADIUS zoneName
+</span><span class="comment">-- @param coalition : Takes "red" or "blue" or "neutral"
+</span><span class="comment">-- @param eventFlag : optional true, false, or nil
+</span><a id="156"></a><span class="comment">-- Defaults to true if not provided.
+</span><span class="keyword">function</span> SPECTRE.Utils.DeleteUnitsInZone(zoneName, coalition, eventFlag)
+    eventFlag = eventFlag <span class="keyword">or</span> <span class="keyword">true</span>
+    <span class="keyword">local</span> Zone_ = ZONE:FindByName(zoneName)
+    <span class="keyword">local</span> ZoneSet = SET_GROUP:New():FilterZones({Zone_}):FilterCoalitions(coalition):FilterCategoryGround():FilterOnce()
+    <span class="keyword">local</span> <span class="keyword">function</span> DelGroup (__group)
+      __group:Destroy(eventFlag)
+    <span class="keyword">end</span>
+    ZoneSet:ForEachGroup(DelGroup)
+<span class="keyword">end</span>
+
+
+<span class="comment">--- Modify a Counter.
+</span><span class="comment">-- add or subtract 1
+</span><span class="comment">-- @param Resource : The counter to be modified
+</span><span class="comment">-- @param Operation : Takes "add" or "sub"
+</span><a id="172"></a><span class="comment">-- @return value : new value of resource
+</span><span class="keyword">function</span> SPECTRE.Utils.Ticker(Resource, Operation)
+  <span class="keyword">local</span> value = Resource
+  <span class="keyword">if</span> Operation == <span class="string">"add"</span> <span class="keyword">then</span>
+    value = value + <span class="number">1</span>
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> Operation == <span class="string">"sub"</span> <span class="keyword">then</span>
+    <span class="keyword">if</span> value ~= <span class="number">0</span> <span class="keyword">then</span>
+      value = value - <span class="number">1</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> value
+<span class="keyword">end</span>
+
+<span class="comment">--- Convert PlaceName from OnEventBaseCaptured to match AirfieldName in AIRBASE class.
+</span><span class="comment">-- @param PlaceName Paramter returned from OnEventBaseCaptured.place event data
+</span><a id="188"></a><span class="comment">-- @return output : Converted name to Airfield name list format
+</span><span class="keyword">function</span> SPECTRE.Utils.AirfieldNameConvert(PlaceName)
+  <span class="comment">-- Replace "-" with "_"
+</span>  <span class="keyword">local</span> sub1 = <span class="global">string</span>.gsub(PlaceName, <span class="string">'-'</span>, <span class="string">'_'</span>)
+  <span class="comment">-- Replace " " with "_"
+</span>  <span class="keyword">local</span> sub2 = <span class="global">string</span>.gsub(sub1, <span class="string">' '</span>, <span class="string">'_'</span>)
+  <span class="comment">-- Remove '
+</span>  <span class="keyword">local</span> output = <span class="global">string</span>.gsub(sub2, <span class="string">'\''</span>, <span class="string">''</span>)
+  <span class="keyword">return</span> output
+<span class="keyword">end</span>
+
+<span class="comment">--- Truncate a number's decimal to a specified amount of digits.
+</span><span class="comment">-- @param num number to do work on.
+</span><span class="comment">-- @param digits amount of digits to truncate decimal to.
+</span><a id="202"></a><span class="comment">-- @return output : worked on number
+</span><span class="keyword">function</span> SPECTRE.Utils.trunc(num, digits)
+  <span class="keyword">local</span> mult = <span class="number">10</span>^(digits)
+  <span class="keyword">local</span> output = <span class="global">math</span>.modf(num*mult)/mult
+  <span class="keyword">return</span> output
+<span class="keyword">end</span>
+
+<span class="comment">---Utils SSB Functions.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *All Functions associated with SSB.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section Utils SSB Functions
+</span>
+<span class="comment">--- Enable/Disable Slot for player aircraft based on a known group naming convention.
+</span><span class="comment">--
+</span><span class="comment">-- Player Aircraft slots must be named in the format:
+</span><span class="comment">--
+</span><span class="comment">--       "field .. aircraft .. number"
+</span><span class="comment">--
+</span><span class="comment">-- EX. Name of group to be enabled: "Abu_F18-1"
+</span><span class="comment">--
+</span><span class="comment">-- @param AircraftList Table of all aircraft types names, EX. {"\_F18-", "_F16-", ... }
+</span><span class="comment">-- @param field The airfield denotation of group name, EX. "Abu"
+</span><span class="comment">-- @param flag Flag value for SSB enable/Disable, EX. 0
+</span><span class="comment">-- @param startNum starting number value, EX. 1
+</span><a id="229"></a><span class="comment">-- @param endNum End Number Value, EX. 4
+</span><span class="keyword">function</span> SPECTRE.Utils.SlotEnableDisable(AircraftList, field, flag, startNum, endNum)
+  startNum = startNum <span class="keyword">or</span> <span class="keyword">nil</span>
+  endNum = endNum <span class="keyword">or</span> <span class="keyword">nil</span>
+  <span class="keyword">for</span> AircraftListCount = <span class="number">1</span>, #AircraftList, <span class="number">1</span> <span class="keyword">do</span>
+    <span class="keyword">local</span> aircraft = AircraftList[AircraftListCount]
+    <span class="keyword">for</span> _iCounter = startNum,endNum,<span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">local</span> number = <span class="global">tostring</span>(_iCounter)
+      trigger.action.setUserFlag(field .. aircraft .. number,flag)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-06-15 13:10:10 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

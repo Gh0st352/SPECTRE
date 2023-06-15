@@ -1,2 +1,2 @@
-# SPECTRE
-Special Purpose Extension for Creating Truly Reactive Environments
+# SPECTRE_DEV
+Dev Environment for S.P.E.C.T.R.E. 

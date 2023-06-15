@@ -1,0 +1,402 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#FileIO">FileIO </a></li>
+<li><a href="#FileIO_functions">FileIO functions </a></li>
+<li><a href="#FileIO_persistence">FileIO.persistence </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/DYNAMIC_SPAWNER.html">DYNAMIC_SPAWNER</a></li>
+  <li><strong>FileIO</strong></li>
+  <li><a href="../modules/OBJECT.html">OBJECT</a></li>
+  <li><a href="../modules/PLAYER_MANAGER.html">PLAYER_MANAGER</a></li>
+  <li><a href="../modules/POINT_MANAGER.html">POINT_MANAGER</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/Utils.html">Utils</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>FileIO</code></h1>
+<p><strong>SPECTRE.FileIO</strong> </p>
+
+<p> File Input/Output operations for tracking game data.</p>
+<p>
+
+
+<hr/>
+
+<pre>
+<a href="../modules/SPECTRE.html#">SPECTRE</a> <span class="comment">---&gt; <a href="../modules/FileIO.html#SPECTRE.FileIO">SPECTRE.FileIO</a></span>
+</pre>
+
+<hr/>
+
+<p>  <strong><em>FileIO for SPECTRE.</em></strong></p>
+
+<ul>
+    <li><p>The FileIO Class.</p></li>
+    <li><p>All aspects of the FileIO are accessed via this class.</p></li>
+</ul>
+
+
+<pre>
+<span class="comment">-- Send table Data from DCS -&gt; text file.
+</span><span class="comment">-- Import table Data from text file -&gt; DCS
+</span><span class="comment">-- Store and retrieve various aspects of SPECTRE.</span>
+</pre>
+
+<hr/>
+
+</p>
+
+
+<h2><a href="#FileIO">FileIO </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.FileIO">SPECTRE.FileIO</a></td>
+	<td class="summary">
+<h3>FileIO</h3>
+<hr/>
+
+<pre><code>  File Input/Output operations for tracking game data.
+</code></pre>
+</td>
+	</tr>
+</table>
+<h2><a href="#FileIO_functions">FileIO functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.FileIO.StoreGroundResourceData">SPECTRE.FileIO.StoreGroundResourceData(GroundDataTable)</a></td>
+	<td class="summary">Access and store info from GetGroundResourceData from PlayerManagerMod.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.FileIO.file_exists">SPECTRE.FileIO.file_exists(filePath)</a></td>
+	<td class="summary">Checks if a specific file exists.</td>
+	</tr>
+</table>
+<h2><a href="#FileIO_persistence">FileIO.persistence </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.FileIO.persistence">SPECTRE.FileIO.persistence</a></td>
+	<td class="summary">
+<h3>Houses methods for interacting with files outside of the game.</h3>
+</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.FileIO.persistence.dump">SPECTRE.FileIO.persistence.dump(o)</a></td>
+	<td class="summary">Convert table to string to output to console.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.FileIO.persistence.store">SPECTRE.FileIO.persistence.store(path, ...)</a></td>
+	<td class="summary">Store table output to file.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.FileIO.persistence.load">SPECTRE.FileIO.persistence.load(path)</a></td>
+	<td class="summary">Load table data from file to table.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="FileIO"></a>FileIO </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>File Input/Output operations for tracking game data.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.FileIO"></a>
+    <strong>SPECTRE.FileIO</strong>
+    <a style="float:right;" href="../source/FileIO.lua.html#49">line 49</a>
+    </dt>
+    <dd>
+
+<h3>FileIO</h3>
+<hr/>
+
+<pre><code>  File Input/Output operations for tracking game data.
+</code></pre>
+
+<ul>
+    <li><p>FileIO for SPECTRE</p></li>
+    <li><p>The FileIO Class.</p></li>
+    <li><p>All aspects of the FileIO are accessed via this class.</p></li>
+</ul>
+
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">FileIO</span>
+
+
+
+        </li>
+        <li><span class="parameter">ClassName</span>
+         SPECTRE.OBJECT.FileIO
+        </li>
+        <li><span class="parameter">ClassID</span>
+         The ID number of the class.
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="FileIO_functions"></a>FileIO functions </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+<p> <em>All Functions associated with the class.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.FileIO.StoreGroundResourceData"></a>
+    <strong>SPECTRE.FileIO.StoreGroundResourceData(GroundDataTable)</strong>
+    <a style="float:right;" href="../source/FileIO.lua.html#67">line 67</a>
+    </dt>
+    <dd>
+    Access and store info from GetGroundResourceData from PlayerManagerMod. </p>
+
+<p> REQUIRES PLAYERMANAGERMOD
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">GroundDataTable</span>
+         : GetGroundResourceData from PlayerManagerMod
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        LoadedDatabase : Table of GetGroundResourceData
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.FileIO.file_exists"></a>
+    <strong>SPECTRE.FileIO.file_exists(filePath)</strong>
+    <a style="float:right;" href="../source/FileIO.lua.html#78">line 78</a>
+    </dt>
+    <dd>
+    Checks if a specific file exists.
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filePath</span>
+         : The filepath for the file, PATH + FILE.extension
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        true : File does indeed exist</li>
+        <li>
+        false : File does not exist :(</li>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="FileIO_persistence"></a>FileIO.persistence </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Stores persistence generation functions.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.FileIO.persistence"></a>
+    <strong>SPECTRE.FileIO.persistence</strong>
+    <a style="float:right;" href="../source/FileIO.lua.html#105">line 105</a>
+    </dt>
+    <dd>
+
+<h3>Houses methods for interacting with files outside of the game.</h3>
+<hr/>
+
+<pre><code> -Exports table of data from MissionScripting environment to text file
+ -Imports table of data from text file to MissionScripting environment
+ -Dumps table to string format
+</code></pre>
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">persistence</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.FileIO.persistence.dump"></a>
+    <strong>SPECTRE.FileIO.persistence.dump(o)</strong>
+    <a style="float:right;" href="../source/FileIO.lua.html#110">line 110</a>
+    </dt>
+    <dd>
+    Convert table to string to output to console.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">o</span>
+         : table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        o : String version of table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.FileIO.persistence.store"></a>
+    <strong>SPECTRE.FileIO.persistence.store(path, ...)</strong>
+    <a style="float:right;" href="../source/FileIO.lua.html#126">line 126</a>
+    </dt>
+    <dd>
+    Store table output to file.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+         : filepath
+        </li>
+        <li><span class="parameter">...</span>
+         : data
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.FileIO.persistence.load"></a>
+    <strong>SPECTRE.FileIO.persistence.load(path)</strong>
+    <a style="float:right;" href="../source/FileIO.lua.html#183">line 183</a>
+    </dt>
+    <dd>
+    Load table data from file to table.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+         : filepath
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-06-15 13:10:10 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><strong>ai.lua</strong></li>
+  <li><a href="../source/dynamic_spawner.lua.html">dynamic_spawner.lua</a></li>
+  <li><a href="../source/fileio.lua.html">fileio.lua</a></li>
+  <li><a href="../source/object.lua.html">object.lua</a></li>
+  <li><a href="../source/player_manager.lua.html">player_manager.lua</a></li>
+  <li><a href="../source/point_manager.lua.html">point_manager.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/DYNAMIC_SPAWNER.html">DYNAMIC_SPAWNER</a></li>
+  <li><a href="../modules/FileIO.html">FileIO</a></li>
+  <li><a href="../modules/OBJECT.html">OBJECT</a></li>
+  <li><a href="../modules/PLAYER_MANAGER.html">PLAYER_MANAGER</a></li>
+  <li><a href="../modules/POINT_MANAGER.html">POINT_MANAGER</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/Utils.html">Utils</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>ai.lua</h2>
+<pre>
+<span class="comment">--- **SPECTRE.AI**
+</span><span class="comment">--
+</span><span class="comment">-- The base AI management class.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--      <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; ???
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--  ***A.I. for SPECTRE.***
+</span><span class="comment">--
+</span><span class="comment">--   * The A.I. Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the A.I. are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">--     -- lorem ipsum
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- @module AI
+</span><span class="comment">-- @extends SPECTRE
+</span>
+env.info(<span class="string">" *** LOAD S.P.E.C.T.R.E. - A.I. *** "</span>)
+
+<span class="comment">---A.I..
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Houses all aspects dealing with AI management.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section A.I.
+</span>
+<span class="comment">---###AI
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--     AI unit operations for tracking game data and state.
+</span><span class="comment">--
+</span><span class="comment">-- * Houses all aspects dealing with AI management.
+</span><span class="comment">--
+</span><span class="comment">-- @field #AI
+</span><span class="comment">-- @field ClassName SPECTRE.OBJECT.AI
+</span><a id="43"></a><span class="comment">-- @field ClassID The ID number of the class.
+</span>SPECTRE.AI = {
+  ClassName = <span class="string">"AI"</span>,
+  ClassID = <span class="number">0</span>,
+}
+
+<span class="comment">---Functions.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *All Functions associated with the class.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section Functions
+</span>
+<span class="comment">--- Defines a menu slot to let the escort Join and Follow you at a certain distance.
+</span><span class="comment">-- This menu will appear under **Navigation**.
+</span><span class="comment">-- @param EscortGroup ESCORT group Object
+</span><span class="comment">-- @param Distance The distance in NM that the escort needs to follow the client.
+</span><a id="61"></a><span class="comment">-- @return self
+</span><span class="keyword">function</span> SPECTRE.AI.MenuFollowAtNM( EscortGroup, Distance )
+  <span class="keyword">local</span> DistanceM = UTILS.NMToMeters(Distance)
+  <span class="keyword">local</span> self = EscortGroup
+  self:F(Distance)
+  <span class="keyword">if</span> self.EscortGroup:IsAir() <span class="keyword">then</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> self.EscortMenuReportNavigation <span class="keyword">then</span>
+      self.EscortMenuReportNavigation = MENU_GROUP:New( self.EscortClient:GetGroup(), <span class="string">"Navigation"</span>, self.EscortMenu )
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> self.EscortMenuJoinUpAndFollow <span class="keyword">then</span>
+      self.EscortMenuJoinUpAndFollow = {}
+    <span class="keyword">end</span>
+    self.EscortMenuJoinUpAndFollow[#self.EscortMenuJoinUpAndFollow+<span class="number">1</span>] = MENU_GROUP_COMMAND:New( self.EscortClient:GetGroup(), <span class="string">"Join-Up and Follow at "</span> .. Distance .. <span class="string">"NM"</span>, self.EscortMenuReportNavigation, ESCORT._JoinUpAndFollow, self, DistanceM )
+    self.EscortMode = ESCORT.MODE.FOLLOW
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-06-15 13:10:10 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

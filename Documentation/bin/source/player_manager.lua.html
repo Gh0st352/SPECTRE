@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/dynamic_spawner.lua.html">dynamic_spawner.lua</a></li>
+  <li><a href="../source/fileio.lua.html">fileio.lua</a></li>
+  <li><a href="../source/object.lua.html">object.lua</a></li>
+  <li><strong>player_manager.lua</strong></li>
+  <li><a href="../source/point_manager.lua.html">point_manager.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/DYNAMIC_SPAWNER.html">DYNAMIC_SPAWNER</a></li>
+  <li><a href="../modules/FileIO.html">FileIO</a></li>
+  <li><a href="../modules/OBJECT.html">OBJECT</a></li>
+  <li><a href="../modules/PLAYER_MANAGER.html">PLAYER_MANAGER</a></li>
+  <li><a href="../modules/POINT_MANAGER.html">POINT_MANAGER</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/Utils.html">Utils</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>player_manager.lua</h2>
+<pre>
+<span class="comment">--- **SPECTRE.PLAYER_MANAGER**
+</span><span class="comment">--
+</span><span class="comment">-- Player management and tracking operations.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--      <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; ???
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--  ***PLAYER_MANAGER for SPECTRE.***
+</span><span class="comment">--
+</span><span class="comment">--   * The PLAYER_MANAGER Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the PLAYER_MANAGER are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">--     -- lorum ipsem.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- @module PLAYER_MANAGER
+</span><span class="comment">-- @extends SPECTRE
+</span>
+env.info(<span class="string">" *** LOAD S.P.E.C.T.R.E. - PLAYER_MANAGER *** "</span>)
+<span class="comment">---PLAYER_MANAGER.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Player management and tracking operations.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section PLAYER_MANAGER
+</span>
+<span class="comment">--- ###PLAYER_MANAGER
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">--      Player management and tracking operations.
+</span><span class="comment">--
+</span><span class="comment">-- * PLAYER_MANAGER for SPECTRE
+</span><span class="comment">--
+</span><span class="comment">--   * The PLAYER_MANAGER Class.
+</span><span class="comment">--
+</span><span class="comment">--   * All aspects of the PLAYER_MANAGER are accessed via this class.
+</span><span class="comment">--
+</span><span class="comment">-- @field #PLAYER_MANAGER
+</span><span class="comment">-- @field ClassName SPECTRE.OBJECT.PLAYER_MANAGER
+</span><a id="46"></a><span class="comment">-- @field ClassID The ID number of the class.
+</span>SPECTRE.PLAYER_MANAGER = {
+  ClassName = <span class="string">"PLAYER_MANAGER"</span>,
+  ClassID = <span class="number">0</span>,
+}
+
+<span class="comment">---PLAYER_MANAGER.Funcs.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *All Functions associated with the class.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section PLAYER_MANAGER.Funcs
+</span>
+<span class="comment">--- Clear perm world markers associated with the player.
+</span><span class="comment">--
+</span><span class="comment">-- @param PlayerName Name of player to clear markers for
+</span><span class="comment">-- @param flag Indicates type of markers to clear.
+</span><span class="comment">--
+</span><span class="comment">--        0 = All,
+</span><span class="comment">--        1 = CAP,
+</span><span class="comment">--        2 = Tomahawk,
+</span><span class="comment">--        3 = Bomber,
+</span><span class="comment">--        4 = Airdrop
+</span><a id="70"></a><span class="comment">--
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.ClearWorldMarkers(PlayerName, flag)
+
+  <span class="comment">--cap
+</span>  <span class="keyword">if</span> flag == <span class="number">1</span> <span class="keyword">or</span> flag == <span class="number">0</span> <span class="keyword">then</span>
+    <span class="keyword">for</span> _i = <span class="number">1</span>, #_G[<span class="string">"Player_"</span>.. PlayerName].CAP_Markers.MarkerArrays , <span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">local</span> markID = _G[<span class="string">"Player_"</span>.. PlayerName].CAP_Markers.MarkerArrays[_i].PermMarkerID
+      trigger.action.removeMark(markID)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="comment">--Tomahawk
+</span>  <span class="keyword">if</span> flag == <span class="number">2</span> <span class="keyword">or</span> flag == <span class="number">0</span> <span class="keyword">then</span>
+    <span class="keyword">for</span> _i = <span class="number">1</span>, #_G[<span class="string">"Player_"</span>.. PlayerName].Tomahawk_Markers.MarkerArrays , <span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">local</span> markID = _G[<span class="string">"Player_"</span>.. PlayerName].Tomahawk_Markers.MarkerArrays[_i].PermMarkerID
+      trigger.action.removeMark(markID)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="comment">--Bomber
+</span>  <span class="keyword">if</span> flag == <span class="number">3</span> <span class="keyword">or</span> flag == <span class="number">0</span> <span class="keyword">then</span>
+    <span class="keyword">for</span> _i = <span class="number">1</span>, #_G[<span class="string">"Player_"</span>.. PlayerName].Bomber_Markers.MarkerArrays , <span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">local</span> markID = _G[<span class="string">"Player_"</span>.. PlayerName].Bomber_Markers.MarkerArrays[_i].PermMarkerID
+      trigger.action.removeMark(markID)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="comment">--Airdrop
+</span>  <span class="keyword">if</span> flag == <span class="number">4</span> <span class="keyword">or</span> flag == <span class="number">0</span> <span class="keyword">then</span>
+    <span class="keyword">for</span> _i = <span class="number">1</span>, #_G[<span class="string">"Player_"</span>.. PlayerName].Airdrop_Markers.MarkerArrays , <span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">local</span> markID = _G[<span class="string">"Player_"</span>.. PlayerName].Airdrop_Markers.MarkerArrays[_i].PermMarkerID
+      trigger.action.removeMark(markID)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="comment">--Strike
+</span>  <span class="keyword">if</span> flag == <span class="number">5</span> <span class="keyword">or</span> flag == <span class="number">0</span> <span class="keyword">then</span>
+    <span class="keyword">for</span> _i = <span class="number">1</span>, #_G[<span class="string">"Player_"</span>.. PlayerName].Strike_Markers.MarkerArrays , <span class="number">1</span> <span class="keyword">do</span>
+      <span class="keyword">local</span> markID = _G[<span class="string">"Player_"</span>.. PlayerName].Strike_Markers.MarkerArrays[_i].PermMarkerID
+      trigger.action.removeMark(markID)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Find closest friendly airfield to the unit.
+</span><span class="comment">--
+</span><span class="comment">-- @param PlayerName Name of the unit
+</span><a id="113"></a><span class="comment">-- @return NearestAirbaseInfo The closest airfield to the player
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.ClosestAirfield(PlayerName)
+
+  <span class="keyword">local</span> coal = _G[<span class="string">"Player_"</span>.. PlayerName].Coalition
+
+  <span class="keyword">if</span> coal == <span class="number">2</span> <span class="keyword">then</span> coal = <span class="string">"blue"</span> <span class="keyword">end</span>
+  <span class="keyword">if</span> coal == <span class="number">1</span> <span class="keyword">then</span> coal = <span class="string">"red"</span> <span class="keyword">end</span>
+  <span class="keyword">if</span> coal == <span class="number">0</span> <span class="keyword">then</span> coal = <span class="string">"neutral"</span> <span class="keyword">end</span>
+
+  <span class="keyword">local</span> PlayerUnitName = _G[<span class="string">"Player_"</span>.. PlayerName].UnitName
+  <span class="keyword">local</span> PlayerUnit = UNIT:FindByName(PlayerUnitName)
+  <span class="keyword">local</span> PlayerPosition = PlayerUnit:GetPointVec2()
+
+  <span class="keyword">local</span> Airfields = SET_AIRBASE:New():FilterCoalitions(coal):FilterOnce()
+  <span class="keyword">local</span> NearestAirbase = Airfields:FindNearestAirbaseFromPointVec2(PlayerPosition)
+
+  <span class="keyword">local</span> NearestAirbaseInfo = {
+    Vec3 = NearestAirbase.parking[<span class="number">1</span>].Vec3,
+    Name = NearestAirbase.parking[<span class="number">1</span>].AirbaseName,
+  }
+  <span class="keyword">return</span> NearestAirbaseInfo
+<span class="keyword">end</span>
+
+
+<span class="comment">---Access and return info from GetGroundResourceData from PlayerManagerMod.
+</span><span class="comment">--
+</span><span class="comment">-- REQUIRES PLAYERMANAGERMOD
+</span><span class="comment">--
+</span><a id="141"></a><span class="comment">-- @return LoadedDatabase : Table of GetGroundResourceData
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.GetGroundResourceData()
+  <span class="keyword">local</span> PlayerDatabase_Path  = lfs.writedir() .. <span class="string">"PlayerDatabase/"</span>
+  <span class="keyword">local</span> PlayerDatabase_File = PlayerDatabase_Path .. <span class="string">"/"</span> ..  <span class="string">"GroundResources.lua"</span>
+  <span class="keyword">local</span> LoadedDatabase = SPECTRE.FileIO.persistence.<span class="global">load</span>(PlayerDatabase_File)
+  <span class="keyword">return</span> LoadedDatabase
+<span class="keyword">end</span>
+
+
+<span class="comment">---Set up event handlers for already existing airdropped units.
+</span><span class="comment">--
+</span><span class="comment">-- @param coal coalition to search for units and add event handlers.
+</span><span class="comment">--
+</span><span class="comment">--       takes "blue", "red", or "neutral"
+</span><a id="155"></a><span class="comment">--
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.AddEventHandler_ExistingAirdrop(coal)
+  <span class="keyword">local</span> GroundUnitsSet = SET_GROUP:New():FilterCoalitions(coal):FilterCategoryGround():FilterPrefixes({<span class="string">"TANK_Group_"</span>,<span class="string">"IFV_Group_"</span>,<span class="string">"ARTILLERY_Group_"</span>,<span class="string">"AAA_Group_"</span>,<span class="string">"IRSAM_Group_"</span>,<span class="string">"RDRSAM_Group_"</span>,<span class="string">"EWR_Group_"</span>,<span class="string">"SUPPLY_Group_"</span>}):FilterOnce()
+  <span class="keyword">if</span> GroundUnitsSet ~= <span class="keyword">nil</span> <span class="keyword">then</span>
+    <span class="keyword">if</span> coal == <span class="string">"blue"</span> <span class="keyword">then</span> coal = <span class="number">2</span> <span class="keyword">end</span>
+    <span class="keyword">if</span> coal == <span class="string">"red"</span> <span class="keyword">then</span> coal = <span class="number">1</span> <span class="keyword">end</span>
+    <span class="keyword">if</span> coal == <span class="string">"neutral"</span> <span class="keyword">then</span> coal = <span class="number">0</span> <span class="keyword">end</span>
+    GroundUnitsSet:ForEachGroup(<span class="keyword">function</span>(GroupObject)
+      <span class="keyword">local</span> groupname = GroupObject:GetName()
+      <span class="keyword">local</span> descriptor
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"TANK"</span>) <span class="keyword">then</span> descriptor = <span class="string">"TANK"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"IFV"</span>) <span class="keyword">then</span> descriptor = <span class="string">"IFV"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"ARTILLERY"</span>) <span class="keyword">then</span> descriptor = <span class="string">"ARTILLERY"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"AAA"</span>) <span class="keyword">then</span> descriptor = <span class="string">"AAA"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"IRSAM"</span>) <span class="keyword">then</span> descriptor = <span class="string">"IRSAM"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"RDRSAM"</span>) <span class="keyword">then</span> descriptor = <span class="string">"RDRSAM"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"EWR"</span>) <span class="keyword">then</span> descriptor = <span class="string">"EWR"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="global">string</span>.find(groupname, <span class="string">"SUPPLY"</span>) <span class="keyword">then</span> descriptor = <span class="string">"SUPPLY"</span> <span class="keyword">end</span>
+      <span class="keyword">if</span> coal == <span class="number">2</span>  <span class="keyword">and</span> descriptor == <span class="string">"EWR"</span> <span class="keyword">then</span>
+        blueIADS:addEarlyWarningRadar(groupname .. <span class="string">"-01"</span>)<span class="comment">--:sub(1, -5))
+</span>      <span class="keyword">end</span>
+      GroupObject:HandleEvent(EVENTS.Dead)
+      <span class="keyword">local</span> DroppedDead = <span class="keyword">function</span>(eventData)
+
+        <span class="keyword">if</span> GroupObject:CountAliveUnits() == <span class="number">0</span> <span class="keyword">then</span>
+          MESSAGE:New(descriptor .. <span class="string">" group destroyed! Prepping new assets."</span>, <span class="number">10</span>, <span class="string">"NOTICE"</span>):ToCoalition( coal )
+
+          <span class="keyword">local</span> restockTimer=TIMER:New(<span class="keyword">function</span>()
+            <span class="keyword">if</span> descriptor == <span class="string">"TANK"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Tank"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Tank"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.Tank = COUNTERS.RESTOCK.Airdrop.Tank - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Tank"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> descriptor == <span class="string">"IFV"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_IFV"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_IFV"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.IFV = COUNTERS.RESTOCK.Airdrop.IFV - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_IFV"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> descriptor == <span class="string">"ARTILLERY"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Artillery"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Artillery"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.Artillery = COUNTERS.RESTOCK.Airdrop.Artillery - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Artillery"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> descriptor == <span class="string">"AAA"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_AAA"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_AAA"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.AAA = COUNTERS.RESTOCK.Airdrop.AAA - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_AAA"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> descriptor == <span class="string">"IRSAM"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_SAM_IR"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_SAM_IR"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.SAM_IR = COUNTERS.RESTOCK.Airdrop.SAM_IR - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_SAM_IR"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> descriptor == <span class="string">"RDRSAM"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_SAM_RDR"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_SAM_RDR"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.SAM_RDR = COUNTERS.RESTOCK.Airdrop.SAM_RDR - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_SAM_RDR"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> descriptor == <span class="string">"EWR"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_EWR"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_EWR"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.EWR = COUNTERS.RESTOCK.Airdrop.EWR - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_EWR"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> descriptor == <span class="string">"SUPPLY"</span> <span class="keyword">then</span>
+              RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Supply"</span>] = SPECTRE.Utils.Ticker(RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Supply"</span>],<span class="string">"add"</span>)
+              COUNTERS.RESTOCK.Airdrop.Supply = COUNTERS.RESTOCK.Airdrop.Supply - <span class="number">1</span>
+              <span class="keyword">local</span> report = REPORT:New(<span class="string">"New "</span> .. descriptor .. <span class="string">" group is available for airdrop."</span>)
+              report:AddIndent(descriptor .. <span class="string">" Airdrop Resources available: "</span> .. RESOURCES.Airdrop[<span class="number">1</span>][<span class="string">"_Supply"</span>], <span class="string">"-"</span>)
+              trigger.action.outTextForCoalition(coal,report:Text(), <span class="number">10</span> )
+            <span class="keyword">end</span>
+          <span class="keyword">end</span>, descriptor)
+
+          <span class="keyword">if</span> descriptor == <span class="string">"TANK"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.Tank = COUNTERS.RESTOCK.Airdrop.Tank + <span class="number">1</span>
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> descriptor == <span class="string">"IFV"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.IFV = COUNTERS.RESTOCK.Airdrop.IFV + <span class="number">1</span>
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> descriptor == <span class="string">"ARTILLERY"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.Artillery = COUNTERS.RESTOCK.Airdrop.Artillery + <span class="number">1</span>
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> descriptor == <span class="string">"AAA"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.AAA = COUNTERS.RESTOCK.Airdrop.AAA + <span class="number">1</span>
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> descriptor == <span class="string">"IRSAM"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.SAM_IR = COUNTERS.RESTOCK.Airdrop.SAM_IR + <span class="number">1</span>
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> descriptor == <span class="string">"RDRSAM"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.SAM_RDR = COUNTERS.RESTOCK.Airdrop.SAM_RDR + <span class="number">1</span>
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> descriptor == <span class="string">"EWR"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.EWR = COUNTERS.RESTOCK.Airdrop.EWR + <span class="number">1</span>
+          <span class="keyword">end</span>
+          <span class="keyword">if</span> descriptor == <span class="string">"SUPPLY"</span> <span class="keyword">then</span>
+            COUNTERS.RESTOCK.Airdrop.Supply = COUNTERS.RESTOCK.Airdrop.Supply + <span class="number">1</span>
+          <span class="keyword">end</span>
+          restockTimer:Start(<span class="number">400</span>)
+
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+      <span class="keyword">function</span> GroupObject:OnEventDead(eventData)
+        DroppedDead(eventData)
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>)
+    GroundUnitsSet = <span class="keyword">nil</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">---Access and store info from PlayerDatabase from PlayerManagerMod.
+</span><span class="comment">--
+</span><span class="comment">-- REQUIRES PLAYERMANAGERMOD
+</span><span class="comment">--
+</span><a id="281"></a><span class="comment">-- @param PlayerName_ The playername to search for
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.StorePlayerData(PlayerName_)
+  <span class="keyword">local</span> PlayerDatabase_Path  = lfs.writedir() .. <span class="string">"PlayerDatabase/"</span>
+  <span class="keyword">local</span> PlayerDatabase_File = PlayerDatabase_Path .. <span class="string">"/"</span> ..  <span class="string">"PlayerDatabase.lua"</span>
+  <span class="keyword">local</span> LoadedDatabase = SPECTRE.FileIO.persistence.<span class="global">load</span>(PlayerDatabase_File)
+  <span class="keyword">local</span> PlayerUCID_ = _G[ <span class="string">"Player_"</span>.. PlayerName_].UCID
+  <span class="keyword">local</span> RedPlayerPoints_ = _G[ <span class="string">"Player_"</span>.. PlayerName_].Points.Red <span class="keyword">or</span> <span class="number">0</span>
+  <span class="keyword">local</span> BluePlayerPoints_ = _G[ <span class="string">"Player_"</span>.. PlayerName_].Points.Blue <span class="keyword">or</span> <span class="number">0</span>
+  <span class="keyword">for</span> _i = <span class="number">1</span>, #LoadedDatabase, <span class="number">1</span> <span class="keyword">do</span>
+    <span class="keyword">if</span> LoadedDatabase[_i][<span class="string">"ucid"</span>] == PlayerUCID_ <span class="keyword">then</span>
+      LoadedDatabase[_i][<span class="string">"pointsred"</span>] = RedPlayerPoints_
+      LoadedDatabase[_i][<span class="string">"pointsblue"</span>] = BluePlayerPoints_
+      SPECTRE.FileIO.persistence.store(PlayerDatabase_File, LoadedDatabase)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+<span class="comment">---Access and return info from PlayerDatabase from PlayerManagerMod.
+</span><span class="comment">--
+</span><span class="comment">-- REQUIRES PLAYERMANAGERMOD
+</span><span class="comment">--
+</span><span class="comment">-- @param PlayerName_ The playername to search for
+</span><a id="304"></a><span class="comment">-- @return result : Table of {PlayerUCID\_, PlayerPoints_} for requested player
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.GetPlayerData(PlayerName_)
+  <span class="keyword">local</span> PlayerDatabase_Path  = lfs.writedir() .. <span class="string">"PlayerDatabase/"</span>
+  <span class="keyword">local</span> PlayerDatabase_File = PlayerDatabase_Path .. <span class="string">"/"</span> ..  <span class="string">"PlayerDatabase.lua"</span>
+  <span class="keyword">local</span> LoadedDatabase = SPECTRE.FileIO.persistence.<span class="global">load</span>(PlayerDatabase_File)
+  <span class="keyword">local</span> PlayerUCID_
+  <span class="keyword">local</span> RedPlayerPoints_
+  <span class="keyword">local</span> BluePlayerPoints_
+  <span class="keyword">local</span> result
+  <span class="keyword">for</span> _i = <span class="number">1</span>, #LoadedDatabase, <span class="number">1</span> <span class="keyword">do</span>
+    <span class="keyword">if</span> LoadedDatabase[_i][<span class="string">"name"</span>] == PlayerName_ <span class="keyword">then</span>
+      PlayerUCID_ = LoadedDatabase[_i][<span class="string">"ucid"</span>]
+      RedPlayerPoints_ = LoadedDatabase[_i][<span class="string">"pointsred"</span>]
+      BluePlayerPoints_ = LoadedDatabase[_i][<span class="string">"pointsblue"</span>]
+      result = {PlayerUCID_, RedPlayerPoints_ , BluePlayerPoints_}
+      <span class="keyword">return</span> result
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+<span class="comment">---Setup Tables for Players in the global environment for tracking + operations.
+</span><span class="comment">--
+</span><span class="comment">-- If PlayerTable !exist, create; else update unit/group info for table
+</span><span class="comment">--
+</span><span class="comment">-- Uses PlayerManagerMod database to get UCID + stored points
+</span><span class="comment">--
+</span><a id="331"></a><span class="comment">-- @param SlotData Returned Event inforation from Player Event, EnterAircraft
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.SetupPlayerTable(SlotData)
+  <span class="keyword">local</span> PlayerName = SlotData.IniPlayerName
+  <span class="keyword">if</span> _G[<span class="string">"Player_"</span>.. PlayerName] == SNULL <span class="keyword">then</span>
+    <span class="keyword">local</span> PlayerPersistanceData = SPECTRE.PLAYER_MANAGER.GetPlayerData(PlayerName)
+    <span class="keyword">local</span> PlayerUCID = PlayerPersistanceData[<span class="number">1</span>]
+    <span class="keyword">local</span> PlayerPoints = {Red = PlayerPersistanceData[<span class="number">2</span>], Blue = PlayerPersistanceData[<span class="number">3</span>]}
+    _G[ <span class="string">"Player_"</span>.. PlayerName] = {}
+    _G[ <span class="string">"Player_"</span>.. PlayerName].PlayerID_ = SlotData.initiator.id_
+    _G[ <span class="string">"Player_"</span>.. PlayerName].GroupID_ = SlotData.IniDCSGroup.id_
+    _G[ <span class="string">"Player_"</span>.. PlayerName].PlayerName = SlotData.IniPlayerName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].GroupName = SlotData.IniGroupName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].UnitName = SlotData.IniUnitName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].UnitType = SlotData.IniTypeName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Coalition = SlotData.IniCoalition
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Points = PlayerPoints
+    _G[ <span class="string">"Player_"</span>.. PlayerName].UCID = PlayerUCID
+    _G[ <span class="string">"Player_"</span>.. PlayerName].CAP_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Tomahawk_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Bomber_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Airdrop_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Escort_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Strike_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+  <span class="keyword">else</span>
+    <span class="keyword">local</span> PlayerPersistanceData = SPECTRE.PLAYER_MANAGER.GetPlayerData(PlayerName)
+    <span class="keyword">local</span> PlayerUCID = PlayerPersistanceData[<span class="number">1</span>]
+    <span class="keyword">local</span> PlayerPoints = {Red = PlayerPersistanceData[<span class="number">2</span>], Blue = PlayerPersistanceData[<span class="number">3</span>]}
+    _G[ <span class="string">"Player_"</span>.. PlayerName].PlayerID_ = SlotData.initiator.id_
+    _G[ <span class="string">"Player_"</span>.. PlayerName].GroupID_ = SlotData.IniDCSGroup.id_
+    _G[ <span class="string">"Player_"</span>.. PlayerName].PlayerName = SlotData.IniPlayerName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].GroupName = SlotData.IniGroupName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].UnitName = SlotData.IniUnitName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].UnitType = SlotData.IniTypeName
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Coalition = SlotData.IniCoalition
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Points = PlayerPoints
+    _G[ <span class="string">"Player_"</span>.. PlayerName].UCID = PlayerUCID
+    _G[ <span class="string">"Player_"</span>.. PlayerName].CAP_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Tomahawk_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Bomber_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Airdrop_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Escort_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+    _G[ <span class="string">"Player_"</span>.. PlayerName].Strike_Markers = {
+      MarkerArrays = {},
+      MenuArrays = {}
+    }
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- Limits the maximum amount of marks able to be stored.
+</span><span class="comment">--
+</span><span class="comment">-- Removes oldest marker from map and marker table.
+</span><span class="comment">--
+</span><span class="comment">-- @param type : Type of Marker to Remove
+</span><span class="comment">--
+</span><span class="comment">--       Takes:
+</span><span class="comment">--       "CAP_Markers", "Bomber_Markers", "Tomahawk_Markers", "Airdrop_Markers"
+</span><span class="comment">--
+</span><span class="comment">-- @param PlayerName : PlayerName for operation
+</span><a id="422"></a><span class="comment">-- @param limit : Total amount of markers to allow
+</span><span class="keyword">function</span> SPECTRE.PLAYER_MANAGER.LimitMaxMarkers(<span class="global">type</span>, PlayerName, limit)
+  <span class="keyword">if</span> <span class="global">type</span> == <span class="string">"CAP_Markers"</span> <span class="keyword">then</span>
+    <span class="keyword">local</span> CurrentAmountMarkers = #_G[<span class="string">"Player_"</span>.. PlayerName].CAP_Markers.MarkerArrays
+    <span class="keyword">local</span> AmountToRemove = CurrentAmountMarkers - limit
+    <span class="keyword">if</span> AmountToRemove &gt; <span class="number">0</span> <span class="keyword">then</span>
+      <span class="keyword">for</span> _i = <span class="number">1</span>, AmountToRemove, <span class="number">1</span> <span class="keyword">do</span>
+        trigger.action.removeMark(_G[<span class="string">"Player_"</span>.. PlayerName].CAP_Markers.MarkerArrays[<span class="number">1</span>].PermMarkerID)
+        <span class="global">table</span>.remove(_G[<span class="string">"Player_"</span>.. PlayerName].CAP_Markers.MarkerArrays,<span class="number">1</span>)
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> <span class="global">type</span> == <span class="string">"Bomber_Markers"</span> <span class="keyword">then</span>
+    <span class="keyword">local</span> CurrentAmountMarkers = #_G[<span class="string">"Player_"</span>.. PlayerName].Bomber_Markers.MarkerArrays
+    <span class="keyword">local</span> AmountToRemove = CurrentAmountMarkers - limit
+    <span class="keyword">if</span> AmountToRemove &gt; <span class="number">0</span> <span class="keyword">then</span>
+      <span class="keyword">for</span> _i = <span class="number">1</span>, AmountToRemove, <span class="number">1</span> <span class="keyword">do</span>
+        trigger.action.removeMark(_G[<span class="string">"Player_"</span>.. PlayerName].Bomber_Markers.MarkerArrays[<span class="number">1</span>].PermMarkerID)
+        <span class="global">table</span>.remove(_G[<span class="string">"Player_"</span>.. PlayerName].Bomber_Markers.MarkerArrays,<span class="number">1</span>)
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> <span class="global">type</span> == <span class="string">"Tomahawk_Markers"</span> <span class="keyword">then</span>
+    <span class="keyword">local</span> CurrentAmountMarkers = #_G[<span class="string">"Player_"</span>.. PlayerName].Tomahawk_Markers.MarkerArrays
+    <span class="keyword">local</span> AmountToRemove = CurrentAmountMarkers - limit
+    <span class="keyword">if</span> AmountToRemove &gt; <span class="number">0</span> <span class="keyword">then</span>
+      <span class="keyword">for</span> _i = <span class="number">1</span>, AmountToRemove, <span class="number">1</span> <span class="keyword">do</span>
+        trigger.action.removeMark(_G[<span class="string">"Player_"</span>.. PlayerName].Tomahawk_Markers.MarkerArrays[<span class="number">1</span>].PermMarkerID)
+        <span class="global">table</span>.remove(_G[<span class="string">"Player_"</span>.. PlayerName].Tomahawk_Markers.MarkerArrays,<span class="number">1</span>)
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> <span class="global">type</span> == <span class="string">"Airdrop_Markers"</span> <span class="keyword">then</span>
+    <span class="keyword">local</span> CurrentAmountMarkers = #_G[<span class="string">"Player_"</span>.. PlayerName].Airdrop_Markers.MarkerArrays
+    <span class="keyword">local</span> AmountToRemove = CurrentAmountMarkers - limit
+    <span class="keyword">if</span> AmountToRemove &gt; <span class="number">0</span> <span class="keyword">then</span>
+      <span class="keyword">for</span> _i = <span class="number">1</span>, AmountToRemove, <span class="number">1</span> <span class="keyword">do</span>
+        trigger.action.removeMark(_G[<span class="string">"Player_"</span>.. PlayerName].Airdrop_Markers.MarkerArrays[<span class="number">1</span>].PermMarkerID)
+        <span class="global">table</span>.remove(_G[<span class="string">"Player_"</span>.. PlayerName].Airdrop_Markers.MarkerArrays,<span class="number">1</span>)
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">if</span> <span class="global">type</span> == <span class="string">"Strike_Markers"</span> <span class="keyword">then</span>
+    <span class="keyword">local</span> CurrentAmountMarkers = #_G[<span class="string">"Player_"</span>.. PlayerName].Strike_Markers.MarkerArrays
+    <span class="keyword">local</span> AmountToRemove = CurrentAmountMarkers - limit
+    <span class="keyword">if</span> AmountToRemove &gt; <span class="number">0</span> <span class="keyword">then</span>
+      <span class="keyword">for</span> _i = <span class="number">1</span>, AmountToRemove, <span class="number">1</span> <span class="keyword">do</span>
+        trigger.action.removeMark(_G[<span class="string">"Player_"</span>.. PlayerName].Strike_Markers.MarkerArrays[<span class="number">1</span>].PermMarkerID)
+        <span class="global">table</span>.remove(_G[<span class="string">"Player_"</span>.. PlayerName].Strike_Markers.MarkerArrays,<span class="number">1</span>)
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-06-15 13:10:10 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
