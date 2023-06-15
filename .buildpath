@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry kind="src" path="Scripts"/>
+	<buildpathentry kind="src" path="Release"/>
 </buildpath>
