@@ -20,7 +20,7 @@ All features of SPECTRE automatically account for and work with multi-coalition 
 - Utilizes DBSCAN Clustering Algorithm to contribute to mission learning.
 - System is capable of using the determined clusters to decide course of action for mission zones based on cluster information.
 - Currently used in Hotspot, Intel, and ZONEMGR's intelligent wrapper for `SPAWNER`
-- LiveEditor functionality. Adds brushlike generation and deletion tools for generating and deleting dynamic ground units in game via markers to tailor your experience.
+
 
   - `SPAWNER` wrapper:
     - Uses mission learning strategies to detect existing units in zone and classifies them.
@@ -44,6 +44,46 @@ All features of SPECTRE automatically account for and work with multi-coalition 
     - Automatically updates.
 
 - More advanced implementations to come (Directing ground forces to opposing forces, directing air response, gameplay mechanics, secret sauce).
+
+---
+
+## Live Editor:
+
+Adds brushlike generation and deletion tools for generating and deleting dynamic ground units in game via player markers to tailor your experience.
+
+Simply add the following text to an in game marker:
+
+ Delete: /del [command] [coal] [opt param, ...]
+
+    /del zone [coal]
+    /del airfield [coal]
+    /del allairfield [coal]
+    /del circle [coal] [Circle Diameter (meters), centered on marker]
+
+ Spawn: /spawn [command] [coal] [opt param, ...]
+ 
+    /spawn zone [coal] [country] [smart] [bias]
+    /spawn airfield [coal] [country]
+    /spawn allairfield [coal] [country]
+    /spawn circle [coal] [Circle Diameter (meters), centered on marker] [country] [name]
+
+- Zone commands apply to the entire zone where the player marker was placed
+- Airfield commands apply to the nearest airfield from the player marker
+- All airfield commands apply to all airfields in the entire zone where the player marker was placed
+
+		coal = 1 for red, 2 for blue
+		
+		country = 1 for red, 2 for blue 
+			uses SPECTRE global defaults:
+				SPECTRE.Countries = {
+				  Red = country.id.CJTF_RED,
+				  Blue = country.id.CJTF_BLUE
+				}
+		smart = 1 or ommitted, if enabled uses ML strategies
+		bias = 1 for red, 2 for blue. Only works if smart is used
+	  	name = optional parameter to name the zone for use later. if ommitted, a temporary spawn zone name is generated	
+  
+- Upcoming updates will add the ability to restrict this function to specific UCID's if you want this enabled in a prod server for tweaking what gets generated.
 
 ---
 
