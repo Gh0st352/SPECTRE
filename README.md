@@ -20,6 +20,7 @@ All features of SPECTRE automatically account for and work with multi-coalition 
 - Utilizes DBSCAN Clustering Algorithm to contribute to mission learning.
 - System is capable of using the determined clusters to decide course of action for mission zones based on cluster information.
 - Currently used in Hotspot, Intel, and ZONEMGR's intelligent wrapper for `SPAWNER`
+- LiveEditor functionality. Adds brushlike generation and deletion tools for generating and deleting dynamic ground units in game via markers to tailor your experience.
 
   - `SPAWNER` wrapper:
     - Uses mission learning strategies to detect existing units in zone and classifies them.
