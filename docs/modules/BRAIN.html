@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Persistence">Persistence </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><strong>BRAIN</strong></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>BRAIN</code></h1>
+<p><strong>BRAIN</strong></p>
+
+<p> The brain of SPECTRE, allowing the game to interpret various units positioning and data with ML strategies.</p>
+<p> Contains methods for easily interpreting and persisting data.</p>
+
+
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN">SPECTRE.BRAIN</a></td>
+	<td class="summary">SPECTRE.BRAIN.</td>
+	</tr>
+</table>
+<h2><a href="#Persistence">Persistence </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.checkAndPersist">SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)</a></td>
+	<td class="summary">Checks for the existence of a persistence file and manages object persistence.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.BRAIN"></a>
+    <strong>SPECTRE.BRAIN</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#17">line 17</a>
+    </dt>
+    <dd>
+    SPECTRE.BRAIN. </p>
+
+<p> The brain of SPECTRE, allowing the game to interpret various units positioning and data with ML strategies.</p>
+
+<p> Contains methods for easily interpreting and persisting data.
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">BRAIN</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Persistence"></a>Persistence </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions commonly associated with AI operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.BRAIN.checkAndPersist"></a>
+    <strong>SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#43">line 43</a>
+    </dt>
+    <dd>
+    Checks for the existence of a persistence file and manages object persistence. </p>
+
+<p> This function handles the persistence of objects, checking for existing persistence files and loading them if present.
+ If the file is not found, or if the function is forced to bypass loading, it will run a specified input function on the object.
+ After processing the input function, if persistence is enabled and the object was not previously loaded, the function saves
+ the object to the persistence file. This functionality is essential for maintaining consistent state across game sessions or reloads.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_filename</span>
+         The filename and path of the persistence file, relative to saved games mission folder.
+        </li>
+        <li><span class="parameter">force</span>
+         A boolean flag indicating whether to force bypass the loading of an existing file.
+        </li>
+        <li><span class="parameter">_Object</span>
+         The object to be checked and potentially persisted.
+        </li>
+        <li><span class="parameter">_persistence</span>
+         A boolean flag indicating whether persistence is enabled.
+        </li>
+        <li><span class="parameter">_InputFunction</span>
+         The function to be executed on the object if the persistence file does not exist or is bypassed.
+        </li>
+        <li><span class="parameter">...</span>
+         Additional parameters to be passed to the _InputFunction.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        _Object The object after loading from a persistence file or processing through the _InputFunction.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.BRAIN.checkAndPersist(<span class="string">"PATH/PATH/filename.lua"</span>, <span class="keyword">false</span>, myObject, <span class="keyword">true</span>, processFunction, additionalParam1, additionalParam2)
+        <span class="comment">-- Checks and manages the persistence of 'myObject', potentially processing it with 'processFunction'.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

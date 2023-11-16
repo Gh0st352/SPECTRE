@@ -1,0 +1,1482 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Line">Line </a></li>
+<li><a href="#Point">Point </a></li>
+<li><a href="#Shape">Shape </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><strong>POLY</strong></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>POLY</code></h1>
+<p><strong>POLY</strong></p>
+
+<p> Shape manipulation and analytical geometry.</p>
+<p>
+
+
+<hr/>
+</p>
+
+
+<h2><a href="#Line">Line </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.GetIntersect">SPECTRE.POLY.GetIntersect(points)</a></td>
+	<td class="summary">Compute Intersection Point of Two Line Segments.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.calculateLineSlope">SPECTRE.POLY.calculateLineSlope(line)</a></td>
+	<td class="summary">Calculate Line Slope.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.extendLine">SPECTRE.POLY.extendLine(line, extension)</a></td>
+	<td class="summary">Extend a Line.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.findOtherEndpoint">SPECTRE.POLY.findOtherEndpoint(endpoint, slope, length)</a></td>
+	<td class="summary">Find Other Endpoint of a Line Segment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.findPerpendicularEndpoints">SPECTRE.POLY.findPerpendicularEndpoints(Point, line, length)</a></td>
+	<td class="summary">Find Perpendicular Endpoint.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.getEquallySpacedPoints">SPECTRE.POLY.getEquallySpacedPoints(InputLine, DesiredPoints)</a></td>
+	<td class="summary">Generate Equally Spaced Points on a Line Segment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.getMidpoint">SPECTRE.POLY.getMidpoint(line)</a></td>
+	<td class="summary">Calculate Midpoint of a Line Segment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.isIntersect">SPECTRE.POLY.isIntersect(l1, l2)</a></td>
+	<td class="summary">Check if Two Line Segments Intersect.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.isWithinOffset">SPECTRE.POLY.isWithinOffset(LineA, LineB, Offset)</a></td>
+	<td class="summary">Check if Two Lines are Within a Specified Offset.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.lineLength">SPECTRE.POLY.lineLength(line)</a></td>
+	<td class="summary">Calculate Length of a Line Segment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.randomPointOnLine">SPECTRE.POLY.randomPointOnLine(inputLine)</a></td>
+	<td class="summary">Generate a Random Point on a Line Segment.</td>
+	</tr>
+</table>
+<h2><a href="#Point">Point </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.PointWithinShape">SPECTRE.POLY.PointWithinShape(P, Polygon)</a></td>
+	<td class="summary">Check if a Point is Within a Polygon.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.colinear">SPECTRE.POLY.colinear(line, x, y, e)</a></td>
+	<td class="summary">Check if Point is Colinear with a Line Segment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.direction">SPECTRE.POLY.direction(a, b, c)</a></td>
+	<td class="summary">Determine the Direction of Turn for Three Ordered Points.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.distance">SPECTRE.POLY.distance(point1, point2)</a></td>
+	<td class="summary">Calculate Distance Between Two Points.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.distanceSquared">SPECTRE.POLY.distanceSquared(ax, ay, bx, by)</a></td>
+	<td class="summary">Calculate Squared Distance Between Two Points.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.dot">SPECTRE.POLY.dot(ax, ay, bx, by)</a></td>
+	<td class="summary">Calculate the Dot Product of Two Vectors.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.onLine">SPECTRE.POLY.onLine(l1, p)</a></td>
+	<td class="summary">Check if Point is On or Within Bounds of a Line Segment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.pointToSegmentSquared">SPECTRE.POLY.pointToSegmentSquared(px, py, ax, ay, bx, by)</a></td>
+	<td class="summary">Calculate Squared Distance from a Point to a Line Segment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY:crossProduct">SPECTRE.POLY:crossProduct(p1, p2, p3)</a></td>
+	<td class="summary">Calculate Cross Product of Vectors Formed by Three Points.</td>
+	</tr>
+</table>
+<h2><a href="#Shape">Shape </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.CrossingsMultiplyTest">SPECTRE.POLY.CrossingsMultiplyTest(pgon, tx, ty)</a></td>
+	<td class="summary">Determine if a Point is Inside a Polygon using Crossings Multiply Test.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.convertZoneToLines">SPECTRE.POLY.convertZoneToLines(zone)</a></td>
+	<td class="summary">Convert a Polygonal Zone into a List of Line Segments.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.doesCircleOverlap">SPECTRE.POLY.doesCircleOverlap(subCircle1, subCircle2)</a></td>
+	<td class="summary">Checks if two circles overlap.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.doesCircleOverlapThreshold">SPECTRE.POLY.doesCircleOverlapThreshold(subCircle1, subCircle2, threshold)</a></td>
+	<td class="summary">Checks if two circles overlap with a specified threshold.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.ensureConvex">SPECTRE.POLY.ensureConvex(zoneCoords)</a></td>
+	<td class="summary">Ensure a Quadrilateral is Convex.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.generateSubCircles">SPECTRE.POLY.generateSubCircles(mainCircleSize, mainCircleVec2, numSubCircles, subCircleMinSize)</a></td>
+	<td class="summary">Generates a list of subcircles within a main circle while avoiding overlaps.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.getMinMaxDistances">SPECTRE.POLY.getMinMaxDistances(polygon)</a></td>
+	<td class="summary">Gets min and max distance across a polygon.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.getShrunkenPolygon">SPECTRE.POLY.getShrunkenPolygon(polygon, shrinkDistance)</a></td>
+	<td class="summary">Shrinks a polygon's boundaries by given distance.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.isSubCircleValid">SPECTRE.POLY.isSubCircleValid(subCircle, generatedSubCircles, mainCircleVec2, mainRadius, threshold)</a></td>
+	<td class="summary">Checks if a subcircle is valid based on a threshold for overlapping with other subcircles and being within the main circle's boundaries.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.isSubCircleValidThreshold">SPECTRE.POLY.isSubCircleValidThreshold(subCircle, mainCircleVec2, mainRadius)</a></td>
+	<td class="summary">Checks if a subcircle is completely within the boundaries of the main circle.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.isWithinMainCircle">SPECTRE.POLY.isWithinMainCircle(subCircle, mainCircleVec2, mainRadius, threshold)</a></td>
+	<td class="summary">Checks if a subcircle is within the boundaries of the main circle with a specified threshold.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.isWithinMainCircleThreshold">SPECTRE.POLY.isWithinMainCircleThreshold(subCircle1, subCircle2)</a></td>
+	<td class="summary">Checks if two circles overlap.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.polygonArea">SPECTRE.POLY.polygonArea(coords)</a></td>
+	<td class="summary">Calculates the area of a polygon.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.POLY.triangulateZone">SPECTRE.POLY.triangulateZone(zoneCoords)</a></td>
+	<td class="summary">Triangulate a Quadrilateral into Two Triangles.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Line"></a>Line </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with line operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.POLY.GetIntersect"></a>
+    <strong>SPECTRE.POLY.GetIntersect(points)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#247">line 247</a>
+    </dt>
+    <dd>
+    Compute Intersection Point of Two Line Segments. </p>
+
+<p> Computes the intersection point of two given line segments. Returns (0, 0) if the line segments don't intersect.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">points</span>
+         A table containing four points, each having 'x' and 'y' attributes. The first two points represent the first line segment and the next two represent the second line segment.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        xk,yk The x and y coordinates of the intersection point.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> x, y = SPECTRE.POLY.GetIntersect({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}, {x=<span class="number">0</span>, y=<span class="number">10</span>}, {x=<span class="number">10</span>, y=<span class="number">0</span>}}) <span class="comment">-- Gets the intersection point of the two line segments.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.calculateLineSlope"></a>
+    <strong>SPECTRE.POLY.calculateLineSlope(line)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#90">line 90</a>
+    </dt>
+    <dd>
+    Calculate Line Slope. </p>
+
+<p> Calculates the slope of a given line.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">line</span>
+         A table containing two points, each having 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The slope of the line, or 'math.huge' if the line is vertical.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> slope = SPECTRE.POLY.calculateLineSlope({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">1</span>, y=<span class="number">1</span>}}) <span class="comment">-- Calculates the slope of the line.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.extendLine"></a>
+    <strong>SPECTRE.POLY.extendLine(line, extension)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#35">line 35</a>
+    </dt>
+    <dd>
+    Extend a Line. </p>
+
+<p> Extends both ends of a given line by a specified length.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">line</span>
+         A table containing two points, each having 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">extension</span>
+         The length by which both ends of the line will be extended.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The extended line with modified points.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> extended = SPECTRE.POLY.extendLine({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">1</span>, y=<span class="number">1</span>}}, <span class="number">1</span>) <span class="comment">-- Extends the line by 1 unit on both ends.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.findOtherEndpoint"></a>
+    <strong>SPECTRE.POLY.findOtherEndpoint(endpoint, slope, length)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#112">line 112</a>
+    </dt>
+    <dd>
+    Find Other Endpoint of a Line Segment. </p>
+
+<p> Calculates the other endpoint of a line segment given one endpoint, the slope, and the length of the segment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">endpoint</span>
+         A table containing an 'x' and 'y' attribute representing one endpoint of the line segment.
+        </li>
+        <li><span class="parameter">slope</span>
+         The slope of the line segment.
+        </li>
+        <li><span class="parameter">length</span>
+         The length of the line segment.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A table with 'x' and 'y' attributes representing the other endpoint of the line segment.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> otherEndpoint = SPECTRE.POLY.findOtherEndpoint({x=<span class="number">1</span>, y=<span class="number">1</span>}, <span class="number">1</span>, <span class="number">1</span>) <span class="comment">-- Finds the other endpoint of the line segment.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.findPerpendicularEndpoints"></a>
+    <strong>SPECTRE.POLY.findPerpendicularEndpoints(Point, line, length)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#64">line 64</a>
+    </dt>
+    <dd>
+    Find Perpendicular Endpoint. </p>
+
+<p> Calculates the endpoint of a line segment that is perpendicular to a given line, originates from a given point, and has a given length.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Point</span>
+         A table containing an 'x' and 'y' attribute representing the starting point of the perpendicular line segment.
+        </li>
+        <li><span class="parameter">line</span>
+         A table containing two points, each having 'x' and 'y' attributes, representing the original line.
+        </li>
+        <li><span class="parameter">length</span>
+         The length of the perpendicular line segment.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A table with 'x' and 'y' attributes representing the endpoint of the perpendicular line segment.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> endpoint = SPECTRE.POLY.findPerpendicularEndpoints({x=<span class="number">1</span>, y=<span class="number">1</span>}, {{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">1</span>, y=<span class="number">1</span>}}, <span class="number">1</span>) <span class="comment">-- Finds the endpoint of a 1 unit long perpendicular line segment.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.getEquallySpacedPoints"></a>
+    <strong>SPECTRE.POLY.getEquallySpacedPoints(InputLine, DesiredPoints)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#224">line 224</a>
+    </dt>
+    <dd>
+    Generate Equally Spaced Points on a Line Segment. </p>
+
+<p> Computes a set of equally spaced points on a given line segment using linear interpolation.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">InputLine</span>
+         A table containing two points, each having 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">DesiredPoints</span>
+         The number of equally spaced points to generate.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A table of tables, each with 'x' and 'y' attributes, representing the equally spaced points on the line segment.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> points = SPECTRE.POLY.getEquallySpacedPoints({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}}, <span class="number">5</span>) <span class="comment">-- Gets 5 equally spaced points on the line segment.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.getMidpoint"></a>
+    <strong>SPECTRE.POLY.getMidpoint(line)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#140">line 140</a>
+    </dt>
+    <dd>
+    Calculate Midpoint of a Line Segment. </p>
+
+<p> Computes the midpoint of a given line segment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">line</span>
+         A table containing two points, each having 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A table with 'x' and 'y' attributes representing the midpoint of the line segment.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> midpoint = SPECTRE.POLY.getMidpoint({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">2</span>, y=<span class="number">2</span>}}) <span class="comment">-- Calculates the midpoint of the line segment.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.isIntersect"></a>
+    <strong>SPECTRE.POLY.isIntersect(l1, l2)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#281">line 281</a>
+    </dt>
+    <dd>
+    Check if Two Line Segments Intersect. </p>
+
+<p> Determines if two given line segments intersect using orientation values.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">l1</span>
+         A table containing two points (p1 and p2) representing the first line segment, each having 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">l2</span>
+         A table containing two points (p1 and p2) representing the second line segment, each having 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool  True if the line segments intersect, false otherwise.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> intersect = SPECTRE.POLY.isIntersect({p1={x=<span class="number">0</span>, y=<span class="number">0</span>}, p2={x=<span class="number">10</span>, y=<span class="number">10</span>}}, {p1={x=<span class="number">0</span>, y=<span class="number">10</span>}, p2={x=<span class="number">10</span>, y=<span class="number">0</span>}}) <span class="comment">-- Checks if the two line segments intersect.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.isWithinOffset"></a>
+    <strong>SPECTRE.POLY.isWithinOffset(LineA, LineB, Offset)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#157">line 157</a>
+    </dt>
+    <dd>
+    Check if Two Lines are Within a Specified Offset. </p>
+
+<p> Determines if two line segments are within a certain offset from each other by sampling points on the lines.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">LineA</span>
+         A table containing two points of the first line segment, each having 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">LineB</span>
+         A table containing two points of the second line segment, each having 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">Offset</span>
+         The distance threshold for the points on the lines.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        True if the lines are within the offset, false otherwise.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result = SPECTRE.POLY.isWithinOffset(line1, line2, <span class="number">10</span>) <span class="comment">-- Checks if line1 and line2 are within an offset of 10 units from each other.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.lineLength"></a>
+    <strong>SPECTRE.POLY.lineLength(line)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#190">line 190</a>
+    </dt>
+    <dd>
+    Calculate Length of a Line Segment. </p>
+
+<p> Computes the length of a given line segment using the Pythagorean theorem.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">line</span>
+         A table containing two points, each having 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The length of the line segment.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> length = SPECTRE.POLY.lineLength({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">3</span>, y=<span class="number">4</span>}}) <span class="comment">-- Calculates the length of the line segment (should return 5 in this example).</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.randomPointOnLine"></a>
+    <strong>SPECTRE.POLY.randomPointOnLine(inputLine)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#205">line 205</a>
+    </dt>
+    <dd>
+    Generate a Random Point on a Line Segment. </p>
+
+<p> Computes a random point on a given line segment using linear interpolation.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputLine</span>
+         A table containing two points, each having 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A table with 'x' and 'y' attributes representing the randomly generated point on the line segment.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> randomPoint = SPECTRE.POLY.randomPointOnLine({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}}) <span class="comment">-- Gets a random point on the line segment.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Point"></a>Point </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with vertex operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.POLY.PointWithinShape"></a>
+    <strong>SPECTRE.POLY.PointWithinShape(P, Polygon)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#451">line 451</a>
+    </dt>
+    <dd>
+    Check if a Point is Within a Polygon. </p>
+
+<p> Determines if a given point lies inside a polygon using the ray casting method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">P</span>
+         A table having 'x' and 'y' attributes representing the point to check.
+        </li>
+        <li><span class="parameter">Polygon</span>
+         A table containing vertices of the polygon, each vertex is a table with 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean True if the point lies inside the polygon, false otherwise.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isWithin = SPECTRE.POLY.PointWithinShape({x=<span class="number">5</span>, y=<span class="number">5</span>}, {{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}, {x=<span class="number">0</span>, y=<span class="number">10</span>}}) <span class="comment">-- Checks if the point (5,5) lies inside the square polygon.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.colinear"></a>
+    <strong>SPECTRE.POLY.colinear(line, x, y, e)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#407">line 407</a>
+    </dt>
+    <dd>
+    Check if Point is Colinear with a Line Segment. </p>
+
+<p> Determines if a given point is colinear with a line segment within a specified tolerance.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">line</span>
+         A table containing two points, each having 'x' and 'y' attributes, representing the line segment.
+        </li>
+        <li><span class="parameter">x</span>
+         x-coordinate of the test point.
+        </li>
+        <li><span class="parameter">y</span>
+         y-coordinate of the test point.
+        </li>
+        <li><span class="parameter">e</span>
+         Tolerance value for colinearity check. Defaults to 0.1 if not provided.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean True if the point is colinear with the line segment within the tolerance, false otherwise.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isColinear = SPECTRE.POLY.colinear({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}}, <span class="number">5</span>, <span class="number">5</span>) <span class="comment">-- Checks if the point (5,5) is colinear with the line segment.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.direction"></a>
+    <strong>SPECTRE.POLY.direction(a, b, c)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#501">line 501</a>
+    </dt>
+    <dd>
+    Determine the Direction of Turn for Three Ordered Points. </p>
+
+<p> Computes the direction of a turn for three ordered points. It can be clockwise, counterclockwise, or the points can be collinear.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">a</span>
+         First point, a table with 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">b</span>
+         Second point, a table with 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">c</span>
+         Third point, a table with 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        0 if the points are collinear</li>
+        <li>
+        1 if the direction is clockwise</li>
+        <li>
+        2 if the direction is counterclockwise</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> dir = SPECTRE.POLY.direction({x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">1</span>, y=<span class="number">1</span>}, {x=<span class="number">2</span>, y=<span class="number">2</span>}) <span class="comment">-- Returns 0 as the points are collinear.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.distance"></a>
+    <strong>SPECTRE.POLY.distance(point1, point2)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#325">line 325</a>
+    </dt>
+    <dd>
+    Calculate Distance Between Two Points. </p>
+
+<p> Computes the distance between two given points using the Pythagorean theorem.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">point1</span>
+         A table having 'x' and 'y' attributes representing the first point.
+        </li>
+        <li><span class="parameter">point2</span>
+         A table having 'x' and 'y' attributes representing the second point.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The distance between the two points.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> dist = SPECTRE.POLY.distance({x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">3</span>, y=<span class="number">4</span>}) <span class="comment">-- Calculates the distance between the two points (should return 5 in this example).</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.distanceSquared"></a>
+    <strong>SPECTRE.POLY.distanceSquared(ax, ay, bx, by)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#374">line 374</a>
+    </dt>
+    <dd>
+    Calculate Squared Distance Between Two Points. </p>
+
+<p> Computes the squared distance between two given points using the Pythagorean theorem.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ax</span>
+         x-coordinate of the first point.
+        </li>
+        <li><span class="parameter">ay</span>
+         y-coordinate of the first point.
+        </li>
+        <li><span class="parameter">bx</span>
+         x-coordinate of the second point.
+        </li>
+        <li><span class="parameter">by</span>
+         y-coordinate of the second point.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        number The squared distance between the two points.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> squaredDist = SPECTRE.POLY.distanceSquared(<span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">4</span>) <span class="comment">-- Calculates the squared distance between the two points (should return 25 in this example).</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.dot"></a>
+    <strong>SPECTRE.POLY.dot(ax, ay, bx, by)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#526">line 526</a>
+    </dt>
+    <dd>
+    Calculate the Dot Product of Two Vectors. </p>
+
+<p> Computes the dot product of two vectors given their 'x' and 'y' components.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ax</span>
+         The 'x' component of the first vector.
+        </li>
+        <li><span class="parameter">ay</span>
+         The 'y' component of the first vector.
+        </li>
+        <li><span class="parameter">bx</span>
+         The 'x' component of the second vector.
+        </li>
+        <li><span class="parameter">by</span>
+         The 'y' component of the second vector.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        number The dot product of the two vectors.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> product = SPECTRE.POLY.dot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>) <span class="comment">-- Calculates the dot product of vectors (1,2) and (3,4).</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.onLine"></a>
+    <strong>SPECTRE.POLY.onLine(l1, p)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#433">line 433</a>
+    </dt>
+    <dd>
+    Check if Point is On or Within Bounds of a Line Segment. </p>
+
+<p> Determines if a given point lies on or within the bounds of a line segment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">l1</span>
+         A table containing two points (p1 and p2) representing the line segment, each having 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">p</span>
+         A table having 'x' and 'y' attributes representing the test point.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean True if the point lies on or within the bounds of the line segment, false otherwise.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isOnLine = SPECTRE.POLY.onLine({p1={x=<span class="number">0</span>, y=<span class="number">0</span>}, p2={x=<span class="number">10</span>, y=<span class="number">10</span>}}, {x=<span class="number">5</span>, y=<span class="number">5</span>}) <span class="comment">-- Checks if the point (5,5) lies on the line segment.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.pointToSegmentSquared"></a>
+    <strong>SPECTRE.POLY.pointToSegmentSquared(px, py, ax, ay, bx, by)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#346">line 346</a>
+    </dt>
+    <dd>
+    Calculate Squared Distance from a Point to a Line Segment. </p>
+
+<p> Computes the squared distance from a given point to a line segment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">px</span>
+         x-coordinate of the point.
+        </li>
+        <li><span class="parameter">py</span>
+         y-coordinate of the point.
+        </li>
+        <li><span class="parameter">ax</span>
+         x-coordinate of the first endpoint of the line segment.
+        </li>
+        <li><span class="parameter">ay</span>
+         y-coordinate of the first endpoint of the line segment.
+        </li>
+        <li><span class="parameter">bx</span>
+         x-coordinate of the second endpoint of the line segment.
+        </li>
+        <li><span class="parameter">by</span>
+         y-coordinate of the second endpoint of the line segment.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        number The squared distance from the point to the line segment.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> squaredDist = SPECTRE.POLY.pointToSegmentSquared(<span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">2</span>) <span class="comment">-- Calculates the squared distance from the point to the line segment.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY:crossProduct"></a>
+    <strong>SPECTRE.POLY:crossProduct(p1, p2, p3)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#392">line 392</a>
+    </dt>
+    <dd>
+    Calculate Cross Product of Vectors Formed by Three Points. </p>
+
+<p> Computes the cross product (determinant) of the vectors formed by three given points.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">p1</span>
+         A table having 'x' and 'y' attributes representing the first point.
+        </li>
+        <li><span class="parameter">p2</span>
+         A table having 'x' and 'y' attributes representing the second point.
+        </li>
+        <li><span class="parameter">p3</span>
+         A table having 'x' and 'y' attributes representing the third point.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        number The cross product of the vectors formed by the three points.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> crossProd = SPECTRE.POLY:crossProduct({x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">1</span>, y=<span class="number">1</span>}, {x=<span class="number">0</span>, y=<span class="number">2</span>}) <span class="comment">-- Calculates the cross product of the vectors formed by the three points.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Shape"></a>Shape </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Closed Shape operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.POLY.CrossingsMultiplyTest"></a>
+    <strong>SPECTRE.POLY.CrossingsMultiplyTest(pgon, tx, ty)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#641">line 641</a>
+    </dt>
+    <dd>
+    Determine if a Point is Inside a Polygon using Crossings Multiply Test. </p>
+
+<p> Uses the crossings or even-odd rule method to determine if a given point, specified by its 'x' and 'y' coordinates, lies inside the polygon 'pgon'.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pgon</span>
+         A list of points representing the polygon vertices in order. Each point is a table with 'x' and 'y' attributes.
+        </li>
+        <li><span class="parameter">tx</span>
+         The 'x' coordinate of the point to check.
+        </li>
+        <li><span class="parameter">ty</span>
+         The 'y' coordinate of the point to check.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean 'true' if the point is inside the polygon, 'false' otherwise.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> insidePolygon = SPECTRE.POLY.CrossingsMultiplyTest({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}, {x=<span class="number">0</span>, y=<span class="number">10</span>}}, <span class="number">5</span>, <span class="number">5</span>) <span class="comment">-- Returns 'true' as the point is inside the square.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.convertZoneToLines"></a>
+    <strong>SPECTRE.POLY.convertZoneToLines(zone)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#548">line 548</a>
+    </dt>
+    <dd>
+    Convert a Polygonal Zone into a List of Line Segments. </p>
+
+<p> Takes a zone represented as a list of points and converts it into a list of line segments.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">zone</span>
+         A list of points representing the polygonal zone. Each point is a table with 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        lines A list of line segments. Each line segment is represented by two points (start and end).
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> lines = SPECTRE.POLY.convertZoneToLines({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}, {x=<span class="number">0</span>, y=<span class="number">10</span>}}) <span class="comment">-- Converts a square zone into its four edges.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.doesCircleOverlap"></a>
+    <strong>SPECTRE.POLY.doesCircleOverlap(subCircle1, subCircle2)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#774">line 774</a>
+    </dt>
+    <dd>
+    Checks if two circles overlap. </p>
+
+<p> This function determines whether two circles defined by <code>subCircle1</code> and <code>subCircle2</code> overlap with each other.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">subCircle1</span>
+         The first circle to check for overlap.
+        </li>
+        <li><span class="parameter">subCircle2</span>
+         The second circle to check for overlap.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean Returns true if the circles overlap; otherwise, false.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.doesCircleOverlapThreshold"></a>
+    <strong>SPECTRE.POLY.doesCircleOverlapThreshold(subCircle1, subCircle2, threshold)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#788">line 788</a>
+    </dt>
+    <dd>
+    Checks if two circles overlap with a specified threshold. </p>
+
+<p> This function assesses whether two circles defined by <code>subCircle1</code> and <code>subCircle2</code> overlap with each other while considering a specified <code>threshold</code>. The <code>threshold</code> allows for some degree of non-overlapping.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">subCircle1</span>
+         The first circle to check for overlap.
+        </li>
+        <li><span class="parameter">subCircle2</span>
+         The second circle to check for overlap.
+        </li>
+        <li><span class="parameter">threshold</span>
+         The threshold for allowed overlap (0 to 1).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean Returns true if the circles overlap within the given threshold; otherwise, false.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.ensureConvex"></a>
+    <strong>SPECTRE.POLY.ensureConvex(zoneCoords)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#570">line 570</a>
+    </dt>
+    <dd>
+    Ensure a Quadrilateral is Convex. </p>
+
+<p> Adjusts a quadrilateral to ensure that it is convex by checking the cross products of consecutive vertices. If necessary, it swaps the last two vertices.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">zoneCoords</span>
+         A list of four points representing the quadrilateral. Each point is a table with 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        zoneCoords The possibly adjusted list of four points ensuring the quadrilateral is convex.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> convexZone = SPECTRE.POLY.ensureConvex({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}, {x=<span class="number">0</span>, y=<span class="number">10</span>}}) <span class="comment">-- Adjusts the zone to ensure it's convex.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.generateSubCircles"></a>
+    <strong>SPECTRE.POLY.generateSubCircles(mainCircleSize, mainCircleVec2, numSubCircles, subCircleMinSize)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#674">line 674</a>
+    </dt>
+    <dd>
+    Generates a list of subcircles within a main circle while avoiding overlaps. </p>
+
+<p> OLD FUNCTION. Kept for later updates. Good Version is built into <code>SPECTRE.SPAWNER.generateSubZoneCircles</code></p>
+
+<p> This function generates a list of subcircles within a main circle defined by <code>mainCircleSize</code> and <code>mainCircleVec2</code>. It aims to create <code>numSubCircles</code> subcircles with a minimum size of <code>subCircleMinSize</code>. The generated subcircles are guaranteed not to overlap with each other or extend beyond the boundaries of the main circle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mainCircleSize</span>
+         The size (diameter) of the main circle.
+        </li>
+        <li><span class="parameter">mainCircleVec2</span>
+         The center coordinates of the main circle.
+        </li>
+        <li><span class="parameter">numSubCircles</span>
+         The desired number of subcircles to generate.
+        </li>
+        <li><span class="parameter">subCircleMinSize</span>
+         The minimum size (diameter) of each subcircle.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table A table containing the generated subcircles, each represented as a table with <code>vec2</code> (center coordinates) and <code>diameter</code> (size) attributes.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.getMinMaxDistances"></a>
+    <strong>SPECTRE.POLY.getMinMaxDistances(polygon)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#834">line 834</a>
+    </dt>
+    <dd>
+    Gets min and max distance across a polygon.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">polygon</span>
+         vec2 ipair
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        minDistance, maxDistance
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.getShrunkenPolygon"></a>
+    <strong>SPECTRE.POLY.getShrunkenPolygon(polygon, shrinkDistance)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#800">line 800</a>
+    </dt>
+    <dd>
+    Shrinks a polygon's boundaries by given distance.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">polygon</span>
+         vec2 ipair
+        </li>
+        <li><span class="parameter">shrinkDistance</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        shrunkenPolygon
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.isSubCircleValid"></a>
+    <strong>SPECTRE.POLY.isSubCircleValid(subCircle, generatedSubCircles, mainCircleVec2, mainRadius, threshold)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#713">line 713</a>
+    </dt>
+    <dd>
+    Checks if a subcircle is valid based on a threshold for overlapping with other subcircles and being within the main circle's boundaries. </p>
+
+<p> This function determines the validity of a <code>subCircle</code> by considering whether it overlaps with any of the <code>generatedSubCircles</code> beyond the specified <code>threshold</code>. Additionally, it checks if the <code>subCircle</code> remains within the boundaries of the main circle defined by <code>mainCircleVec2</code> and <code>mainRadius</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">subCircle</span>
+         The subcircle to validate.
+        </li>
+        <li><span class="parameter">generatedSubCircles</span>
+         A list of already generated subcircles to compare against.
+        </li>
+        <li><span class="parameter">mainCircleVec2</span>
+         The center coordinates of the main circle.
+        </li>
+        <li><span class="parameter">mainRadius</span>
+         The radius of the main circle.
+        </li>
+        <li><span class="parameter">threshold</span>
+         The allowed threshold for overlapping (0 to 1).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean Returns true if the subcircle is valid; otherwise, false.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.isSubCircleValidThreshold"></a>
+    <strong>SPECTRE.POLY.isSubCircleValidThreshold(subCircle, mainCircleVec2, mainRadius)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#729">line 729</a>
+    </dt>
+    <dd>
+    Checks if a subcircle is completely within the boundaries of the main circle. </p>
+
+<p> This function verifies whether the given <code>subCircle</code> is entirely contained within the main circle defined by <code>mainCircleVec2</code> and <code>mainRadius</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">subCircle</span>
+         The subcircle to check.
+        </li>
+        <li><span class="parameter">mainCircleVec2</span>
+         The center coordinates of the main circle.
+        </li>
+        <li><span class="parameter">mainRadius</span>
+         The radius of the main circle.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean Returns true if the subcircle is entirely within the main circle; otherwise, false.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.isWithinMainCircle"></a>
+    <strong>SPECTRE.POLY.isWithinMainCircle(subCircle, mainCircleVec2, mainRadius, threshold)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#747">line 747</a>
+    </dt>
+    <dd>
+    Checks if a subcircle is within the boundaries of the main circle with a specified threshold. </p>
+
+<p> This function evaluates whether the <code>subCircle</code> remains within the main circle defined by <code>mainCircleVec2</code> and <code>mainRadius</code>, considering a specified <code>threshold</code>. The <code>threshold</code> allows for some degree of overlap with the main circle.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">subCircle</span>
+         The subcircle to check.
+        </li>
+        <li><span class="parameter">mainCircleVec2</span>
+         The center coordinates of the main circle.
+        </li>
+        <li><span class="parameter">mainRadius</span>
+         The radius of the main circle.
+        </li>
+        <li><span class="parameter">threshold</span>
+         The threshold for allowed overlap (0 to 1).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean Returns true if the subcircle is within the main circle with the given threshold; otherwise, false.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.isWithinMainCircleThreshold"></a>
+    <strong>SPECTRE.POLY.isWithinMainCircleThreshold(subCircle1, subCircle2)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#760">line 760</a>
+    </dt>
+    <dd>
+    Checks if two circles overlap. </p>
+
+<p> This function determines whether two circles defined by <code>subCircle1</code> and <code>subCircle2</code> overlap with each other.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">subCircle1</span>
+         The first circle to check for overlap.
+        </li>
+        <li><span class="parameter">subCircle2</span>
+         The second circle to check for overlap.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean Returns true if the circles overlap; otherwise, false.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.polygonArea"></a>
+    <strong>SPECTRE.POLY.polygonArea(coords)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#590">line 590</a>
+    </dt>
+    <dd>
+    Calculates the area of a polygon.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coords</span>
+         ipairs vec2 table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        area
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.POLY.triangulateZone"></a>
+    <strong>SPECTRE.POLY.triangulateZone(zoneCoords)</strong>
+    <a style="float:right;" href="../source/POLY.lua.html#608">line 608</a>
+    </dt>
+    <dd>
+    Triangulate a Quadrilateral into Two Triangles. </p>
+
+<p> Takes a 4-point polygon (quadrilateral) and splits it into two triangles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">zoneCoords</span>
+         A list of four points representing the quadrilateral. Each point is a table with 'x' and 'y' attributes.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        table A list containing two triangles formed from the quadrilateral. {[1] = triangle1,[2] = triangle2,}</li>
+        <li>
+        error An error message if the input does not represent a 4-point polygon.</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> triangles = SPECTRE.POLY.triangulateZone({{x=<span class="number">0</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">0</span>}, {x=<span class="number">10</span>, y=<span class="number">10</span>}, {x=<span class="number">0</span>, y=<span class="number">10</span>}}) <span class="comment">-- Splits the square into two triangles.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

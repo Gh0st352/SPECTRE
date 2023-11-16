@@ -1,0 +1,523 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#REWARDS">REWARDS </a></li>
+<li><a href="#Config">Config </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><strong>REWARDS</strong></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>REWARDS</code></h1>
+<p><strong>REWARDS</strong></p>
+
+<p> Player reward distribution and settings.</p>
+<p>
+<p> </p>
+
+<hr/>
+</p>
+
+
+<h2><a href="#REWARDS">REWARDS </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.DispersePoints">SPECTRE.REWARDS.DispersePoints(EventData)</a></td>
+	<td class="summary">Disperse Reward Points Based on Event Data.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#getMatchingValue">getMatchingValue(inputTable)</a></td>
+	<td class="summary">Gets the matching point value for the input attributes.</td>
+	</tr>
+</table>
+<h2><a href="#Config">Config </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost">SPECTRE.REWARDS.Config.PointCost</a></td>
+	<td class="summary">PointCost.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP">SPECTRE.REWARDS.Config.PointCost.AIRDROP</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA">SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY">SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR">SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV">SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM">SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM">SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY">SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK">SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.AWAKS">SPECTRE.REWARDS.Config.PointCost.AWAKS</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.BOMBER">SPECTRE.REWARDS.Config.PointCost.BOMBER</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.CAP">SPECTRE.REWARDS.Config.PointCost.CAP</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.ESCORT">SPECTRE.REWARDS.Config.PointCost.ESCORT</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.STRIKE">SPECTRE.REWARDS.Config.PointCost.STRIKE</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.TANKER">SPECTRE.REWARDS.Config.PointCost.TANKER</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointCost.TOMAHAWK">SPECTRE.REWARDS.Config.PointCost.TOMAHAWK</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.REWARDS.Config.PointRewards">SPECTRE.REWARDS.Config.PointRewards</a></td>
+	<td class="summary">PointRewards.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="REWARDS"></a>REWARDS </h2>
+
+          <div class="section-description">
+           Player reward distribution and settings.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.REWARDS.DispersePoints"></a>
+    <strong>SPECTRE.REWARDS.DispersePoints(EventData)</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#25">line 25</a>
+    </dt>
+    <dd>
+    Disperse Reward Points Based on Event Data. </p>
+
+<p> Evaluates the event data to determine the reward points for a given action, such as shooting or destroying targets. Takes into account friendly fire and other specific criteria.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">EventData</span>
+         The data associated with the event.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        PointReward The calculated reward or penalty points based on the event data.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getMatchingValue"></a>
+    <strong>getMatchingValue(inputTable)</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#50">line 50</a>
+    </dt>
+    <dd>
+    Gets the matching point value for the input attributes.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         The table of attributes to find a matching point reward for.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        A matching point reward value.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Config"></a>Config </h2>
+
+          <div class="section-description">
+           Settings for a point based redeem system.</p>
+
+<p> Point cost for redeems + Point Reward for Kills based on type.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#95">line 95</a>
+    </dt>
+    <dd>
+    PointCost.
+ Point cost for redeems.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#111">line 111</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#119">line 119</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#113">line 113</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#125">line 125</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#115">line 115</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#121">line 121</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#123">line 123</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#127">line 127</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#117">line 117</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.AWAKS"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.AWAKS</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#107">line 107</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.BOMBER"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.BOMBER</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#99">line 99</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.CAP"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.CAP</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#97">line 97</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.ESCORT"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.ESCORT</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#105">line 105</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.STRIKE"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.STRIKE</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#101">line 101</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.TANKER"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.TANKER</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#109">line 109</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointCost.TOMAHAWK"></a>
+    <strong>SPECTRE.REWARDS.Config.PointCost.TOMAHAWK</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#103">line 103</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.REWARDS.Config.PointRewards"></a>
+    <strong>SPECTRE.REWARDS.Config.PointRewards</strong>
+    <a style="float:right;" href="../source/REWARDS.lua.html#132">line 132</a>
+    </dt>
+    <dd>
+    PointRewards.
+ Point Reward for Kills based on type.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

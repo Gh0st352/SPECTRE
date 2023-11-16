@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Zone">Zone </a></li>
+<li><a href="#Markers">Markers </a></li>
+<li><a href="#Airbase">Airbase </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><strong>WORLD</strong></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>WORLD</code></h1>
+<p><strong>WORLD</strong></p>
+<p>
+<p>  <em>Functions for tracking zone game data and state.</em></p>
+
+<hr/>
+</p>
+
+
+<h2><a href="#Zone">Zone </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.WORLD.PointInZone">SPECTRE.WORLD.PointInZone(vec2, zoneName)</a></td>
+	<td class="summary">Check if a given 2D vector point is inside a specified zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.WORLD.Vec2inZones">SPECTRE.WORLD.Vec2inZones(possibleVec2, zoneList)</a></td>
+	<td class="summary">Check if a given 2D vector point is inside any of the specified no-go zones.</td>
+	</tr>
+</table>
+<h2><a href="#Markers">Markers </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.WORLD.TargetMarker_CreateAtPointIfUnitsExistInZone">SPECTRE.WORLD.TargetMarker_CreateAtPointIfUnitsExistInZone(ZoneName, ObjectCategory, Table_UnitCategory, UnitCoalition, Coordinate, MarkCoalition, MarkerRadius, MarkText)</a></td>
+	<td class="summary">Create a red target marker at a specified coordinate if units of a given category and coalition exist within a zone.</td>
+	</tr>
+</table>
+<h2><a href="#Airbase">Airbase </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.WORLD.ClosestAirfieldVec2">SPECTRE.WORLD.ClosestAirfieldVec2(coal, _vec2)</a></td>
+	<td class="summary">Retrieve information about the closest airfield to a given 2D vector point based on coalition and map.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.WORLD.FindNearestAirbaseToPointVec2">SPECTRE.WORLD.FindNearestAirbaseToPointVec2(AirbaseList, _vec2)</a></td>
+	<td class="summary">Find the nearest airbase from a provided list to a given 2D vector point.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.WORLD.GetOwnedAirbaseCoal">SPECTRE.WORLD.GetOwnedAirbaseCoal(coal)</a></td>
+	<td class="summary">Retrieve a list of airbases owned by a specific coalition for a given map.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.WORLD.f_distance">SPECTRE.WORLD.f_distance(p1, p2)</a></td>
+	<td class="summary">Calculate the Euclidean distance between two points in a 2D space.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Zone"></a>Zone </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Functions for tracking zone game data and state.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.WORLD.PointInZone"></a>
+    <strong>SPECTRE.WORLD.PointInZone(vec2, zoneName)</strong>
+    <a style="float:right;" href="../source/WORLD.lua.html#31">line 31</a>
+    </dt>
+    <dd>
+    Check if a given 2D vector point is inside a specified zone.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">vec2</span>
+         table: A table containing the x and y coordinates of the point to check (e.g., {x=0, y=0}).
+        </li>
+        <li><span class="parameter">zoneName</span>
+         string: The name of the zone to check against.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        boolean: Returns true if the Vec2 is inside the zone, otherwise returns false.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.WORLD.Vec2inZones"></a>
+    <strong>SPECTRE.WORLD.Vec2inZones(possibleVec2, zoneList)</strong>
+    <a style="float:right;" href="../source/WORLD.lua.html#53">line 53</a>
+    </dt>
+    <dd>
+    Check if a given 2D vector point is inside any of the specified no-go zones.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">possibleVec2</span>
+         table: A table containing the x and y coordinates of the point to check (e.g., {x=0, y=0}).
+        </li>
+        <li><span class="parameter">zoneList</span>
+         table: A list of zones (represented by their names or objects) to check against.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        number: Returns 0 if the Vec2 is inside any of the no-go zones, otherwise returns 1.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Markers"></a>Markers </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Functions for tracking zone game data and state.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.WORLD.TargetMarker_CreateAtPointIfUnitsExistInZone"></a>
+    <strong>SPECTRE.WORLD.TargetMarker_CreateAtPointIfUnitsExistInZone(ZoneName, ObjectCategory, Table_UnitCategory, UnitCoalition, Coordinate, MarkCoalition, MarkerRadius, MarkText)</strong>
+    <a style="float:right;" href="../source/WORLD.lua.html#85">line 85</a>
+    </dt>
+    <dd>
+    Create a red target marker at a specified coordinate if units of a given category and coalition exist within a zone. </p>
+
+<p> Old function kept for sentimental value. Still works.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZoneName</span>
+         string: The name of the zone to check for units.
+        </li>
+        <li><span class="parameter">ObjectCategory</span>
+         number: The category of the object (e.g., Object.Category.UNIT).
+        </li>
+        <li><span class="parameter">Table_UnitCategory</span>
+         table: A list of unit categories to scan for within the zone (e.g., {Unit.Category.GROUND_UNIT}).
+        </li>
+        <li><span class="parameter">UnitCoalition</span>
+         number: The coalition code of the units to check for (e.g., 0 = neutral, 1 = red, 2 = blue).
+        </li>
+        <li><span class="parameter">Coordinate</span>
+         OBJECT: The coordinate object where the marker should be created.
+        </li>
+        <li><span class="parameter">MarkCoalition</span>
+         number (optional): The coalition that should see the marker. Default is -1 (all coalitions).
+        </li>
+        <li><span class="parameter">MarkerRadius</span>
+         number (optional): The radius of the created circle around the marker. Default is 5000.
+        </li>
+        <li><span class="parameter">MarkText</span>
+         string (optional): The text to display on the marker. Default is an empty string.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table: A list containing the marker ID and circle ID.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Airbase"></a>Airbase </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Functions for tracking zone game data and state.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.WORLD.ClosestAirfieldVec2"></a>
+    <strong>SPECTRE.WORLD.ClosestAirfieldVec2(coal, _vec2)</strong>
+    <a style="float:right;" href="../source/WORLD.lua.html#180">line 180</a>
+    </dt>
+    <dd>
+    Retrieve information about the closest airfield to a given 2D vector point based on coalition and map.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coal</span>
+         number: The coalition code (0 = neutral, 1 = red, 2 = blue).
+        </li>
+        <li><span class="parameter">_vec2</span>
+         table: A table containing the x and y coordinates of the given point (e.g., {x=0, y=0}).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table: Information about the nearest airbase, containing its name and 3D vector coordinates.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.WORLD.FindNearestAirbaseToPointVec2"></a>
+    <strong>SPECTRE.WORLD.FindNearestAirbaseToPointVec2(AirbaseList, _vec2)</strong>
+    <a style="float:right;" href="../source/WORLD.lua.html#120">line 120</a>
+    </dt>
+    <dd>
+    Find the nearest airbase from a provided list to a given 2D vector point.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">AirbaseList</span>
+         table: A list of airbase names to search within.
+        </li>
+        <li><span class="parameter">_vec2</span>
+         table: A table containing the x and y coordinates of the given point (e.g., {x=0, y=0}).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table: A list containing the name and 3D vector coordinates of the nearest airbase.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.WORLD.GetOwnedAirbaseCoal"></a>
+    <strong>SPECTRE.WORLD.GetOwnedAirbaseCoal(coal)</strong>
+    <a style="float:right;" href="../source/WORLD.lua.html#147">line 147</a>
+    </dt>
+    <dd>
+    Retrieve a list of airbases owned by a specific coalition for a given map.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coal</span>
+         number: The coalition code (e.g., 0 = neutral, 1 = red, 2 = blue).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table: A list of airbases owned by the specified coalition in the given map.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.WORLD.f_distance"></a>
+    <strong>SPECTRE.WORLD.f_distance(p1, p2)</strong>
+    <a style="float:right;" href="../source/WORLD.lua.html#201">line 201</a>
+    </dt>
+    <dd>
+    Calculate the Euclidean distance between two points in a 2D space.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">p1</span>
+         table: A table containing the x and y coordinates of the first point (e.g., {x=0, y=0}).
+        </li>
+        <li><span class="parameter">p2</span>
+         table: A table containing the x and y coordinates of the second point (e.g., {x=1, y=1}).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        number: The Euclidean distance between the two points.
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

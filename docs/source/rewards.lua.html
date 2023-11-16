@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/brain.lua.html">brain.lua</a></li>
+  <li><a href="../source/handlers.lua.html">handlers.lua</a></li>
+  <li><a href="../source/iads.lua.html">iads.lua</a></li>
+  <li><a href="../source/io.lua.html">io.lua</a></li>
+  <li><a href="../source/markers.lua.html">markers.lua</a></li>
+  <li><a href="../source/menu.lua.html">menu.lua</a></li>
+  <li><a href="../source/plyrmgr.lua.html">plyrmgr.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><strong>rewards.lua</strong></li>
+  <li><a href="../source/spawner.lua.html">spawner.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+  <li><a href="../source/zonemgr.lua.html">zonemgr.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>rewards.lua</h2>
+<pre>
+<span class="comment">--- **REWARDS**
+</span><span class="comment">--
+</span><span class="comment">-- Player reward distribution and settings.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- @module REWARDS
+</span><span class="comment">-- @extends SPECTRE
+</span>
+
+<span class="comment">--- REWARDS.
+</span><span class="comment">--
+</span><span class="comment">-- Player reward distribution and settings.
+</span><span class="comment">--
+</span><span class="comment">-- @section SPECTRE.REWARDS
+</span><span class="comment">-- @field #REWARDS
+</span>SPECTRE.REWARDS = {}
+
+<span class="comment">--- Disperse Reward Points Based on Event Data.
+</span><span class="comment">--
+</span><span class="comment">-- Evaluates the event data to determine the reward points for a given action, such as shooting or destroying targets. Takes into account friendly fire and other specific criteria.
+</span><span class="comment">--
+</span><span class="comment">-- @param EventData The data associated with the event.
+</span><a id="25"></a><span class="comment">-- @return PointReward The calculated reward or penalty points based on the event data.
+</span><span class="keyword">function</span> SPECTRE.REWARDS.DispersePoints(EventData)
+  <span class="comment">---
+</span>  <span class="comment">-- Finds the reward point value for a given input by recursing through the provided table.
+</span>  <span class="comment">--
+</span>  <span class="comment">-- @param #table table The table containing the possible point values.
+</span>  <span class="comment">-- @param #table input The specific attributes to search for in the table.
+</span>  <span class="comment">-- @return #number bestValue The highest point value found for the given input.
+</span>  <span class="keyword">local</span> <span class="keyword">function</span> findReward(<span class="global">table</span>, input)
+    <span class="keyword">local</span> bestValue = <span class="global">table</span>.General <span class="keyword">or</span> <span class="number">0</span>
+    <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="global">pairs</span>(<span class="global">table</span>) <span class="keyword">do</span>
+      <span class="keyword">if</span> input[key] <span class="keyword">and</span> <span class="global">type</span>(value) == <span class="string">"table"</span> <span class="keyword">then</span>
+        <span class="keyword">local</span> newValue = findReward(value, input)
+        bestValue = <span class="global">math</span>.max(bestValue, newValue)
+      <span class="keyword">elseif</span> input[key] <span class="keyword">and</span> <span class="global">type</span>(value) == <span class="string">"number"</span> <span class="keyword">then</span>
+        bestValue = <span class="global">math</span>.max(bestValue, value)
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> bestValue
+  <span class="keyword">end</span>
+
+  <span class="comment">---
+</span>  <span class="comment">-- Gets the matching point value for the input attributes.
+</span>  <span class="comment">--
+</span>  <span class="comment">-- @param inputTable The table of attributes to find a matching point reward for.
+</span>  <a id="50"></a><span class="comment">-- @return A matching point reward value.
+</span>  <span class="keyword">local</span> <span class="keyword">function</span> getMatchingValue(inputTable)
+    <span class="keyword">return</span> findReward(SPECTRE.REWARDS.Config.PointRewards, inputTable)
+  <span class="keyword">end</span>
+
+  EventData = EventData <span class="keyword">or</span> {}
+  <span class="keyword">local</span> ShooterName = EventData.IniPlayerName
+  <span class="keyword">local</span> ShooterCoalition = EventData.IniCoalition
+  <span class="keyword">local</span> TargetCoalition = EventData.TgtCoalition
+  <span class="keyword">local</span> TargetType = EventData.TgtTypeName
+
+  <span class="keyword">if</span> EventData.TgtUnitName == <span class="string">"No target object for Event ID 28"</span> <span class="keyword">then</span>
+    <span class="keyword">local</span> deadObject = mist.DBs.deadObjects[EventData.TgtDCSUnit.id_]
+    <span class="keyword">if</span> deadObject <span class="keyword">then</span>
+      TargetType = deadObject.objectData.<span class="global">type</span>
+      TargetCoalition = (deadObject.objectData.coalition == <span class="string">"red"</span>) <span class="keyword">and</span> <span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span>
+      mist.DBs.deadObjects[EventData.TgtDCSUnit.id_] = <span class="keyword">nil</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+
+  <span class="keyword">local</span> TargetDesc = Unit.getDescByName(TargetType)
+  <span class="keyword">local</span> TargetAttributes = TargetDesc.attributes
+  <span class="keyword">local</span> PointReward = getMatchingValue(TargetAttributes)
+
+  <span class="keyword">if</span> ShooterCoalition == TargetCoalition <span class="keyword">then</span>
+    PointReward = (<span class="global">math</span>.ceil(PointReward / <span class="number">2</span>))
+    trigger.action.outTextForGroup(EventData.IniDCSGroup.id_, <span class="string">"Destroying friendly assets is a court martialable offense! Deducting "</span> .. PointReward .. <span class="string">" points."</span>, <span class="number">10</span>)
+    PointReward = -(PointReward)
+  <span class="keyword">end</span>
+
+  <span class="keyword">return</span> PointReward
+<span class="keyword">end</span>
+
+<span class="comment">--- Config.
+</span><span class="comment">--
+</span><span class="comment">-- Settings for a point based redeem system.
+</span><span class="comment">--
+</span><span class="comment">-- Point cost for redeems + Point Reward for Kills based on type.
+</span><span class="comment">--
+</span><span class="comment">-- @section SPECTRE.REWARDS
+</span><span class="comment">-- @field #Config
+</span>SPECTRE.REWARDS.Config = {}
+
+<span class="comment">--- PointCost.
+</span><span class="comment">-- Point cost for redeems.
+</span><a id="95"></a><span class="comment">-- @field #Config.PointCost
+</span>SPECTRE.REWARDS.Config.PointCost = {}
+<a id="97"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.CAP = <span class="number">100</span>
+<a id="99"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.BOMBER = <span class="number">50</span>
+<a id="101"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.STRIKE = <span class="number">55</span>
+<a id="103"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.TOMAHAWK = <span class="number">70</span>
+<a id="105"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.ESCORT = <span class="number">75</span>
+<a id="107"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AWAKS = <span class="number">200</span>
+<a id="109"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.TANKER = <span class="number">100</span>
+<a id="111"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP = { }
+<a id="113"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY = <span class="number">50</span>
+<a id="115"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV = <span class="number">30</span>
+<a id="117"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK = <span class="number">50</span>
+<a id="119"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA = <span class="number">60</span>
+<a id="121"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM = <span class="number">70</span>
+<a id="123"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM = <span class="number">150</span>
+<a id="125"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR = <span class="number">250</span>
+<a id="127"></a><span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY = <span class="number">30</span>
+
+<span class="comment">--- PointRewards.
+</span><span class="comment">-- Point Reward for Kills based on type.
+</span><a id="132"></a><span class="comment">-- @field #Config.PointRewards
+</span>SPECTRE.REWARDS.Config.PointRewards = {}
+SPECTRE.REWARDS.Config.PointRewards[<span class="string">"Air"</span>] = {
+  General = <span class="number">10</span>,
+  [<span class="string">"Helicopters"</span>] = {
+    General = <span class="number">1</span>,
+    [<span class="string">"Attack helicopters"</span>] = <span class="number">4</span>,
+    [<span class="string">"Transport helicopters"</span>] = <span class="number">2</span>,
+  },
+  [<span class="string">"Planes"</span>] = {
+    General = <span class="number">10</span>,
+    [<span class="string">"AWACS"</span>] = <span class="number">50</span>,
+    [<span class="string">"Tankers"</span>] = <span class="number">50</span>,
+    [<span class="string">"Aux"</span>] = <span class="number">12</span>,
+    [<span class="string">"UAVs"</span>] = <span class="number">20</span>,
+    [<span class="string">"Transports"</span>] = <span class="number">7</span>,
+    [<span class="string">"Battle airplanes"</span>] = {
+      General = <span class="number">10</span>,
+      [<span class="string">"Fighters"</span>] = <span class="number">10</span>,
+      [<span class="string">"Interceptors"</span>] = <span class="number">15</span>,
+      [<span class="string">"Multirole fighters"</span>] = <span class="number">12</span>,
+      [<span class="string">"Bombers"</span>] = {
+        General = <span class="number">20</span>,
+        [<span class="string">"Strategic bombers"</span>] = <span class="number">25</span>,
+      },
+      [<span class="string">"Battleplanes"</span>] = <span class="number">11</span>,
+      [<span class="string">"Missiles"</span>] = {
+        General = <span class="number">5</span>,
+        [<span class="string">"Cruise missiles"</span>] = <span class="number">40</span>,
+        [<span class="string">"Anti-Ship missiles"</span>] = <span class="number">50</span>,
+      },
+    },
+  },
+}
+<span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointRewards[<span class="string">"Ships"</span>] = {
+  General = <span class="number">50</span>,
+  [<span class="string">"Unarmed ships"</span>] = <span class="number">5</span>,
+  [<span class="string">"Armed ships"</span>] = {
+    General = <span class="number">55</span>,
+    [<span class="string">"Light armed ships"</span>] = <span class="number">60</span>,
+    [<span class="string">"Heavy armed ships"</span>] = {
+      General = <span class="number">70</span>,
+      [<span class="string">"Corvettes"</span>] = <span class="number">75</span>,
+      [<span class="string">"Frigates"</span>] = <span class="number">80</span>,
+      [<span class="string">"Destroyers"</span>] = <span class="number">100</span>,
+      [<span class="string">"Cruisers"</span>] = <span class="number">75</span>,
+      [<span class="string">"Aircraft Carriers"</span>] = <span class="number">200</span>,
+    }
+  }
+}
+<span class="comment">---.
+</span>SPECTRE.REWARDS.Config.PointRewards[<span class="string">"Ground Units"</span>] = {
+  General = <span class="number">2</span>,
+  [<span class="string">"LightArmoredUnits"</span>] = {
+    General = <span class="number">2</span>,
+    [<span class="string">"IFV"</span>] = <span class="number">5</span>,
+    [<span class="string">"APC"</span>] = <span class="number">3</span>,
+    [<span class="string">"Artillery"</span>] = {
+      General = <span class="number">5</span>,
+      [<span class="string">"MLRS"</span>] = <span class="number">10</span>,
+    }
+  },
+  [<span class="string">"HeavyArmoredUnits"</span>] = {
+    General = <span class="number">2</span>,
+    [<span class="string">"Tanks"</span>] = <span class="number">6</span>,
+    [<span class="string">"Buildings"</span>] = <span class="number">7</span>,
+    [<span class="string">"Fortifications"</span>] = <span class="number">7</span>,
+  },
+  [<span class="string">"Ground vehicles"</span>] = {
+    General = <span class="number">2</span>,
+    [<span class="string">"AAA"</span>] = {
+      General = <span class="number">8</span>,
+      [<span class="string">"Static AAA"</span>] = <span class="number">10</span>,
+      [<span class="string">"Mobile AAA"</span>] = <span class="number">15</span>,
+    },
+    [<span class="string">"EWR"</span>] = <span class="number">50</span>,
+    [<span class="string">"Unarmed vehicles"</span>] = {
+      General = <span class="number">0</span>,
+      [<span class="string">"Cars"</span>] = <span class="number">0</span>,
+      [<span class="string">"Trucks"</span>] = <span class="number">0</span>,
+    },
+    [<span class="string">"SAM elements"</span>] = {
+      General = <span class="number">7</span>,
+      [<span class="string">"SR SAM"</span>] = {
+        General = <span class="number">10</span>,
+        [<span class="string">"SAM SR"</span>] = <span class="number">15</span>,
+        [<span class="string">"SAM TR"</span>] = <span class="number">15</span>,
+        [<span class="string">"SAM LL"</span>] = <span class="number">12</span>,
+        [<span class="string">"SAM CC"</span>] = <span class="number">20</span>,
+        [<span class="string">"SAM AUX"</span>] = <span class="number">11</span>,
+      }, <span class="comment">--short range
+</span>      [<span class="string">"MR SAM"</span>] = {
+        General = <span class="number">15</span>,
+        [<span class="string">"SAM SR"</span>] = <span class="number">20</span>,
+        [<span class="string">"SAM TR"</span>] = <span class="number">20</span>,
+        [<span class="string">"SAM LL"</span>] = <span class="number">17</span>,
+        [<span class="string">"SAM CC"</span>] = <span class="number">25</span>,
+        [<span class="string">"SAM AUX"</span>] = <span class="number">16</span>,
+      }, <span class="comment">--medium range
+</span>      [<span class="string">"LR SAM"</span>] = {
+        General = <span class="number">20</span>,
+        [<span class="string">"SAM SR"</span>] = <span class="number">25</span>,
+        [<span class="string">"SAM TR"</span>] = <span class="number">25</span>,
+        [<span class="string">"SAM LL"</span>] = <span class="number">22</span>,
+        [<span class="string">"SAM CC"</span>] = <span class="number">30</span>,
+        [<span class="string">"SAM AUX"</span>] = <span class="number">21</span>,
+      }, <span class="comment">--long range
+</span>    },
+    [<span class="string">"Armed ground units"</span>] = {
+      General = <span class="number">2</span>,
+      [<span class="string">"Infantry"</span>] = {
+        General = <span class="number">2</span>,
+        [<span class="string">"MANPADS AUX"</span>] = <span class="number">5</span>,
+        [<span class="string">"MANPADS"</span>] = <span class="number">10</span>,
+      }
+    }
+  }
+}
+
+
+SPECTRE.MENU.Text.CAP.Cost = <span class="global">string</span>.format(<span class="string">"C.A.P. Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.CAP)
+SPECTRE.MENU.Text.TOMAHAWK.Cost = <span class="global">string</span>.format(<span class="string">"Tomahawk Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.TOMAHAWK)
+SPECTRE.MENU.Text.BOMBER.Cost = <span class="global">string</span>.format(<span class="string">"Bomber Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.BOMBER)
+SPECTRE.MENU.Text.AIRDROP.Cost = <span class="string">"Print Airdrop Types &amp; Costs"</span>
+SPECTRE.MENU.Text.STRIKE.Cost = <span class="global">string</span>.format(<span class="string">"Strike Team Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.STRIKE)
+
+SPECTRE.MENU.Text.Reports.Instructions.Airdrop = {
+  <span class="string">"Airdrop Group {Type} Costs:"</span>,
+  <span class="string">"================================"</span>,
+  <span class="string">""</span>,
+  <span class="string">"Usage: /airdrop artillery"</span>,
+  <span class="global">string</span>.format(<span class="string">"Artillery Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+  <span class="string">"Usage: /airdrop ifv"</span>,
+  <span class="global">string</span>.format(<span class="string">"Infantry Fighting Vehicle Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+  <span class="string">"Usage: /airdrop tank"</span>,
+  <span class="global">string</span>.format(<span class="string">"Tank Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+  <span class="string">"Usage: /airdrop aaa"</span>,
+  <span class="global">string</span>.format(<span class="string">"Anti-Aircraft Artillery Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+  <span class="string">"Usage: /airdrop irsam"</span>,
+  <span class="global">string</span>.format(<span class="string">"IR SAM Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+  <span class="string">"Usage: /airdrop rdrsam"</span>,
+  <span class="global">string</span>.format(<span class="string">"Radar SAM Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+  <span class="string">"Usage: /airdrop ewr"</span>,
+  <span class="global">string</span>.format(<span class="string">"Early Warning Radar Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+  <span class="string">"Usage: /airdrop supply"</span>,
+  <span class="global">string</span>.format(<span class="string">"Supply Cost: %d Points"</span>, SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+}</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
