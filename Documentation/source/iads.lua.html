@@ -1,0 +1,633 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/brain.lua.html">brain.lua</a></li>
+  <li><a href="../source/handlers.lua.html">handlers.lua</a></li>
+  <li><strong>iads.lua</strong></li>
+  <li><a href="../source/io.lua.html">io.lua</a></li>
+  <li><a href="../source/markers.lua.html">markers.lua</a></li>
+  <li><a href="../source/menu.lua.html">menu.lua</a></li>
+  <li><a href="../source/plyrmgr.lua.html">plyrmgr.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/rewards.lua.html">rewards.lua</a></li>
+  <li><a href="../source/spawner.lua.html">spawner.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+  <li><a href="../source/zonemgr.lua.html">zonemgr.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>iads.lua</h2>
+<pre>
+<span class="comment">--- **IADS**
+</span><span class="comment">--
+</span><span class="comment">-- The Integrated Air Defense System (IADS) module for SPECTRE, leveraging Skynet-IADS for advanced air defense simulation.
+</span><span class="comment">--
+</span><span class="comment">-- Automatically adds all eligible groups to their relevant IADs. Manual set up no longer required.
+</span><span class="comment">--
+</span><span class="comment">-- All SKYNET functions can be called by
+</span><span class="comment">--
+</span><span class="comment">--      local newIADS =  IADS:New()
+</span><span class="comment">--      newIADS.SkynetIADS:<code>SKYNET FUNCTION HERE</code>()
+</span><span class="comment">--
+</span><span class="comment">-- This module integrates the functionalities of Skynet-IADS, with the SPECTRE system.
+</span><span class="comment">--
+</span><span class="comment">-- Skynet-IADS is required for this module to function properly.
+</span><span class="comment">--
+</span><span class="comment">--      For more information and the Skynet-IADS source, visit: https://github.com/walder/Skynet-IADS
+</span><span class="comment">--
+</span><span class="comment">-- <code>HIGHLIGHTS</code>
+</span><span class="comment">--
+</span><span class="comment">-- The SPECTRE.IADS module integrates several key features and functionalities to enhance air defense simulations:
+</span><span class="comment">--
+</span><span class="comment">-- **Seamless Integration with SPECTRE:**
+</span><span class="comment">--
+</span><span class="comment">--      Leverages the existing capabilities of the SPECTRE framework,
+</span><span class="comment">--      ensuring smooth operation and coordination with other SPECTRE modules.
+</span><span class="comment">--
+</span><span class="comment">-- **Automated Zone Management:**
+</span><span class="comment">--
+</span><span class="comment">--      Works in conjunction with ZONEMGR to automatically detect
+</span><span class="comment">--      and classify air defense units within specified zones, simplifying setup and deployment.
+</span><span class="comment">--
+</span><span class="comment">-- **Enhanced Air Defense Tactics:**
+</span><span class="comment">--      Supports advanced tactics such as SAM site activation/deactivation
+</span><span class="comment">--      for generated units automatically.
+</span><span class="comment">--
+</span><span class="comment">-- **Integration with External Systems:**
+</span><span class="comment">--
+</span><span class="comment">--      Facilitates integration with external systems and modules,
+</span><span class="comment">--      expanding the scope and interoperability of air defense simulations.
+</span><span class="comment">--
+</span><span class="comment">--
+</span><span class="comment">-- @module IADS
+</span><span class="comment">-- @extends SPECTRE
+</span>
+<span class="comment">--- Main.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Main exposed access points.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section SPECTRE.IADS
+</span>
+<span class="comment">--- SPECTRE.IADS.
+</span><span class="comment">--
+</span><span class="comment">-- The core table representing the IADS functionality within the SPECTRE framework.
+</span><span class="comment">--
+</span><span class="comment">-- This table acts as the primary interface for implementing and managing IADS operations,
+</span><span class="comment">-- integrating Skynet-IADS features into the SPECTRE environment.
+</span><span class="comment">--
+</span><span class="comment">-- It requires the Skynet-IADS system to be installed and properly configured.
+</span><span class="comment">--
+</span><span class="comment">-- Access more about Skynet-IADS at: https://github.com/walder/Skynet-IADS
+</span><span class="comment">--
+</span><span class="comment">-- The primary table/interface for IADS functionalities within SPECTRE.
+</span><a id="66"></a><span class="comment">-- @field #IADS
+</span>SPECTRE.IADS = {}
+<span class="comment">--- Scheduler for periodic IADS updates.
+</span><span class="comment">-- This field in the IADS module is dedicated to managing the scheduler responsible for periodic updates of the IADS.
+</span><a id="70"></a><span class="comment">-- A scheduler object that triggers periodic updates within the IADS system.
+</span>SPECTRE.IADS.UpdateSched = {}
+<span class="comment">--- Flag indicating if IADS is currently being updated.
+</span><span class="comment">-- This boolean field signifies whether an update process for the IADS is currently active or not.
+</span><a id="74"></a><span class="comment">-- A boolean flag to control and check the status of ongoing IADS updates.
+</span>SPECTRE.IADS.UpdatingIADS = <span class="keyword">false</span>
+<span class="comment">--- Storage for SkynetIADS object.
+</span><span class="comment">-- This field holds the Skynet Integrated Air Defense System object for managing air defense networks.
+</span><a id="78"></a><span class="comment">-- A container for the Skynet IADS object.
+</span>SPECTRE.IADS.SkynetIADS = {}
+<span class="comment">--- Storage for Managed SAMs.
+</span><span class="comment">-- A storage field dedicated to Surface-to-Air Missile (SAM) systems managed within the IADS.
+</span><a id="82"></a><span class="comment">-- A collection of managed SAM systems.
+</span>SPECTRE.IADS.SAMs = {}
+<span class="comment">--- Storage for Managed EWRs.
+</span><span class="comment">-- A storage field dedicated to Early Warning Radars (EWRs) managed within the IADS.
+</span><a id="86"></a><span class="comment">-- A collection of managed EWR systems.
+</span>SPECTRE.IADS.EWRs = {}
+<span class="comment">--- Storage for ZONEMGR object.
+</span><span class="comment">-- This field contains the Zone Manager object that is utilized by the IADS for managing various zones.
+</span><a id="90"></a><span class="comment">-- A container for the ZONEMGR object.
+</span>SPECTRE.IADS.ZONEMGR = {}
+<span class="comment">--- Storage for built groups from detected ZONEMGR units.
+</span><span class="comment">-- This field stores the names of groups that have been constructed based on units detected by the Zone Manager.
+</span><a id="94"></a><span class="comment">-- A list of group names built from ZONEMGR-detected units.
+</span>SPECTRE.IADS._GroupNames = {}
+<span class="comment">--- Storage for _GroupAttributes from detected ZONEMGR units.
+</span><span class="comment">-- A field that holds attributes of groups, derived from units identified by the Zone Manager.
+</span><a id="98"></a><span class="comment">-- A collection of attributes for groups based on ZONEMGR-detected units.
+</span>SPECTRE.IADS._GroupAttributes = {}
+<span class="comment">--- Coalition to build IADs for.
+</span><span class="comment">-- A numerical value representing the coalition for which the IADS is being built.
+</span><a id="102"></a><span class="comment">-- An integer indicating the coalition (e.g., 0, 1, 2).
+</span>SPECTRE.IADS.coal = <span class="number">0</span>
+<span class="comment">--- How often to update self.
+</span><span class="comment">-- This field specifies the interval at which the IADS should update itself.
+</span><a id="106"></a><span class="comment">-- An integer representing the update interval in seconds.
+</span>SPECTRE.IADS.UpdateInterval = <span class="number">25</span>
+<span class="comment">--- Nudge factor for update interval.
+</span><span class="comment">-- A modifier that adds randomness to the IADS update interval.
+</span><a id="110"></a><span class="comment">-- A decimal value representing the nudge factor for the update interval.
+</span>SPECTRE.IADS.UpdateIntervalNudge = <span class="number">0.25</span>
+
+<span class="comment">--- Create a new instance of the Integrated Air Defense System (IADS) Manager.
+</span><span class="comment">--
+</span><span class="comment">-- This function initializes a new IADS manager for a specified coalition and Zone Manager.
+</span><span class="comment">-- The IADS manager is responsible for coordinating and managing air defense assets within a defined area.
+</span><span class="comment">--
+</span><span class="comment">-- @param #IADS self The IADS instance.
+</span><span class="comment">-- @param coal Coalition number (0, 1, or 2) to which this IADS belongs.
+</span><span class="comment">-- @param #ZONEMGR ZONEMGR_ The Zone Manager instance to be associated with this IADS.
+</span><a id="121"></a><span class="comment">-- @return #IADS self The newly created IADS manager instance.
+</span><span class="keyword">function</span> SPECTRE.IADS:New(coal,ZONEMGR_)
+  <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
+  self.coal = coal
+  <span class="comment">--self:assignZONEMGR(ZONEMGR_)
+</span>  self.ZONEMGR = ZONEMGR_
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Create Skynet Object.
+</span><span class="comment">-- Initializes a new Skynet IADS object with the given name.
+</span><span class="comment">-- @param #IADS self The IADS instance.
+</span><span class="comment">-- @param name The name for the Skynet IADS.
+</span><a id="134"></a><span class="comment">-- @return #IADS self The IADS instance with the Skynet IADS created.
+</span><span class="keyword">function</span> SPECTRE.IADS:createSkynet(name)
+  self.SkynetIADS = SkynetIADS:create(name)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Enable Debug Mode for IADS.
+</span><span class="comment">-- Activates various debug settings for the IADS's Skynet component.
+</span><span class="comment">-- @param #IADS
+</span><a id="143"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:DebugOn()
+  <span class="keyword">local</span> iadsDebug = self.SkynetIADS:getDebugSettings()
+  iadsDebug.IADSStatus = <span class="keyword">true</span>
+  iadsDebug.radarWentDark = <span class="keyword">true</span>
+  iadsDebug.contacts = <span class="keyword">true</span>
+  iadsDebug.radarWentLive = <span class="keyword">true</span>
+  iadsDebug.noWorkingCommmandCenter = <span class="keyword">false</span>
+  iadsDebug.ewRadarNoConnection = <span class="keyword">false</span>
+  iadsDebug.samNoConnection = <span class="keyword">false</span>
+  iadsDebug.jammerProbability = <span class="keyword">true</span>
+  iadsDebug.addedEWRadar = <span class="keyword">false</span>
+  iadsDebug.hasNoPower = <span class="keyword">false</span>
+  iadsDebug.harmDefence = <span class="keyword">true</span>
+  iadsDebug.samSiteStatusEnvOutput = <span class="keyword">true</span>
+  iadsDebug.earlyWarningRadarStatusEnvOutput = <span class="keyword">true</span>
+  iadsDebug.commandCenterStatusEnvOutput = <span class="keyword">true</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Deactivate Skynet Object in IADS.
+</span><span class="comment">-- This function deactivates the Skynet IADS component.
+</span><span class="comment">-- @param #IADS
+</span><a id="166"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:deactivateSkynet()
+  self.SkynetIADS:deactivate()
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Set Skynet update interval in IADS.
+</span><span class="comment">-- This function sets the update interval for the Skynet IADS component.
+</span><span class="comment">-- @param #IADS self The instance of the IADS class.
+</span><span class="comment">-- @param interval The time interval in seconds for Skynet updates.
+</span><a id="176"></a><span class="comment">-- @return #IADS self The instance of the IADS class after setting the interval.
+</span><span class="keyword">function</span> SPECTRE.IADS:setSkynetUpdateInterval(interval)
+  interval = interval <span class="keyword">or</span> <span class="number">5</span>
+  self.SkynetIADS:setUpdateInterval(interval)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Set the update interval and nudge factor for IADS.
+</span><span class="comment">-- This function configures the interval and nudge factor for the IADS system updates.
+</span><span class="comment">-- @param #IADS self The IADS instance.
+</span><span class="comment">-- @param interval The time interval in seconds for IADS updates (optional, default 25 seconds).
+</span><span class="comment">-- @param nudge A nudge factor to adjust the interval (optional, default 0.25).
+</span><a id="188"></a><span class="comment">-- @return #IADS self The IADS instance after configuration.
+</span><span class="keyword">function</span> SPECTRE.IADS:setUpdateInterval(interval, nudge)
+  interval = interval <span class="keyword">or</span> <span class="number">25</span>
+  nudge = nudge <span class="keyword">or</span> <span class="number">0.25</span>
+  self.UpdateInterval = interval
+  self.UpdateIntervalNudge = nudge
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Initialize the IADS.
+</span><span class="comment">-- This function initializes the IADS by updating its configuration and setting up a schedule for further updates.
+</span><span class="comment">-- @param #IADS
+</span><a id="200"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:Init()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:Init | "</span>)
+  self:Update()
+  self:UpdateSchedInit()
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Initialize the update scheduler for the IADS.
+</span><span class="comment">-- This function sets up a scheduler to periodically perform updates on the IADS. It ensures that updates are
+</span><span class="comment">-- only executed when a previous update cycle is not in progress.
+</span><span class="comment">-- @param #IADS
+</span><a id="212"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:UpdateSchedInit()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:UpdateSchedInit | ---------------------"</span>)
+  <span class="comment">-- Initialize a scheduler to periodically check and update zones
+</span>  self.UpdateSched = SCHEDULER:New(self, <span class="keyword">function</span>()
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:self.UpdateSched | "</span>)
+    <span class="comment">-- Only proceed if zones are not already being updated
+</span>    <span class="keyword">if</span> <span class="keyword">not</span> self.UpdatingIADS <span class="keyword">then</span>
+      self.UpdatingIADS = <span class="keyword">true</span>
+      self:Update()
+      self.UpdatingIADS = <span class="keyword">false</span>
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> self
+  <span class="keyword">end</span>, {self}, self.UpdateInterval, self.UpdateInterval, self.UpdateIntervalNudge)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Perform an update cycle for the IADS.
+</span><span class="comment">-- This function executes a series of tasks including retrieving groups within the ZONEMGR, getting group attributes,
+</span><span class="comment">-- classifying groups, adding new SAMs, and adding new EWRs to the IADS.
+</span><span class="comment">-- @param #IADS
+</span><a id="233"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:Update()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:Update | "</span>)
+  self:getGroupsInZONEMGR():getGroupAttributes():classifyGroups():addNewSAMs():addNewEWRs()
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- SAM TypeDef.
+</span><span class="comment">-- This section defines the Surface-to-Air Missile (SAM) component within the Integrated Air Defense System (IADS).
+</span><span class="comment">-- @section SPECTRE.IADS
+</span><span class="comment">-- @field #IADS.SAM A table representing the SAM module within IADS.
+</span>SPECTRE.IADS.SAM = {}
+<span class="comment">--- SAM Type.
+</span><span class="comment">-- The type of SAM system represented, e.g., short-range, medium-range, or long-range SAM.
+</span><a id="247"></a><span class="comment">-- A string describing the type of SAM system.
+</span>SPECTRE.IADS.SAM.<span class="global">type</span> = <span class="string">""</span>
+<span class="comment">--- SAM Group Name.
+</span><span class="comment">-- The name of the group in the DCS world that this SAM object represents.
+</span><a id="251"></a><span class="comment">-- A string containing the group name of the SAM system.
+</span>SPECTRE.IADS.SAM.groupName = <span class="string">""</span>
+<span class="comment">--- Skynet SAM Object.
+</span><span class="comment">-- The associated Skynet IADS object for this SAM, managing its behavior and properties in the IADS network.
+</span><a id="255"></a><span class="comment">-- A SkynetIADS object representation of the SAM system.
+</span>SPECTRE.IADS.SAM.SkynetObj = {}
+<span class="comment">--- Act As Early Warning.
+</span><span class="comment">-- A boolean indicating whether the SAM site should also act as an Early Warning Radar.
+</span><a id="259"></a><span class="comment">-- A boolean flag, true if the SAM acts as EWR, false otherwise.
+</span>SPECTRE.IADS.SAM.ActAsEW = <span class="keyword">false</span>
+<span class="comment">--- Go Live Zone.
+</span><span class="comment">-- Defines the conditions under which the SAM system will switch to a live (active) state.
+</span><a id="263"></a><span class="comment">-- A value determining the condition for SAM activation, based on SkynetIADSAbstractRadarElement constants.
+</span>SPECTRE.IADS.SAM.goLiveZone = SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_KILL_ZONE <span class="comment">--SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_SEARCH_RANGE
+</span><span class="comment">--- Go Live Percent.
+</span><span class="comment">-- Specifies the percentage of maximum engagement range at which the SAM system will go live.
+</span><span class="comment">-- An integer indicating the percent of maximum range for SAM activation.
+</span>SPECTRE.IADS.SAM.goLivePercent = <span class="number">100</span>
+<span class="comment">--- Can Engage Air Weapons.
+</span><span class="comment">-- Determines if the SAM site is capable of engaging air weapons.
+</span><a id="271"></a><span class="comment">-- A boolean flag, true if SAM can engage air weapons, false otherwise.
+</span>SPECTRE.IADS.SAM.CanEngageAirWeapons = <span class="keyword">true</span>
+<span class="comment">--- Can Engage HARM Missiles.
+</span><span class="comment">-- Specifies if the SAM site can engage HARM (High-speed Anti-Radiation Missile) missiles.
+</span><a id="275"></a><span class="comment">-- A boolean flag, true if SAM can engage HARM missiles, false otherwise.
+</span>SPECTRE.IADS.SAM.CanEngageHARMS = <span class="keyword">true</span>
+
+<span class="comment">--- Create a new SAM object.
+</span><span class="comment">-- This function is responsible for initializing a new Surface-to-Air Missile (SAM) object within the IADS framework.
+</span><span class="comment">-- It sets up various properties and configurations specific to the SAM type, such as engagement zones, weapon engagement capabilities, and live range percentages.
+</span><span class="comment">-- @param #IADS.SAM self The SAM class.
+</span><span class="comment">-- @param _Name The name of the SAM group.
+</span><span class="comment">-- @param _SAMTYPE The type of the SAM (e.g., LR SAM, MR SAM).
+</span><span class="comment">-- @param #IADS _IADS The instance of the IADS to which this SAM belongs.
+</span><a id="285"></a><span class="comment">-- @return #IADS.SAM self The newly created SAM object.
+</span><span class="keyword">function</span> SPECTRE.IADS.SAM:New(_Name, _SAMTYPE, _IADS)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | ------------------ "</span>)
+  <span class="comment">-- Inherit properties from the BASE class.
+</span>  <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
+
+  self.groupName = _Name
+  self.<span class="global">type</span> = _SAMTYPE
+  self.SkynetObj = _IADS.SkynetIADS:getSAMSiteByGroupName(_Name)
+  self.SkynetObj:setEngagementZone(self.goLiveZone)
+  self.SkynetObj:setCanEngageAirWeapons(self.CanEngageAirWeapons)
+  self.SkynetObj:setCanEngageHARM(self.CanEngageHARMS)
+
+  <span class="keyword">if</span> self.<span class="global">type</span> == <span class="string">"LR SAM"</span> <span class="keyword">then</span>
+    self.goLivePercent = <span class="number">75</span>
+    self.SkynetObj:setGoLiveRangeInPercent(self.goLivePercent)
+  <span class="keyword">elseif</span> self.<span class="global">type</span> == <span class="string">"MR SAM"</span> <span class="keyword">then</span>
+    self.goLivePercent = <span class="number">85</span>
+    self.SkynetObj:setGoLiveRangeInPercent(self.goLivePercent)
+  <span class="keyword">end</span>
+
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | groupName | "</span> .. self.groupName)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | type                | "</span> .. self.<span class="global">type</span>)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | ActAsEW             | "</span> .. <span class="global">tostring</span>(self.ActAsEW))
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | goLiveZone          | "</span> .. self.goLiveZone)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | goLivePercent       | "</span> .. self.goLivePercent)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | CanEngageAirWeapons | "</span> .. <span class="global">tostring</span>(self.CanEngageAirWeapons))
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | CanEngageHARMS      | "</span> .. <span class="global">tostring</span>(self.CanEngageHARMS))
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+
+<span class="comment">--- EWR TypeDef.
+</span><span class="comment">-- This section defines the Early Warning Radar (EWR) component within the Integrated Air Defense System (IADS).
+</span><span class="comment">-- @section SPECTRE.IADS
+</span><span class="comment">-- @field #IADS.EWR A table representing the EWR module within IADS.
+</span>SPECTRE.IADS.EWR = {}
+<span class="comment">--- EWR Group Name.
+</span><span class="comment">-- The name of the group in the DCS world that this EWR object represents.
+</span><a id="324"></a><span class="comment">-- A string containing the group name of the EWR system.
+</span>SPECTRE.IADS.EWR.groupName = <span class="string">""</span>
+<span class="comment">--- EWR Unit Name.
+</span><span class="comment">-- The name of the specific unit in the DCS world that this EWR object represents.
+</span><a id="328"></a><span class="comment">-- A string containing the unit name of the EWR system.
+</span>SPECTRE.IADS.EWR.unitName = <span class="string">""</span>
+<span class="comment">--- Skynet EWR Object.
+</span><span class="comment">-- The associated Skynet IADS object for this EWR, managing its behavior and properties in the IADS network.
+</span><a id="332"></a><span class="comment">-- A SkynetIADS object representation of the EWR system.
+</span>SPECTRE.IADS.EWR.SkynetObj = {}
+<span class="comment">--- Go Live Zone.
+</span><span class="comment">-- Defines the conditions under which the EWR system will switch to a live (active) state.
+</span><a id="336"></a><span class="comment">-- A value determining the condition for EWR activation, based on SkynetIADSAbstractRadarElement constants.
+</span>SPECTRE.IADS.EWR.goLiveZone = SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_SEARCH_RANGE
+<span class="comment">--- Go Live Percent.
+</span><span class="comment">-- Specifies the percentage of maximum detection range at which the EWR system will go live.
+</span><a id="340"></a><span class="comment">-- An integer indicating the percent of maximum range for EWR activation.
+</span>SPECTRE.IADS.EWR.goLivePercent = <span class="number">100</span>
+
+<span class="comment">--- Create a new EWR object.
+</span><span class="comment">-- This function is responsible for initializing a new Early Warning Radar (EWR) object within the IADS framework.
+</span><span class="comment">-- It sets up various properties and configurations specific to the EWR, such as engagement zones and live range percentages.
+</span><span class="comment">-- @param #IADS.EWR self The EWR class.
+</span><span class="comment">-- @param _groupName The name of the EWR group.
+</span><span class="comment">-- @param _unitName The name of the EWR unit.
+</span><span class="comment">-- @param #IADS _IADS The instance of the IADS to which this EWR belongs.
+</span><a id="350"></a><span class="comment">-- @return #IADS.EWR self The newly created EWR object.
+</span><span class="keyword">function</span> SPECTRE.IADS.EWR:New(_groupName, _unitName, _IADS)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.EWR:New | ------------------ "</span>)
+  <span class="comment">-- Inherit properties from the BASE class.
+</span>  <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
+
+  self.groupName = _groupName
+  self.unitName = _unitName
+  self.SkynetObj = _IADS.SkynetIADS:getEarlyWarningRadarByUnitName(_unitName)
+  self.SkynetObj:setEngagementZone(self.goLiveZone)
+  self.SkynetObj:setGoLiveRangeInPercent(self.goLivePercent)
+
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | groupName | "</span> .. self.groupName)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | unitName  | "</span> .. self.unitName)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | goLiveZone          | "</span> .. self.goLiveZone)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS.SAM:New | goLivePercent       | "</span> .. self.goLivePercent)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- DangerZone.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Internal functions, can be used externally with care and understanding.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section SPECTRE.IADS
+</span>
+<span class="comment">--- Retrieve and store the names of groups within ZONEMGR.
+</span><span class="comment">-- This function gathers all groups corresponding to units present in the zones managed by ZONEMGR.
+</span><span class="comment">-- It filters these groups based on their coalition and stores their names for further processing.
+</span><span class="comment">-- @param #IADS
+</span><a id="381"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:getGroupsInZONEMGR()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:getGroupsInZONEMGR | "</span>)
+  self._GroupNames = {}
+
+  <span class="comment">--Get all groups for units in zone
+</span>  <span class="keyword">for</span> _ZoneName, _ZoneObj <span class="keyword">in</span> <span class="global">pairs</span>(self.ZONEMGR.Zones) <span class="keyword">do</span>
+    <span class="keyword">if</span> _ZoneObj._detectedUnits[self.coal] <span class="keyword">then</span>
+      <span class="keyword">for</span> _, _Unit <span class="keyword">in</span> <span class="global">ipairs</span>(_ZoneObj._detectedUnits[self.coal]) <span class="keyword">do</span>
+        <span class="keyword">local</span> unitName  = _Unit.name
+        <span class="keyword">local</span> unitType  = _Unit.matchedType
+
+        <span class="keyword">local</span> _unit     = Unit.getByName(unitName)
+        <span class="keyword">if</span> _unit <span class="keyword">then</span>
+          <span class="keyword">local</span> _Group    =  Unit.getGroup(_unit )
+          <span class="keyword">if</span> _Group <span class="keyword">then</span>
+            <span class="keyword">local</span> groupName = Group.getName(_Group)
+            <span class="keyword">if</span> groupName <span class="keyword">then</span>
+              SPECTRE.UTILS.safeInsert(self._GroupNames,groupName)
+            <span class="keyword">end</span>
+          <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Retrieve and store attributes of groups.
+</span><span class="comment">-- This function processes each group name stored in the IADS instance, obtaining and storing their respective attributes.
+</span><span class="comment">-- @param #IADS
+</span><a id="414"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:getGroupAttributes()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:getGroupAttributes | "</span>)
+  self._GroupAttributes = {}
+  <span class="comment">--Get all Attributes for all groups
+</span>  <span class="keyword">for</span> _, _groupName <span class="keyword">in</span> <span class="global">ipairs</span>(self._GroupNames) <span class="keyword">do</span>
+    self._GroupAttributes[_groupName] = SPECTRE.UTILS.GetGroupAttributes(_groupName)
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Classify groups based on their attributes.
+</span><span class="comment">-- This function categorizes each group based on its attributes into different classes like SR SAM, MR SAM, LR SAM, and EWR.
+</span><span class="comment">-- @param #IADS
+</span><a id="428"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:classifyGroups()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:classifyGroups | "</span>)
+  self._ClassifiedGroups = {
+    [<span class="string">"SR SAM"</span>] = {},
+    [<span class="string">"MR SAM"</span>] = {},
+    [<span class="string">"LR SAM"</span>] = {},
+    [<span class="string">"EWR"</span>] = {},
+  }
+
+  <span class="comment">-- Iterate over each key in the inputTable
+</span>  <span class="keyword">for</span> key, types <span class="keyword">in</span> <span class="global">pairs</span>(self._GroupAttributes) <span class="keyword">do</span>
+    <span class="comment">-- Flags to check if the key contains any of the unwanted types
+</span>    <span class="keyword">local</span> containsRestrictedType = <span class="keyword">false</span>
+
+    <span class="comment">-- Check if the key contains any of the unwanted types
+</span>    containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, <span class="string">"AAA"</span>)
+    <span class="keyword">if</span> <span class="keyword">not</span> containsRestrictedType <span class="keyword">then</span>
+      containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, <span class="string">"IR Guided SAM"</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> containsRestrictedType <span class="keyword">then</span>
+      containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, <span class="string">"Mobile AAA"</span>)
+    <span class="keyword">end</span>
+
+
+    <span class="comment">-- If the key doesn't contain any of the unwanted types, add it to the appropriate category in the OutputTable
+</span>    <span class="keyword">if</span> <span class="keyword">not</span> containsRestrictedType <span class="keyword">then</span>
+      <span class="comment">-- Check if the key contains wanted types
+</span>      <span class="keyword">local</span> containsType = <span class="keyword">false</span>
+      <span class="keyword">local</span> containsTypeEWR = <span class="keyword">false</span>
+      <span class="keyword">local</span> containsTypeLR = <span class="keyword">false</span>
+      <span class="keyword">local</span> containsTypeMR = <span class="keyword">false</span>
+      <span class="keyword">local</span> containsTypeSR = <span class="keyword">false</span>
+
+      <span class="comment">-- Check if the key contains any of the unwanted types
+</span>      containsTypeEWR = SPECTRE.UTILS.table_hasValue(types, <span class="string">"EWR"</span>)
+      containsType = containsTypeEWR
+      <span class="keyword">if</span> <span class="keyword">not</span> containsType <span class="keyword">then</span>
+        <span class="comment">-- Check if the key contains any of the unwanted types
+</span>        containsTypeLR = SPECTRE.UTILS.table_hasValue(types, <span class="string">"LR SAM"</span>)
+        containsType = containsTypeLR
+      <span class="keyword">elseif</span> <span class="keyword">not</span> containsType <span class="keyword">then</span>
+        containsTypeMR = SPECTRE.UTILS.table_hasValue(types, <span class="string">"MR SAM"</span>)
+        containsType = containsTypeMR
+      <span class="keyword">end</span>
+      <span class="keyword">if</span> <span class="keyword">not</span> containsType <span class="keyword">then</span>
+        containsTypeSR = SPECTRE.UTILS.table_hasValue(types, <span class="string">"SR SAM"</span>)
+        containsType = containsTypeSR
+      <span class="keyword">end</span>
+
+      <span class="keyword">if</span> containsType <span class="keyword">then</span>
+        <span class="keyword">if</span> containsTypeEWR <span class="keyword">then</span>
+          <span class="global">table</span>.insert(self._ClassifiedGroups[<span class="string">"EWR"</span>], key)
+        <span class="keyword">elseif</span> containsTypeLR <span class="keyword">then</span>
+          <span class="global">table</span>.insert(self._ClassifiedGroups[<span class="string">"LR SAM"</span>], key)
+        <span class="keyword">elseif</span> containsTypeMR <span class="keyword">then</span>
+          <span class="global">table</span>.insert(self._ClassifiedGroups[<span class="string">"MR SAM"</span>], key)
+        <span class="keyword">elseif</span> containsTypeSR <span class="keyword">then</span>
+          <span class="global">table</span>.insert(self._ClassifiedGroups[<span class="string">"SR SAM"</span>], key)
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Add new SAM sites to the IADS.
+</span><span class="comment">-- This function iterates through classified groups and adds each SAM site to the Skynet IADS.
+</span><span class="comment">-- It excludes EWR from being added as a SAM site. New SAM objects are created for each group name not already present.
+</span><span class="comment">-- @param #IADS
+</span><a id="498"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:addNewSAMs()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:addNewSAMs | "</span>)
+  <span class="keyword">for</span> _SAMTYPE, _GroupNames <span class="keyword">in</span> <span class="global">pairs</span> (self._ClassifiedGroups) <span class="keyword">do</span>
+    <span class="keyword">if</span> _SAMTYPE ~= <span class="string">"EWR"</span> <span class="keyword">then</span>
+      <span class="keyword">for</span> _, _Name <span class="keyword">in</span> <span class="global">ipairs</span> (_GroupNames) <span class="keyword">do</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> self.SAMs[_Name] <span class="keyword">then</span>
+          self.SkynetIADS:addSAMSite(_Name)
+          self.SAMs[_Name] = self.SAM:New(_Name, _SAMTYPE, self)
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Add new Early Warning Radars (EWRs) to the IADS.
+</span><span class="comment">-- This function iterates through the classified groups specifically tagged as "EWR" and adds each EWR to the Skynet IADS.
+</span><span class="comment">-- It ensures that only new EWRs, not already part of the IADS, are added. New EWR objects are created for each group name.
+</span><span class="comment">-- @param #IADS
+</span><a id="518"></a><span class="comment">-- @return #IADS self
+</span><span class="keyword">function</span> SPECTRE.IADS:addNewEWRs()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.IADS:addNewEWRs | "</span>)
+
+  <span class="keyword">for</span> _, _Name <span class="keyword">in</span> <span class="global">ipairs</span> (self._ClassifiedGroups[<span class="string">"EWR"</span>]) <span class="keyword">do</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> self.EWRs[_Name] <span class="keyword">then</span>
+      <span class="keyword">local</span> _unitName
+      <span class="comment">-- Find EWR Unit in group
+</span>      <span class="keyword">local</span> _GROUPunits = GROUP:FindByName(_Name):GetUnits()
+      <span class="keyword">for</span> _, _unitOb <span class="keyword">in</span> <span class="global">pairs</span>(_GROUPunits) <span class="keyword">do</span>
+        <span class="keyword">local</span> _attributes = SPECTRE.UTILS.GetUnitAttributes(_unitOb.UnitName)
+        <span class="keyword">if</span> SPECTRE.UTILS.table_contains(_attributes,<span class="string">"EWR"</span>) <span class="keyword">then</span>
+          _unitName = _unitOb.UnitName
+          <span class="keyword">break</span>
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
+
+      self.SkynetIADS:addEarlyWarningRadar(_unitName)
+      self.EWRs[_Name] = self.EWR:New(_Name, _unitName, self)
+    <span class="keyword">end</span>
+
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

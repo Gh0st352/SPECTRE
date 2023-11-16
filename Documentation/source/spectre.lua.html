@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/brain.lua.html">brain.lua</a></li>
+  <li><a href="../source/handlers.lua.html">handlers.lua</a></li>
+  <li><a href="../source/iads.lua.html">iads.lua</a></li>
+  <li><a href="../source/io.lua.html">io.lua</a></li>
+  <li><a href="../source/markers.lua.html">markers.lua</a></li>
+  <li><a href="../source/menu.lua.html">menu.lua</a></li>
+  <li><a href="../source/plyrmgr.lua.html">plyrmgr.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/rewards.lua.html">rewards.lua</a></li>
+  <li><a href="../source/spawner.lua.html">spawner.lua</a></li>
+  <li><strong>spectre.lua</strong></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+  <li><a href="../source/zonemgr.lua.html">zonemgr.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>spectre.lua</h2>
+<pre>
+<span class="comment">--- **SPECTRE**
+</span><span class="comment">--
+</span><span class="comment">-- Special Purpose Extension for Creating Truly Reactive Environments
+</span><span class="comment">--
+</span><span class="comment">-- (SPECTRE) serves as the foundational class for the extension.
+</span><span class="comment">--
+</span><span class="comment">-- This class acts as the access point for all aspects and functionalities of SPECTRE, offering capabilities to enhance and
+</span><span class="comment">-- manage the simulation environment dynamically.
+</span><span class="comment">--
+</span><span class="comment">-- The class is fully compatible with IntelliSense and IntelliJ, providing
+</span><span class="comment">-- a robust and intuitive development experience.
+</span><span class="comment">--
+</span><span class="comment">-- Key features and properties include:
+</span><span class="comment">-- * All in one intelligent framework for speeding mission development.
+</span><span class="comment">-- * <a href="../modules/ZONEMGR.html#">ZONEMGR</a> Utilizes DBSCAN Clustering Algorithm to contribute to mission learning.
+</span><span class="comment">-- * System is capable of using the determined clusters to decide course of action for mission zones based on cluster information.
+</span><span class="comment">-- * More advanced implementations to come.
+</span><span class="comment">-- * <a href="../modules/SPAWNER.html#">SPAWNER</a> is capable of spawning thousands of unique unit combinations and sizes in fractions of a second with no client/server lag.
+</span><span class="comment">-- * Debugging capabilities controlled by <code>DebugEnabled</code>.
+</span><span class="comment">-- * Configuration for map, coalitions, and countries.
+</span><span class="comment">-- * Persistence management, including flags and file paths for various components.
+</span><span class="comment">-- * Mission status tracking and management.
+</span><span class="comment">-- * Storage for user-defined data in <a href="../modules/SPECTRE.html#USERSTORAGE">SPECTRE.USERSTORAGE</a>.
+</span><span class="comment">--
+</span><span class="comment">--        EX: local userinfo = {x = "I want to save this",[3] = false}
+</span><span class="comment">--            SPECTRE.USERSTORAGE["userinfo"] = userinfo
+</span><span class="comment">--
+</span><span class="comment">--        If persistence is enabled, you can get your data back the next load by:
+</span><span class="comment">--
+</span><span class="comment">--            local userinfo = {}
+</span><span class="comment">--            userinfo = SPECTRE.USERSTORAGE["userinfo"]
+</span><span class="comment">--
+</span><span class="comment">--
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/AI.html#">AI</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/BRAIN.html#">BRAIN</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/HANDLERS.html#">HANDLERS</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/IADS.html#">IADS</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/IO.html#">IO</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/MARKERS.html#">MARKERS</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/MENU.html#">MENU</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/PLYRMGR.html#">PLYRMGR</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/POLY.html#">POLY</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/REWARDS.html#">REWARDS</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/SPAWNER.html#">SPAWNER</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/UTILS.html#">UTILS</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/WORLD.html#">WORLD</a>
+</span><span class="comment">--  <a href="../modules/SPECTRE.html#">SPECTRE</a> ---&gt; <a href="../modules/ZONEMGR.html#">ZONEMGR</a>
+</span><span class="comment">--
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- @module SPECTRE
+</span>
+<span class="comment">--- <a href="../modules/SPECTRE.html#">SPECTRE</a>.
+</span><span class="comment">--
+</span><span class="comment">-- Special Purpose Extension for Creating Truly Reactive Environments
+</span><span class="comment">--
+</span><span class="comment">-- (SPECTRE) serves as the foundational class for the extension.
+</span><span class="comment">--
+</span><span class="comment">-- This class acts as the access point for all aspects and functionalities of SPECTRE, offering capabilities to enhance and
+</span><span class="comment">-- manage the simulation environment dynamically.
+</span><span class="comment">--
+</span><span class="comment">-- The class is fully compatible with IntelliSense and IntelliJ, providing
+</span><span class="comment">-- a robust and intuitive development experience.
+</span><span class="comment">--
+</span><span class="comment">-- Key features and properties include:
+</span><span class="comment">-- * Debugging capabilities controlled by <code>DebugEnabled</code>.
+</span><span class="comment">-- * Configuration for map, coalitions, and countries.
+</span><span class="comment">-- * Persistence management, including flags and file paths for various components.
+</span><span class="comment">-- * Mission status tracking and management.
+</span><span class="comment">-- * Storage for user-defined data.
+</span><span class="comment">--
+</span><a id="74"></a><span class="comment">-- @field #SPECTRE
+</span>SPECTRE = {}
+
+<a id="77"></a><span class="comment">--- Debugging switch for SPECTRE (0 = off, 1 = on).
+</span>SPECTRE.DebugEnabled = <span class="number">0</span>
+
+<a id="80"></a><span class="comment">--- Name of the map SPECTRE is operating on.
+</span>SPECTRE.MAPNAME = <span class="string">"Syria"</span> <span class="comment">--(DCS.getCurrentMission().mission.theatre)
+</span>
+<a id="83"></a><span class="comment">--- Coalition definitions used by SPECTRE.
+</span>SPECTRE.Coalitions = {
+  Red = coalition.side.RED,
+  Blue = coalition.side.BLUE
+}
+
+<a id="89"></a><span class="comment">--- Country definitions used by SPECTRE.
+</span>SPECTRE.Countries = {
+  Red = country.id.CJTF_RED,
+  Blue = country.id.CJTF_BLUE
+}
+
+<a id="95"></a><span class="comment">--- Flag to enable persistence in SPECTRE.
+</span>SPECTRE._persistence = <span class="keyword">false</span>
+
+
+<a id="99"></a><span class="comment">--- Flag indicating whether SPECTRE settings have been loaded.
+</span>SPECTRE._loaded = <span class="keyword">false</span>
+
+<a id="102"></a><span class="comment">--- Flag to identify the first run of SPECTRE in a mission.
+</span>SPECTRE._firstRun = <span class="keyword">true</span>
+
+<a id="105"></a><span class="comment">--- Flag indicating if a mission is in progress.
+</span>SPECTRE._missionInProgress = <span class="keyword">false</span>
+
+<a id="108"></a><span class="comment">--- Event handler for mission end events.
+</span>SPECTRE._endMizHandler = {}
+
+<a id="111"></a><span class="comment">--- Locations for persisting various components of SPECTRE.
+</span>SPECTRE._persistenceLocations = {
+  SPECTRE       = {folder = <span class="string">"SPECTRE"</span>, path = <span class="string">""</span>},
+  missionStatus = {folder = <span class="string">"missionStatus"</span>, path = <span class="string">""</span>},
+  SPAWNER       = {folder = <span class="string">"SPAWNER"</span>, path = <span class="string">""</span>},
+  ZONEMGR       = {folder = <span class="string">"ZONEMGR"</span>, path = <span class="string">""</span>},
+  PLYRMGR       = {folder = <span class="string">"PLYRMGR"</span>, path = <span class="string">""</span>},
+  IADS          = {folder = <span class="string">"IADS"</span>, path = <span class="string">""</span>}
+}
+
+
+<a id="122"></a><span class="comment">--- File name for the master profile file of SPECTRE.
+</span>SPECTRE._masterProfileFile = <span class="string">"SPECTRE.lua"</span>
+
+<a id="125"></a><span class="comment">--- User-defined storage within SPECTRE.
+</span>SPECTRE.USERSTORAGE = {}
+
+
+<span class="comment">--- Constructor for creating a new instance of the SPECTRE class.
+</span><span class="comment">--
+</span><span class="comment">-- This function initializes a new instance of the SPECTRE class, leveraging inheritance from the BASE class.
+</span><span class="comment">-- The created SPECTRE instance is ready to be configured and utilized within the simulation environment,
+</span><span class="comment">-- serving as a central component for various operational functionalities.
+</span><span class="comment">--
+</span><span class="comment">-- @param #SPECTRE
+</span><a id="136"></a><span class="comment">-- @return #SPECTRE self The newly created SPECTRE instance.
+</span><span class="keyword">function</span> SPECTRE:New()
+  <span class="keyword">local</span> self=BASE:Inherit(self, BASE:New())
+  <span class="comment">--local self = UTILS.DeepCopy(self)
+</span>  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Destroys a group object when it reaches a waypoint.
+</span><span class="comment">--
+</span><span class="comment">-- This function is designed to delete a specified group object upon reaching a waypoint.
+</span><span class="comment">-- It is a standalone global function, not encapsulated under the main <a href="../modules/SPECTRE.html#">SPECTRE</a> class,
+</span><span class="comment">-- to accommodate the specific operational requirement of group destruction in response to
+</span><span class="comment">-- waypoint attainment.
+</span><span class="comment">--
+</span><a id="150"></a><span class="comment">-- @param group The group object to be destroyed upon reaching a waypoint.
+</span><span class="keyword">function</span> SPECTREDeleteOnWP_(group)
+  group:Destroy(<span class="keyword">true</span>)
+<span class="keyword">end</span>
+
+<span class="comment">--- Enable and configure persistence for the SPECTRE system.
+</span><span class="comment">--
+</span><span class="comment">-- This function activates the persistence feature in the SPECTRE system, setting up paths for saving various
+</span><span class="comment">-- components of the system based on the given mission name. It checks for existing persistence files and loads
+</span><span class="comment">-- them if available, ensuring continuity across mission sessions. The function also sets up an event handler
+</span><span class="comment">-- for mission end to trigger necessary finalization processes. This persistence mechanism is crucial for
+</span><span class="comment">-- maintaining the state of the SPECTRE system across different missions, providing a seamless experience.
+</span><span class="comment">--
+</span><span class="comment">-- @param #SPAWNER self The instance of the SPECTRE class.
+</span><span class="comment">-- @param MissionName A unique name representing the mission, used for organizing persistence data.
+</span><a id="165"></a><span class="comment">-- @return #SPAWNER self The updated SPECTRE instance with persistence enabled and configured.
+</span><span class="keyword">function</span> SPECTRE:Persistence(MissionName)
+  <span class="comment">-- Activate persistence
+</span>  self._persistence = <span class="keyword">true</span>
+  <span class="comment">-- Debug Information
+</span>  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:Persistence | Checking persistence for Mission: "</span> .. MissionName )
+  <span class="comment">-- Set paths for saving different components of the spawner
+</span>  self._persistenceLocations.SPECTRE.folder = MissionName
+  self._persistenceLocations.SPECTRE.path = MissionName .. <span class="string">"/"</span>
+  self._persistenceLocations.missionStatus.path = MissionName .. <span class="string">"/"</span>.. self._persistenceLocations.missionStatus.folder .. <span class="string">"/"</span>
+  self._persistenceLocations.SPAWNER.path = MissionName .. <span class="string">"/"</span>.. self._persistenceLocations.SPAWNER.folder .. <span class="string">"/"</span>
+  self._persistenceLocations.ZONEMGR.path = MissionName .. <span class="string">"/"</span>.. self._persistenceLocations.ZONEMGR.folder .. <span class="string">"/"</span>
+  self._persistenceLocations.PLYRMGR.path = MissionName .. <span class="string">"/"</span>.. self._persistenceLocations.PLYRMGR.folder .. <span class="string">"/"</span>
+  self._persistenceLocations.IADS.path = MissionName .. <span class="string">"/"</span>.. self._persistenceLocations.IADS.folder .. <span class="string">"/"</span>
+
+  <span class="comment">-- Where to go to sleep.
+</span>  <span class="keyword">local</span> _tmasterProfileFile = <span class="global">tostring</span>(self._masterProfileFile)
+  <span class="keyword">local</span> _fmasterProfileName = <span class="global">tostring</span>(self._persistenceLocations.missionStatus.path .. _tmasterProfileFile)
+  self._masterProfileFile = <span class="global">tostring</span>(_fmasterProfileName)
+  <span class="comment">-- Check for existing persistence files and load if present
+</span>  <span class="keyword">if</span> SPECTRE.IO.file_exists(self._masterProfileFile) <span class="keyword">then</span>
+    <span class="comment">-- Load Stuff
+</span>    <span class="keyword">local</span> _oldSelf = SPECTRE.IO.PersistenceFromFile(self._masterProfileFile)
+    self = SPECTRE.UTILS.setTableValues(_oldSelf, self)
+    self._loaded = <span class="keyword">true</span>
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:Persistence | PERSISTENCE | LOADED OLD SELF"</span>)
+  <span class="keyword">end</span>
+  self._missionInProgress = <span class="keyword">true</span>
+  self._endMizHandler = EVENT:New()
+  self._endMizHandler:HandleEvent(EVENTS.MissionEnd, <span class="keyword">function</span>(eventData)
+    self:_EndMission(eventData)
+  <span class="keyword">end</span>)
+  <span class="comment">-- Debug output for constructed paths
+</span>  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:Persistence | Paths:"</span>)
+  SPECTRE.UTILS.debugInfo(<span class="string">"  missionStatus:  "</span> .. self._persistenceLocations.missionStatus.path)
+  SPECTRE.UTILS.debugInfo(<span class="string">"  Profile:        "</span> .. self._masterProfileFile)
+  SPECTRE.UTILS.debugInfo(<span class="string">"  SPAWNER:        "</span> .. self._persistenceLocations.SPAWNER.path)
+  SPECTRE.UTILS.debugInfo(<span class="string">"  ZONEMGR:        "</span> .. self._persistenceLocations.ZONEMGR.path)
+  SPECTRE.UTILS.debugInfo(<span class="string">"  PLYRMGR:        "</span> .. self._persistenceLocations.PLYRMGR.path)
+  SPECTRE.UTILS.debugInfo(<span class="string">"  IADS:           "</span> .. self._persistenceLocations.IADS.path)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Internal.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section SPECTRE
+</span>
+<span class="comment">--- Handler for the end mission event.
+</span><span class="comment">--
+</span><span class="comment">-- This internal function is triggered by the "End Mission" event and is responsible for managing the final
+</span><span class="comment">-- steps of a mission within the SPECTRE system. It logs the mission completion, invokes the <code>EndMission</code>
+</span><span class="comment">-- function to handle the necessary finalization processes, and ensures that SPECTRE is appropriately
+</span><span class="comment">-- updated and saved at the end of a mission. This function plays a critical role in ensuring a smooth
+</span><span class="comment">-- transition and preserving the state of SPECTRE for future operations if persistence is enabled.
+</span><span class="comment">--
+</span><span class="comment">-- @param #SPECTRE self The instance of the SPECTRE class.
+</span><span class="comment">-- @param eventData Data associated with the "End Mission" event.
+</span><a id="226"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, having processed the end of the mission.
+</span><span class="keyword">function</span> SPECTRE:_EndMission(eventData)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:_EndMission | PERSISTENCE | The mission has ended! Saving...."</span>)
+  self:EndMissionSave()
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">---Save and prepare SPECTRE for the next operation.
+</span><span class="comment">--
+</span><span class="comment">-- This function is responsible for preparing the SPECTRE system for subsequent operations.
+</span><span class="comment">-- It handles the state transition by updating internal flags and performing necessary cleanup or reset actions.
+</span><span class="comment">-- Additionally, it exports the current state of SPECTRE to a file for persistence, enabling the system to resume
+</span><span class="comment">-- effectively in the next mission.
+</span><span class="comment">--
+</span><span class="comment">-- @param #SPECTRE
+</span><a id="241"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, prepared for the next operation.
+</span><span class="keyword">function</span> SPECTRE:EndMissionSave()
+  <span class="keyword">if</span> self._firstRun == <span class="keyword">true</span> <span class="keyword">then</span> self._firstRun = <span class="keyword">false</span> <span class="keyword">end</span>
+  <span class="keyword">if</span> self._missionInProgress == <span class="keyword">false</span> <span class="keyword">then</span> self._firstRun = <span class="keyword">true</span> <span class="keyword">end</span>
+  <span class="comment">-- Collect self and center thoughts for the next go.
+</span>  <span class="keyword">local</span> SPECTRE_settings = SPECTRE.UTILS.templateFromObject(self)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:_EndMission | PERSISTENCE | Exporting self... "</span>)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:_EndMission | PERSISTENCE | Saving To:          "</span> .. self._masterProfileFile)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:_EndMission | PERSISTENCE | _missionInProgress: "</span> .. <span class="global">tostring</span>(self._missionInProgress))
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:_EndMission | PERSISTENCE | _firstRun:          "</span> .. <span class="global">tostring</span>(self._firstRun))
+  SPECTRE.IO.PersistenceToFile(self._masterProfileFile, SPECTRE_settings, <span class="keyword">true</span>)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

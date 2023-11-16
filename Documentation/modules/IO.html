@@ -1,0 +1,1021 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Files___Folders">Files & Folders </a></li>
+<li><a href="#Internal_Methods">Internal Methods </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><strong>IO</strong></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>IO</code></h1>
+<p><strong>IO</strong></p>
+
+<p> File and Object Management Utilities for SPECTRE.</p>
+<p>
+
+
+<ul>
+    <li><p>Provides functionality to read, write, and manage files.</p></li>
+    <li><p>Enables object serialization to and from persistent storage.</p></li>
+    <li><p>Offers utilities to check and ensure directory and file existence.</p></li>
+</ul>
+
+
+<pre>
+For example, you can easily serialize game state data, save it to a file, <span class="keyword">and</span> <span class="global">load</span> it back when needed.
+</pre>
+
+<hr/>
+</p>
+
+
+<h2><a href="#Files___Folders">Files & Folders </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.DirExists">SPECTRE.IO.DirExists(Dir)</a></td>
+	<td class="summary">Checks if a directory exists and creates it if not.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.FileExists">SPECTRE.IO.FileExists(File)</a></td>
+	<td class="summary">Checks if a file exists and creates it if not.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.PersistenceFromFile">SPECTRE.IO.PersistenceFromFile(filepath)</a></td>
+	<td class="summary">Loads an object from a specified filepath.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.PersistenceToFile">SPECTRE.IO.PersistenceToFile(filepath, Object, noFunc)</a></td>
+	<td class="summary">Saves an object to a specified file within the SPECTRE directory.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.extractFilenameAndPath">SPECTRE.IO.extractFilenameAndPath(filepath)</a></td>
+	<td class="summary">Extracts the filename and path from a full filepath.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.file_exists">SPECTRE.IO.file_exists(filePath)</a></td>
+	<td class="summary">Determines the existence of a file at a specified path.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.removeLastSlashOrBackslash">SPECTRE.IO.removeLastSlashOrBackslash(inputString)</a></td>
+	<td class="summary">Removes the trailing slash or backslash from a string.</td>
+	</tr>
+</table>
+<h2><a href="#Internal_Methods">Internal Methods </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.persistence.deSerialize">SPECTRE.IO.persistence.deSerialize(serialString_)</a></td>
+	<td class="summary">Loads and executes Lua content from the specified path or file object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.persistence.dump">SPECTRE.IO.persistence.dump(o)</a></td>
+	<td class="summary">Transforms a table or value into its string representation.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.persistence.load">SPECTRE.IO.persistence.load(path)</a></td>
+	<td class="summary">Loads and executes Lua content from the specified path or file object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.persistence.store">SPECTRE.IO.persistence.store(path, ...)</a></td>
+	<td class="summary">Persists multiple Lua values by serializing and saving them to a file.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IO.persistence.storeNoFunc">SPECTRE.IO.persistence.storeNoFunc(path, ...)</a></td>
+	<td class="summary">NO FUNCTION OUTPUT VERSION.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#refCount">refCount(objRefCount, item)</a></td>
+	<td class="summary">Counts references for tables recursively.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#write">write(file, item, level, objRefNames, skipFunctions)</a></td>
+	<td class="summary">Writes the provided item to the file using the appropriate writer based on the item's type.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#writeIndent">writeIndent(file, level)</a></td>
+	<td class="summary">Writes indentation to the provided file.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#writeNoFunc">writeNoFunc(file, item, level, objRefNames, skipFunctions)</a></td>
+	<td class="summary">NO FUNCTION OUTPUT VERSION.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#writeSerialString">writeSerialString(serialString_, item, level, objRefNames, skipFunctions)</a></td>
+	<td class="summary">serial OUTPUT VERSION.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#writers">writers</a></td>
+	<td class="summary">Table of writer functions for serializing various types of Lua data.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#writersNoFunc">writersNoFunc</a></td>
+	<td class="summary">NO FUNCTION OUTPUT VERSION.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#writersSerialString">writersSerialString</a></td>
+	<td class="summary">SERIAL OUTPUT VERSION.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Files___Folders"></a>Files & Folders </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Files &amp; Folders operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.IO.DirExists"></a>
+    <strong>SPECTRE.IO.DirExists(Dir)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#45">line 45</a>
+    </dt>
+    <dd>
+    Checks if a directory exists and creates it if not. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.DirExists">SPECTRE.IO.DirExists</a></p>
+
+<p> This function checks for the existence of a specified directory.
+ If the directory does not exist, it will be created.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Dir</span>
+         The path of the directory to check.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.IO.DirExists(<span class="string">"path/to/directory"</span>) <span class="comment">-- Checks and possibly creates the directory at the specified path.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.FileExists"></a>
+    <strong>SPECTRE.IO.FileExists(File)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#62">line 62</a>
+    </dt>
+    <dd>
+    Checks if a file exists and creates it if not. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.FileExists">SPECTRE.IO.FileExists</a></p>
+
+<p> This function checks for the existence of a specified file.
+ If the file does not exist, an empty file will be created.
+ Any errors encountered during file creation are currently not handled.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">File</span>
+         The path of the file to check.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.IO.FileExists(<span class="string">"path/to/file.txt"</span>) <span class="comment">-- Checks and possibly creates the file at the specified path.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.PersistenceFromFile"></a>
+    <strong>SPECTRE.IO.PersistenceFromFile(filepath)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#105">line 105</a>
+    </dt>
+    <dd>
+    Loads an object from a specified filepath. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.PersistenceFromFile">SPECTRE.IO.PersistenceFromFile</a></p>
+
+<p> This function takes a full filepath as input and extracts the directory path and filename using the <a href="../modules/IO.html#SPECTRE.IO.extractFilenameAndPath">SPECTRE.IO.extractFilenameAndPath</a> method.
+ It then constructs the absolute path to the file and attempts to load an object from it using the <a href="../modules/IO.html#SPECTRE.IO.persistence.load">SPECTRE.IO.persistence.load</a> method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filepath</span>
+         The full filepath from which to load the object.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Object The object loaded from the file, or nil if the file does not contain a valid object.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> myObject = SPECTRE.IO.PersistenceFromFile(<span class="string">"path/to/myFile.txt"</span>) <span class="comment">-- Loads the object from the specified filepath.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.PersistenceToFile"></a>
+    <strong>SPECTRE.IO.PersistenceToFile(filepath, Object, noFunc)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#148">line 148</a>
+    </dt>
+    <dd>
+    Saves an object to a specified file within the SPECTRE directory. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.PersistenceToFile">SPECTRE.IO.PersistenceToFile</a></p>
+
+<p> This function takes an object and a filepath as arguments. It constructs a full path to the file,
+ ensures the directory and file exist (creating them if necessary), and then saves the object to the file.
+ The object is saved using the <a href="../modules/IO.html#SPECTRE.IO.persistence.store">SPECTRE.IO.persistence.store</a> method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filepath</span>
+         The path to the file where the object should be saved.
+        </li>
+        <li><span class="parameter">Object</span>
+         The object to be saved to the file.
+        </li>
+        <li><span class="parameter">noFunc</span>
+         (Optional, if true does not export functions)
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.IO.PersistenceToFile(<span class="string">"path/to/file.txt"</span>, myObject) <span class="comment">-- Saves the <code>myObject</code> to "file.txt" within the specified path in the SPECTRE directory.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.extractFilenameAndPath"></a>
+    <strong>SPECTRE.IO.extractFilenameAndPath(filepath)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#84">line 84</a>
+    </dt>
+    <dd>
+    Extracts the filename and path from a full filepath. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.extractFilenameAndPath">SPECTRE.IO.extractFilenameAndPath</a></p>
+
+<p> This function breaks a given full filepath into its constituent filename and path.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filepath</span>
+         The full filepath to process.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        filePath_ The path without the filename.</li>
+        <li>
+        filename The extracted filename from the filepath.</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> path, name = SPECTRE.IO.extractFilenameAndPath(<span class="string">"path/to/myFile.txt"</span>) <span class="comment">-- Extracts "/path/to/" as path and "myFile.txt" as name.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.file_exists"></a>
+    <strong>SPECTRE.IO.file_exists(filePath)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#179">line 179</a>
+    </dt>
+    <dd>
+    Determines the existence of a file at a specified path. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.file_exists">SPECTRE.IO.file_exists</a></p>
+
+<p> A utility function designed to check the existence of a file at a given path. It tries to open the file for reading.
+ If the file is accessible, it confirms its existence by returning true. If the file cannot be accessed or does not exist, it returns false.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filePath</span>
+         The absolute or relative path of the file to be verified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        true Indicates the file exists.</li>
+        <li>
+        false Indicates the file does not exist.</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> fileExists = SPECTRE.IO.file_exists(<span class="string">"data/files/file.txt"</span>) <span class="comment">-- Verifies the existence of "file.txt" in the "data/files" directory.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.removeLastSlashOrBackslash"></a>
+    <strong>SPECTRE.IO.removeLastSlashOrBackslash(inputString)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#126">line 126</a>
+    </dt>
+    <dd>
+    Removes the trailing slash or backslash from a string. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.removeLastSlashOrBackslash">SPECTRE.IO.removeLastSlashOrBackslash</a></p>
+
+<p> This function examines the last character of an input string. If the last character is either a slash ('/') or a backslash ('\'),
+ the function removes it and returns the modified string. If the last character is not a slash or backslash, the function returns the input string unmodified.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputString</span>
+         The string from which to potentially remove a trailing slash or backslash.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string The modified string without a trailing slash or backslash, or the original string if no modification was made.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> newPath = SPECTRE.IO.removeLastSlashOrBackslash(<span class="string">"path/to/directory/"</span>) <span class="comment">-- Returns "/path/to/directory".</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Internal_Methods"></a>Internal Methods </h2>
+
+          <div class="section-description">
+
+
+
+<p> Not meant to be used directly, but can be.</p>
+
+<p>  <em>Stores persistence generation functions.</em></p>
+
+<p> Houses methods for interacting with files outside of the game.</p>
+
+<hr/>
+
+<pre><code> -Exports table of data from MissionScripting environment to text file
+ -Imports table of data from text file to MissionScripting environment
+ -Dumps table to string format
+</code></pre>
+
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.IO.persistence.deSerialize"></a>
+    <strong>SPECTRE.IO.persistence.deSerialize(serialString_)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#449">line 449</a>
+    </dt>
+    <dd>
+    Loads and executes Lua content from the specified path or file object. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.persistence.load">SPECTRE.IO.persistence.load</a></p>
+
+<p> This utility function reads, loads, and executes Lua content from a given file path or a file-like object.
+ If the content is successfully loaded and executed, the result of the execution is returned.
+ In case of an error during loading, it returns <code>nil</code> alongside an error message.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">serialString_</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        e The result of the Lua content execution, or <code>nil</code> and an associated error message if an error occurs.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> executionResult = SPECTRE.IO.persistence.<span class="global">load</span>(<span class="string">"directory/luaScript.lua"</span>) <span class="comment">-- Loads and executes the Lua script at the defined path.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.persistence.dump"></a>
+    <strong>SPECTRE.IO.persistence.dump(o)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#223">line 223</a>
+    </dt>
+    <dd>
+    Transforms a table or value into its string representation. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.persistence.dump">SPECTRE.IO.persistence.dump</a></p>
+
+<p> A utility function crafted to convert a table into its string representation recursively.
+ For any non-table values, the function will directly convert them into strings.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">o</span>
+         The table or value that needs conversion.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>string A string that represents the serialized form of the given table or value.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> serializedString = SPECTRE.IO.persistence.dump(dataTable) <span class="comment">-- Retrieves the string format of <code>dataTable</code>.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.persistence.load"></a>
+    <strong>SPECTRE.IO.persistence.load(path)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#472">line 472</a>
+    </dt>
+    <dd>
+    Loads and executes Lua content from the specified path or file object. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.persistence.load">SPECTRE.IO.persistence.load</a></p>
+
+<p> This utility function reads, loads, and executes Lua content from a given file path or a file-like object.
+ If the content is successfully loaded and executed, the result of the execution is returned.
+ In case of an error during loading, it returns <code>nil</code> alongside an error message.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+         The path to the Lua file, or a file-like object containing Lua content.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        e The result of the Lua content execution, or <code>nil</code> and an associated error message if an error occurs.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> executionResult = SPECTRE.IO.persistence.<span class="global">load</span>(<span class="string">"directory/luaScript.lua"</span>) <span class="comment">-- Loads and executes the Lua script at the defined path.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.persistence.store"></a>
+    <strong>SPECTRE.IO.persistence.store(path, ...)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#247">line 247</a>
+    </dt>
+    <dd>
+    Persists multiple Lua values by serializing and saving them to a file. </p>
+
+<p>  <a href="../modules/IO.html#SPECTRE.IO.persistence.store">SPECTRE.IO.persistence.store</a></p>
+
+<p> A utility function designed to serialize multiple Lua values, including tables, into a string format.
+ It then writes the serialized string into a specified file. This method ensures efficient storage by
+ avoiding redundant storage of duplicate table references.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+         The path where the serialized values should be written.
+        </li>
+        <li><span class="parameter">...</span>
+         Lua values that need to be serialized and persisted.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.IO.persistence.store(<span class="string">"destination/file.txt"</span>, dataTable1, dataTable2) <span class="comment">-- Serializes and saves <code>dataTable1</code> and <code>dataTable2</code> to the defined file.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IO.persistence.storeNoFunc"></a>
+    <strong>SPECTRE.IO.persistence.storeNoFunc(path, ...)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#312">line 312</a>
+    </dt>
+    <dd>
+    NO FUNCTION OUTPUT VERSION.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+         The path where the serialized values should be written.
+        </li>
+        <li><span class="parameter">...</span>
+         Lua values that need to be serialized and persisted.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.IO.persistence.store(<span class="string">"destination/file.txt"</span>, dataTable1, dataTable2) <span class="comment">-- Serializes and saves <code>dataTable1</code> and <code>dataTable2</code> to the defined file.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "refCount"></a>
+    <strong>refCount(objRefCount, item)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#563">line 563</a>
+    </dt>
+    <dd>
+    Counts references for tables recursively. </p>
+
+<p> This function increases the reference count for tables. When encountering a table for the first time,
+ it counts its references and then recursively counts the references of its keys and values.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">objRefCount</span>
+         A table that stores reference counts for other tables.
+        </li>
+        <li><span class="parameter">item</span>
+         The item (potentially a table) whose references are to be counted.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">refCount(objRefCountTable, myTable) <span class="comment">-- Counts references for <code>myTable</code> and updates <code>objRefCountTable</code>.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "write"></a>
+    <strong>write(file, item, level, objRefNames, skipFunctions)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#499">line 499</a>
+    </dt>
+    <dd>
+    Writes the provided item to the file using the appropriate writer based on the item's type. </p>
+
+<p> This function selects a writer function based on the type of the provided item and then invokes it.
+ The writer functions are expected to be stored in the <a href="../modules/IO.html#writers">writers</a> table, indexed by the item type.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">file</span>
+         The file object to write to.
+        </li>
+        <li><span class="parameter">item</span>
+         The item to be written.
+        </li>
+        <li><span class="parameter">level</span>
+         The current nesting level (used for recursive calls).
+        </li>
+        <li><span class="parameter">objRefNames</span>
+         A table of object reference names (used for recursive calls).
+        </li>
+        <li><span class="parameter">skipFunctions</span>
+         (optional, default false)if true will insert placeholder text for func instead of data.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">write(myFile, myItem, <span class="number">0</span>, {}) <span class="comment">-- Writes <code>myItem</code> to <code>myFile</code> using the appropriate writer.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "writeIndent"></a>
+    <strong>writeIndent(file, level)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#539">line 539</a>
+    </dt>
+    <dd>
+    Writes indentation to the provided file. </p>
+
+<p> This function writes a specified number of tab characters to the given file, creating an indentation effect.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">file</span>
+         The file object to write to.
+        </li>
+        <li><span class="parameter">level</span>
+         The number of tab characters to write.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">writeIndent(myFile, <span class="number">3</span>) <span class="comment">-- Writes 3 tab characters to <code>myFile</code> for indentation.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "writeNoFunc"></a>
+    <strong>writeNoFunc(file, item, level, objRefNames, skipFunctions)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#511">line 511</a>
+    </dt>
+    <dd>
+    NO FUNCTION OUTPUT VERSION.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">file</span>
+         The file object to write to.
+        </li>
+        <li><span class="parameter">item</span>
+         The item to be written.
+        </li>
+        <li><span class="parameter">level</span>
+         The current nesting level (used for recursive calls).
+        </li>
+        <li><span class="parameter">objRefNames</span>
+         A table of object reference names (used for recursive calls).
+        </li>
+        <li><span class="parameter">skipFunctions</span>
+         (optional, default false)if true will insert placeholder text for func instead of data.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">write(myFile, myItem, <span class="number">0</span>, {}) <span class="comment">-- Writes <code>myItem</code> to <code>myFile</code> using the appropriate writer.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "writeSerialString"></a>
+    <strong>writeSerialString(serialString_, item, level, objRefNames, skipFunctions)</strong>
+    <a style="float:right;" href="../source/IO.lua.html#523">line 523</a>
+    </dt>
+    <dd>
+    serial OUTPUT VERSION.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">serialString_</span>
+         The file object to write to.
+        </li>
+        <li><span class="parameter">item</span>
+         The item to be written.
+        </li>
+        <li><span class="parameter">level</span>
+         The current nesting level (used for recursive calls).
+        </li>
+        <li><span class="parameter">objRefNames</span>
+         A table of object reference names (used for recursive calls).
+        </li>
+        <li><span class="parameter">skipFunctions</span>
+         (optional, default false)if true will insert placeholder text for func instead of data.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">write(myFile, myItem, <span class="number">0</span>, {}) <span class="comment">-- Writes <code>myItem</code> to <code>myFile</code> using the appropriate writer.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "writers"></a>
+    <strong>writers</strong>
+    <a style="float:right;" href="../source/IO.lua.html#584">line 584</a>
+    </dt>
+    <dd>
+    Table of writer functions for serializing various types of Lua data. </p>
+
+<p> Each function in this table converts a Lua value of a specific type into a string representation suitable for storing in a file.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">[nil]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[number]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[string]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[boolean]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[table]</span>
+
+
+
+        </li>
+        <li><span class="parameter">v</span>
+
+
+
+        </li>
+        <li><span class="parameter">[function]</span>
+
+
+
+        </li>
+        <li><span class="parameter">s</span>
+
+
+
+        </li>
+        <li><span class="parameter">[thread]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[userdata]</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "writersNoFunc"></a>
+    <strong>writersNoFunc</strong>
+    <a style="float:right;" href="../source/IO.lua.html#650">line 650</a>
+    </dt>
+    <dd>
+    NO FUNCTION OUTPUT VERSION.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">[nil]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[number]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[string]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[boolean]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[table]</span>
+
+
+
+        </li>
+        <li><span class="parameter">v</span>
+
+
+
+        </li>
+        <li><span class="parameter">[function]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[thread]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[userdata]</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "writersSerialString"></a>
+    <strong>writersSerialString</strong>
+    <a style="float:right;" href="../source/IO.lua.html#708">line 708</a>
+    </dt>
+    <dd>
+
+<p>SERIAL OUTPUT VERSION. </p>
+
+
+<hr/>
+
+
+
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">[nil]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[number]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[string]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[boolean]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[table]</span>
+
+
+
+        </li>
+        <li><span class="parameter">v</span>
+
+
+
+        </li>
+        <li><span class="parameter">[function]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[thread]</span>
+
+
+
+        </li>
+        <li><span class="parameter">[userdata]</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

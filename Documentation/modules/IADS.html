@@ -1,0 +1,1318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Main">Main </a></li>
+<li><a href="#SAM_TypeDef">SAM TypeDef </a></li>
+<li><a href="#EWR_TypeDef">EWR TypeDef </a></li>
+<li><a href="#DangerZone">DangerZone </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><strong>IADS</strong></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>IADS</code></h1>
+<p><strong>IADS</strong></p>
+
+<p> The Integrated Air Defense System (IADS) module for SPECTRE, leveraging Skynet-IADS for advanced air defense simulation.</p>
+<p>
+
+
+<p> Automatically adds all eligible groups to their relevant IADs. Manual set up no longer required.</p>
+
+<p> All SKYNET functions can be called by </p>
+
+
+<pre>
+<span class="keyword">local</span> newIADS =  IADS:New()
+newIADS.SkynetIADS:<span class="backtick"><code>SKYNET FUNCTION HERE</code></span>()
+</pre>
+
+<p> This module integrates the functionalities of Skynet-IADS, with the SPECTRE system.</p>
+
+<p> Skynet-IADS is required for this module to function properly.</p>
+
+
+<pre>
+For more information <span class="keyword">and</span> the Skynet-IADS source, visit: https://github.com/walder/Skynet-IADS
+</pre>
+
+<p> <code>HIGHLIGHTS</code></p>
+
+<p> The SPECTRE.IADS module integrates several key features and functionalities to enhance air defense simulations:</p>
+
+<p> <strong>Seamless Integration with SPECTRE:</strong> </p>
+
+
+<pre>
+Leverages the existing capabilities of the SPECTRE framework,
+ensuring smooth operation <span class="keyword">and</span> coordination with other SPECTRE modules.
+</pre>
+
+<p> <strong>Automated Zone Management:</strong> </p>
+
+
+<pre>
+Works <span class="keyword">in</span> conjunction with ZONEMGR to automatically detect
+<span class="keyword">and</span> classify air defense units within specified zones, simplifying setup <span class="keyword">and</span> deployment.
+</pre>
+
+<p> <strong>Enhanced Air Defense Tactics:</strong> </p>
+
+<pre>
+Supports advanced tactics such as SAM site activation/deactivation
+<span class="keyword">for</span> generated units automatically.
+</pre>
+
+<p> <strong>Integration with External Systems:</strong> </p>
+
+
+<pre>
+Facilitates integration with external systems <span class="keyword">and</span> modules,
+expanding the scope <span class="keyword">and</span> interoperability of air defense simulations.
+</pre>
+
+</p>
+
+
+<h2><a href="#Main">Main </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS">SPECTRE.IADS</a></td>
+	<td class="summary">SPECTRE.IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.EWRs">SPECTRE.IADS.EWRs</a></td>
+	<td class="summary">Storage for Managed EWRs.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAMs">SPECTRE.IADS.SAMs</a></td>
+	<td class="summary">Storage for Managed SAMs.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SkynetIADS">SPECTRE.IADS.SkynetIADS</a></td>
+	<td class="summary">Storage for SkynetIADS object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.UpdateInterval">SPECTRE.IADS.UpdateInterval</a></td>
+	<td class="summary">How often to update self.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.UpdateIntervalNudge">SPECTRE.IADS.UpdateIntervalNudge</a></td>
+	<td class="summary">Nudge factor for update interval.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.UpdateSched">SPECTRE.IADS.UpdateSched</a></td>
+	<td class="summary">Scheduler for periodic IADS updates.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.UpdatingIADS">SPECTRE.IADS.UpdatingIADS</a></td>
+	<td class="summary">Flag indicating if IADS is currently being updated.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.ZONEMGR">SPECTRE.IADS.ZONEMGR</a></td>
+	<td class="summary">Storage for ZONEMGR object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS._GroupAttributes">SPECTRE.IADS._GroupAttributes</a></td>
+	<td class="summary">Storage for _GroupAttributes from detected ZONEMGR units.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS._GroupNames">SPECTRE.IADS._GroupNames</a></td>
+	<td class="summary">Storage for built groups from detected ZONEMGR units.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.coal">SPECTRE.IADS.coal</a></td>
+	<td class="summary">Coalition to build IADs for.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:DebugOn">SPECTRE.IADS:DebugOn(IADS)</a></td>
+	<td class="summary">Enable Debug Mode for IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:Init">SPECTRE.IADS:Init(IADS)</a></td>
+	<td class="summary">Initialize the IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:New">SPECTRE.IADS:New(IADS, coal, ZONEMGR)</a></td>
+	<td class="summary">Create a new instance of the Integrated Air Defense System (IADS) Manager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:Update">SPECTRE.IADS:Update(IADS)</a></td>
+	<td class="summary">Perform an update cycle for the IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:UpdateSchedInit">SPECTRE.IADS:UpdateSchedInit(IADS)</a></td>
+	<td class="summary">Initialize the update scheduler for the IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:createSkynet">SPECTRE.IADS:createSkynet(IADS, name)</a></td>
+	<td class="summary">Create Skynet Object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:deactivateSkynet">SPECTRE.IADS:deactivateSkynet(IADS)</a></td>
+	<td class="summary">Deactivate Skynet Object in IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:setSkynetUpdateInterval">SPECTRE.IADS:setSkynetUpdateInterval(IADS, interval)</a></td>
+	<td class="summary">Set Skynet update interval in IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:setUpdateInterval">SPECTRE.IADS:setUpdateInterval(IADS, interval, nudge)</a></td>
+	<td class="summary">Set the update interval and nudge factor for IADS.</td>
+	</tr>
+</table>
+<h2><a href="#SAM_TypeDef">SAM TypeDef </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM.ActAsEW">SPECTRE.IADS.SAM.ActAsEW</a></td>
+	<td class="summary">Act As Early Warning.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM.CanEngageAirWeapons">SPECTRE.IADS.SAM.CanEngageAirWeapons</a></td>
+	<td class="summary">Can Engage Air Weapons.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM.CanEngageHARMS">SPECTRE.IADS.SAM.CanEngageHARMS</a></td>
+	<td class="summary">Can Engage HARM Missiles.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM.SkynetObj">SPECTRE.IADS.SAM.SkynetObj</a></td>
+	<td class="summary">Skynet SAM Object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM.goLiveZone">SPECTRE.IADS.SAM.goLiveZone</a></td>
+	<td class="summary">Go Live Zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM.groupName">SPECTRE.IADS.SAM.groupName</a></td>
+	<td class="summary">SAM Group Name.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM.type">SPECTRE.IADS.SAM.type</a></td>
+	<td class="summary">SAM Type.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.SAM:New">SPECTRE.IADS.SAM:New(_Name, _SAMTYPE, IADS)</a></td>
+	<td class="summary">Create a new SAM object.</td>
+	</tr>
+</table>
+<h2><a href="#EWR_TypeDef">EWR TypeDef </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.EWR.SkynetObj">SPECTRE.IADS.EWR.SkynetObj</a></td>
+	<td class="summary">Skynet EWR Object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.EWR.goLivePercent">SPECTRE.IADS.EWR.goLivePercent</a></td>
+	<td class="summary">Go Live Percent.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.EWR.goLiveZone">SPECTRE.IADS.EWR.goLiveZone</a></td>
+	<td class="summary">Go Live Zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.EWR.groupName">SPECTRE.IADS.EWR.groupName</a></td>
+	<td class="summary">EWR Group Name.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.EWR.unitName">SPECTRE.IADS.EWR.unitName</a></td>
+	<td class="summary">EWR Unit Name.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS.EWR:New">SPECTRE.IADS.EWR:New(_groupName, _unitName, IADS)</a></td>
+	<td class="summary">Create a new EWR object.</td>
+	</tr>
+</table>
+<h2><a href="#DangerZone">DangerZone </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:addNewEWRs">SPECTRE.IADS:addNewEWRs(IADS)</a></td>
+	<td class="summary">Add new Early Warning Radars (EWRs) to the IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:addNewSAMs">SPECTRE.IADS:addNewSAMs(IADS)</a></td>
+	<td class="summary">Add new SAM sites to the IADS.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:classifyGroups">SPECTRE.IADS:classifyGroups(IADS)</a></td>
+	<td class="summary">Classify groups based on their attributes.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:getGroupAttributes">SPECTRE.IADS:getGroupAttributes(IADS)</a></td>
+	<td class="summary">Retrieve and store attributes of groups.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.IADS:getGroupsInZONEMGR">SPECTRE.IADS:getGroupsInZONEMGR(IADS)</a></td>
+	<td class="summary">Retrieve and store the names of groups within ZONEMGR.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="Main"></a>Main </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Main exposed access points.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.IADS"></a>
+    <strong>SPECTRE.IADS</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#66">line 66</a>
+    </dt>
+    <dd>
+    SPECTRE.IADS. </p>
+
+<p> The core table representing the IADS functionality within the SPECTRE framework.</p>
+
+<p> This table acts as the primary interface for implementing and managing IADS operations,
+ integrating Skynet-IADS features into the SPECTRE environment.</p>
+
+<p> It requires the Skynet-IADS system to be installed and properly configured.</p>
+
+<p> Access more about Skynet-IADS at: https://github.com/walder/Skynet-IADS</p>
+
+<p> The primary table/interface for IADS functionalities within SPECTRE.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.EWRs"></a>
+    <strong>SPECTRE.IADS.EWRs</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#86">line 86</a>
+    </dt>
+    <dd>
+    Storage for Managed EWRs.
+ A storage field dedicated to Early Warning Radars (EWRs) managed within the IADS.
+ A collection of managed EWR systems.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAMs"></a>
+    <strong>SPECTRE.IADS.SAMs</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#82">line 82</a>
+    </dt>
+    <dd>
+    Storage for Managed SAMs.
+ A storage field dedicated to Surface-to-Air Missile (SAM) systems managed within the IADS.
+ A collection of managed SAM systems.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SkynetIADS"></a>
+    <strong>SPECTRE.IADS.SkynetIADS</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#78">line 78</a>
+    </dt>
+    <dd>
+    Storage for SkynetIADS object.
+ This field holds the Skynet Integrated Air Defense System object for managing air defense networks.
+ A container for the Skynet IADS object.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.UpdateInterval"></a>
+    <strong>SPECTRE.IADS.UpdateInterval</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#106">line 106</a>
+    </dt>
+    <dd>
+    How often to update self.
+ This field specifies the interval at which the IADS should update itself.
+ An integer representing the update interval in seconds.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.UpdateIntervalNudge"></a>
+    <strong>SPECTRE.IADS.UpdateIntervalNudge</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#110">line 110</a>
+    </dt>
+    <dd>
+    Nudge factor for update interval.
+ A modifier that adds randomness to the IADS update interval.
+ A decimal value representing the nudge factor for the update interval.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.UpdateSched"></a>
+    <strong>SPECTRE.IADS.UpdateSched</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#70">line 70</a>
+    </dt>
+    <dd>
+    Scheduler for periodic IADS updates.
+ This field in the IADS module is dedicated to managing the scheduler responsible for periodic updates of the IADS.
+ A scheduler object that triggers periodic updates within the IADS system.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.UpdatingIADS"></a>
+    <strong>SPECTRE.IADS.UpdatingIADS</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#74">line 74</a>
+    </dt>
+    <dd>
+    Flag indicating if IADS is currently being updated.
+ This boolean field signifies whether an update process for the IADS is currently active or not.
+ A boolean flag to control and check the status of ongoing IADS updates.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.ZONEMGR"></a>
+    <strong>SPECTRE.IADS.ZONEMGR</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#90">line 90</a>
+    </dt>
+    <dd>
+    Storage for ZONEMGR object.
+ This field contains the Zone Manager object that is utilized by the IADS for managing various zones.
+ A container for the ZONEMGR object.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS._GroupAttributes"></a>
+    <strong>SPECTRE.IADS._GroupAttributes</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#98">line 98</a>
+    </dt>
+    <dd>
+    Storage for _GroupAttributes from detected ZONEMGR units.
+ A field that holds attributes of groups, derived from units identified by the Zone Manager.
+ A collection of attributes for groups based on ZONEMGR-detected units.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS._GroupNames"></a>
+    <strong>SPECTRE.IADS._GroupNames</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#94">line 94</a>
+    </dt>
+    <dd>
+    Storage for built groups from detected ZONEMGR units.
+ This field stores the names of groups that have been constructed based on units detected by the Zone Manager.
+ A list of group names built from ZONEMGR-detected units.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.coal"></a>
+    <strong>SPECTRE.IADS.coal</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#102">line 102</a>
+    </dt>
+    <dd>
+    Coalition to build IADs for.
+ A numerical value representing the coalition for which the IADS is being built.
+ An integer indicating the coalition (e.g., 0, 1, 2).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:DebugOn"></a>
+    <strong>SPECTRE.IADS:DebugOn(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#143">line 143</a>
+    </dt>
+    <dd>
+    Enable Debug Mode for IADS.
+ Activates various debug settings for the IADS's Skynet component.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:Init"></a>
+    <strong>SPECTRE.IADS:Init(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#200">line 200</a>
+    </dt>
+    <dd>
+    Initialize the IADS.
+ This function initializes the IADS by updating its configuration and setting up a schedule for further updates.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:New"></a>
+    <strong>SPECTRE.IADS:New(IADS, coal, ZONEMGR)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#121">line 121</a>
+    </dt>
+    <dd>
+    Create a new instance of the Integrated Air Defense System (IADS) Manager. </p>
+
+<p> This function initializes a new IADS manager for a specified coalition and Zone Manager.
+ The IADS manager is responsible for coordinating and managing air defense assets within a defined area.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+         self The IADS instance.
+        </li>
+        <li><span class="parameter">coal</span>
+         Coalition number (0, 1, or 2) to which this IADS belongs.
+        </li>
+        <li><span class="parameter">ZONEMGR</span>
+         ZONEMGR_ The Zone Manager instance to be associated with this IADS.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self The newly created IADS manager instance.</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:Update"></a>
+    <strong>SPECTRE.IADS:Update(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#233">line 233</a>
+    </dt>
+    <dd>
+    Perform an update cycle for the IADS.
+ This function executes a series of tasks including retrieving groups within the ZONEMGR, getting group attributes,
+ classifying groups, adding new SAMs, and adding new EWRs to the IADS.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:UpdateSchedInit"></a>
+    <strong>SPECTRE.IADS:UpdateSchedInit(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#212">line 212</a>
+    </dt>
+    <dd>
+    Initialize the update scheduler for the IADS.
+ This function sets up a scheduler to periodically perform updates on the IADS. It ensures that updates are
+ only executed when a previous update cycle is not in progress.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:createSkynet"></a>
+    <strong>SPECTRE.IADS:createSkynet(IADS, name)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#134">line 134</a>
+    </dt>
+    <dd>
+    Create Skynet Object.
+ Initializes a new Skynet IADS object with the given name.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+         self The IADS instance.
+        </li>
+        <li><span class="parameter">name</span>
+         The name for the Skynet IADS.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self The IADS instance with the Skynet IADS created.</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:deactivateSkynet"></a>
+    <strong>SPECTRE.IADS:deactivateSkynet(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#166">line 166</a>
+    </dt>
+    <dd>
+    Deactivate Skynet Object in IADS.
+ This function deactivates the Skynet IADS component.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:setSkynetUpdateInterval"></a>
+    <strong>SPECTRE.IADS:setSkynetUpdateInterval(IADS, interval)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#176">line 176</a>
+    </dt>
+    <dd>
+    Set Skynet update interval in IADS.
+ This function sets the update interval for the Skynet IADS component.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+         self The instance of the IADS class.
+        </li>
+        <li><span class="parameter">interval</span>
+         The time interval in seconds for Skynet updates.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self The instance of the IADS class after setting the interval.</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:setUpdateInterval"></a>
+    <strong>SPECTRE.IADS:setUpdateInterval(IADS, interval, nudge)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#188">line 188</a>
+    </dt>
+    <dd>
+    Set the update interval and nudge factor for IADS.
+ This function configures the interval and nudge factor for the IADS system updates.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+         self The IADS instance.
+        </li>
+        <li><span class="parameter">interval</span>
+         The time interval in seconds for IADS updates (optional, default 25 seconds).
+        </li>
+        <li><span class="parameter">nudge</span>
+         A nudge factor to adjust the interval (optional, default 0.25).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self The IADS instance after configuration.</h1>
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="SAM_TypeDef"></a>SAM TypeDef </h2>
+
+          <div class="section-description">
+           This section defines the Surface-to-Air Missile (SAM) component within the Integrated Air Defense System (IADS).
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.IADS.SAM.ActAsEW"></a>
+    <strong>SPECTRE.IADS.SAM.ActAsEW</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#259">line 259</a>
+    </dt>
+    <dd>
+    Act As Early Warning.
+ A boolean indicating whether the SAM site should also act as an Early Warning Radar.
+ A boolean flag, true if the SAM acts as EWR, false otherwise.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAM.CanEngageAirWeapons"></a>
+    <strong>SPECTRE.IADS.SAM.CanEngageAirWeapons</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#271">line 271</a>
+    </dt>
+    <dd>
+    Can Engage Air Weapons.
+ Determines if the SAM site is capable of engaging air weapons.
+ A boolean flag, true if SAM can engage air weapons, false otherwise.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAM.CanEngageHARMS"></a>
+    <strong>SPECTRE.IADS.SAM.CanEngageHARMS</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#275">line 275</a>
+    </dt>
+    <dd>
+    Can Engage HARM Missiles.
+ Specifies if the SAM site can engage HARM (High-speed Anti-Radiation Missile) missiles.
+ A boolean flag, true if SAM can engage HARM missiles, false otherwise.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAM.SkynetObj"></a>
+    <strong>SPECTRE.IADS.SAM.SkynetObj</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#255">line 255</a>
+    </dt>
+    <dd>
+    Skynet SAM Object.
+ The associated Skynet IADS object for this SAM, managing its behavior and properties in the IADS network.
+ A SkynetIADS object representation of the SAM system.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAM.goLiveZone"></a>
+    <strong>SPECTRE.IADS.SAM.goLiveZone</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#263">line 263</a>
+    </dt>
+    <dd>
+    Go Live Zone.
+ Defines the conditions under which the SAM system will switch to a live (active) state.
+ A value determining the condition for SAM activation, based on SkynetIADSAbstractRadarElement constants.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAM.groupName"></a>
+    <strong>SPECTRE.IADS.SAM.groupName</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#251">line 251</a>
+    </dt>
+    <dd>
+    SAM Group Name.
+ The name of the group in the DCS world that this SAM object represents.
+ A string containing the group name of the SAM system.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAM.type"></a>
+    <strong>SPECTRE.IADS.SAM.type</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#247">line 247</a>
+    </dt>
+    <dd>
+    SAM Type.
+ The type of SAM system represented, e.g., short-range, medium-range, or long-range SAM.
+ A string describing the type of SAM system.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.SAM:New"></a>
+    <strong>SPECTRE.IADS.SAM:New(_Name, _SAMTYPE, IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#285">line 285</a>
+    </dt>
+    <dd>
+    Create a new SAM object.
+ This function is responsible for initializing a new Surface-to-Air Missile (SAM) object within the IADS framework.
+ It sets up various properties and configurations specific to the SAM type, such as engagement zones, weapon engagement capabilities, and live range percentages.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_Name</span>
+         The name of the SAM group.
+        </li>
+        <li><span class="parameter">_SAMTYPE</span>
+         The type of the SAM (e.g., LR SAM, MR SAM).
+        </li>
+        <li><span class="parameter">IADS</span> _IADS The instance of the IADS to which this SAM belongs.
+        <ul>
+        <li><span class="parameter">SAM</span>
+         self The SAM class.
+        </li>
+        </li></ul>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS.SAM self The newly created SAM object.</h1>
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="EWR_TypeDef"></a>EWR TypeDef </h2>
+
+          <div class="section-description">
+           This section defines the Early Warning Radar (EWR) component within the Integrated Air Defense System (IADS).
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.IADS.EWR.SkynetObj"></a>
+    <strong>SPECTRE.IADS.EWR.SkynetObj</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#332">line 332</a>
+    </dt>
+    <dd>
+    Skynet EWR Object.
+ The associated Skynet IADS object for this EWR, managing its behavior and properties in the IADS network.
+ A SkynetIADS object representation of the EWR system.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.EWR.goLivePercent"></a>
+    <strong>SPECTRE.IADS.EWR.goLivePercent</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#340">line 340</a>
+    </dt>
+    <dd>
+    Go Live Percent.
+ Specifies the percentage of maximum detection range at which the EWR system will go live.
+ An integer indicating the percent of maximum range for EWR activation.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.EWR.goLiveZone"></a>
+    <strong>SPECTRE.IADS.EWR.goLiveZone</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#336">line 336</a>
+    </dt>
+    <dd>
+    Go Live Zone.
+ Defines the conditions under which the EWR system will switch to a live (active) state.
+ A value determining the condition for EWR activation, based on SkynetIADSAbstractRadarElement constants.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.EWR.groupName"></a>
+    <strong>SPECTRE.IADS.EWR.groupName</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#324">line 324</a>
+    </dt>
+    <dd>
+    EWR Group Name.
+ The name of the group in the DCS world that this EWR object represents.
+ A string containing the group name of the EWR system.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.EWR.unitName"></a>
+    <strong>SPECTRE.IADS.EWR.unitName</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#328">line 328</a>
+    </dt>
+    <dd>
+    EWR Unit Name.
+ The name of the specific unit in the DCS world that this EWR object represents.
+ A string containing the unit name of the EWR system.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS.EWR:New"></a>
+    <strong>SPECTRE.IADS.EWR:New(_groupName, _unitName, IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#350">line 350</a>
+    </dt>
+    <dd>
+    Create a new EWR object.
+ This function is responsible for initializing a new Early Warning Radar (EWR) object within the IADS framework.
+ It sets up various properties and configurations specific to the EWR, such as engagement zones and live range percentages.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_groupName</span>
+         The name of the EWR group.
+        </li>
+        <li><span class="parameter">_unitName</span>
+         The name of the EWR unit.
+        </li>
+        <li><span class="parameter">IADS</span> _IADS The instance of the IADS to which this EWR belongs.
+        <ul>
+        <li><span class="parameter">EWR</span>
+         self The EWR class.
+        </li>
+        </li></ul>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS.EWR self The newly created EWR object.</h1>
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="DangerZone"></a>DangerZone </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Internal functions, can be used externally with care and understanding.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.IADS:addNewEWRs"></a>
+    <strong>SPECTRE.IADS:addNewEWRs(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#518">line 518</a>
+    </dt>
+    <dd>
+    Add new Early Warning Radars (EWRs) to the IADS.
+ This function iterates through the classified groups specifically tagged as "EWR" and adds each EWR to the Skynet IADS.
+ It ensures that only new EWRs, not already part of the IADS, are added. New EWR objects are created for each group name.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:addNewSAMs"></a>
+    <strong>SPECTRE.IADS:addNewSAMs(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#498">line 498</a>
+    </dt>
+    <dd>
+    Add new SAM sites to the IADS.
+ This function iterates through classified groups and adds each SAM site to the Skynet IADS.
+ It excludes EWR from being added as a SAM site. New SAM objects are created for each group name not already present.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:classifyGroups"></a>
+    <strong>SPECTRE.IADS:classifyGroups(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#428">line 428</a>
+    </dt>
+    <dd>
+    Classify groups based on their attributes.
+ This function categorizes each group based on its attributes into different classes like SR SAM, MR SAM, LR SAM, and EWR.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:getGroupAttributes"></a>
+    <strong>SPECTRE.IADS:getGroupAttributes(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#414">line 414</a>
+    </dt>
+    <dd>
+    Retrieve and store attributes of groups.
+ This function processes each group name stored in the IADS instance, obtaining and storing their respective attributes.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.IADS:getGroupsInZONEMGR"></a>
+    <strong>SPECTRE.IADS:getGroupsInZONEMGR(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#381">line 381</a>
+    </dt>
+    <dd>
+    Retrieve and store the names of groups within ZONEMGR.
+ This function gathers all groups corresponding to units present in the zones managed by ZONEMGR.
+ It filters these groups based on their coalition and stores their names for further processing.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">IADS</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>IADS self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

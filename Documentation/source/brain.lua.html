@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><strong>brain.lua</strong></li>
+  <li><a href="../source/handlers.lua.html">handlers.lua</a></li>
+  <li><a href="../source/iads.lua.html">iads.lua</a></li>
+  <li><a href="../source/io.lua.html">io.lua</a></li>
+  <li><a href="../source/markers.lua.html">markers.lua</a></li>
+  <li><a href="../source/menu.lua.html">menu.lua</a></li>
+  <li><a href="../source/plyrmgr.lua.html">plyrmgr.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/rewards.lua.html">rewards.lua</a></li>
+  <li><a href="../source/spawner.lua.html">spawner.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+  <li><a href="../source/zonemgr.lua.html">zonemgr.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>brain.lua</h2>
+<pre>
+<span class="comment">--- **BRAIN**
+</span><span class="comment">--
+</span><span class="comment">-- The brain of SPECTRE, allowing the game to interpret various units positioning and data with ML strategies.
+</span><span class="comment">--
+</span><span class="comment">-- Contains methods for easily interpreting and persisting data.
+</span><span class="comment">--
+</span><span class="comment">-- @module BRAIN
+</span><span class="comment">-- @extends SPECTRE
+</span>
+<span class="comment">--- SPECTRE.BRAIN.
+</span><span class="comment">--
+</span><span class="comment">-- The brain of SPECTRE, allowing the game to interpret various units positioning and data with ML strategies.
+</span><span class="comment">--
+</span><span class="comment">-- Contains methods for easily interpreting and persisting data.
+</span><span class="comment">--
+</span><a id="17"></a><span class="comment">-- @field #BRAIN
+</span>SPECTRE.BRAIN = {}
+
+<span class="comment">--- Persistence.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *All Functions commonly associated with AI operations.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section SPECTRE.BRAIN
+</span>
+<span class="comment">--- Checks for the existence of a persistence file and manages object persistence.
+</span><span class="comment">--
+</span><span class="comment">-- This function handles the persistence of objects, checking for existing persistence files and loading them if present.
+</span><span class="comment">-- If the file is not found, or if the function is forced to bypass loading, it will run a specified input function on the object.
+</span><span class="comment">-- After processing the input function, if persistence is enabled and the object was not previously loaded, the function saves
+</span><span class="comment">-- the object to the persistence file. This functionality is essential for maintaining consistent state across game sessions or reloads.
+</span><span class="comment">--
+</span><span class="comment">-- @param _filename The filename and path of the persistence file, relative to saved games mission folder.
+</span><span class="comment">-- @param force A boolean flag indicating whether to force bypass the loading of an existing file.
+</span><span class="comment">-- @param _Object The object to be checked and potentially persisted.
+</span><span class="comment">-- @param _persistence A boolean flag indicating whether persistence is enabled.
+</span><span class="comment">-- @param _InputFunction The function to be executed on the object if the persistence file does not exist or is bypassed.
+</span><span class="comment">-- @param ... Additional parameters to be passed to the _InputFunction.
+</span><span class="comment">-- @return _Object The object after loading from a persistence file or processing through the _InputFunction.
+</span><span class="comment">-- @usage SPECTRE.BRAIN.checkAndPersist("PATH/PATH/filename.lua", false, myObject, true, processFunction, additionalParam1, additionalParam2)
+</span><a id="43"></a><span class="comment">--        -- Checks and manages the persistence of 'myObject', potentially processing it with 'processFunction'.
+</span><span class="keyword">function</span> SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | PERSISTENCE  | ----------------------"</span>)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | PATH         | "</span> .. <span class="global">tostring</span>(_filename))
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | Force        | "</span> .. <span class="global">tostring</span>(force))
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | _persistence | "</span> .. <span class="global">tostring</span>(_persistence))
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | _Object      | "</span> , _Object)
+
+  force = force <span class="keyword">or</span> <span class="keyword">false</span>
+  <span class="keyword">local</span> loaded = <span class="keyword">false</span>
+
+  <span class="comment">-- Check for existing persistence files and load if present
+</span>  <span class="keyword">if</span> _persistence <span class="keyword">and</span> <span class="keyword">not</span> force <span class="keyword">then</span>
+    <span class="keyword">if</span> SPECTRE.IO.file_exists(_filename) <span class="keyword">then</span>
+      _Object = SPECTRE.IO.PersistenceFromFile(_filename)
+      loaded = <span class="keyword">true</span>
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+
+  <span class="comment">-- If object is loaded, return it
+</span>  <span class="keyword">if</span> loaded <span class="keyword">then</span>
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | PERSISTENCE  | LOADED EXISTING"</span>)
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | LOAD _Object | "</span> , _Object)
+    <span class="keyword">return</span> _Object
+  <span class="keyword">else</span>
+
+    <span class="keyword">if</span> _InputFunction <span class="keyword">then</span>
+      <span class="comment">-- Run the input function with parameters
+</span>      _InputFunction(...)
+    <span class="keyword">end</span>
+    <span class="comment">-- Save the object if persistence is enabled and object was not loaded
+</span>    <span class="keyword">if</span> _persistence <span class="keyword">and</span> <span class="keyword">not</span> loaded <span class="keyword">then</span>
+      SPECTRE.IO.PersistenceToFile(_filename, _Object)
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | PERSISTENCE  | NOT FOUND, SAVING NEW"</span>)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+
+  <span class="keyword">return</span> _Object
+<span class="keyword">end</span>
+
+
+
+
+<span class="comment">--
+</span><span class="comment">--
+</span><span class="comment">----- Form clusters with input data points.
+</span><span class="comment">----
+</span><span class="comment">---- dataPoints must be in format:
+</span><span class="comment">----
+</span><span class="comment">----        datapoints = {
+</span><span class="comment">----              [1] = DataPointInfo,
+</span><span class="comment">----              [2] = DataPointInfo,
+</span><span class="comment">----              ...
+</span><span class="comment">----        }
+</span><span class="comment">--
+</span><span class="comment">----        DataPointInfo = {
+</span><span class="comment">----              uniqueID = Integer,
+</span><span class="comment">----              vec2 = {x = Number, y = Number},
+</span><span class="comment">----        }
+</span><span class="comment">----
+</span><span class="comment">----
+</span><span class="comment">----
+</span><span class="comment">---- @param dataPoints
+</span><span class="comment">---- @return dataClusters
+</span><span class="comment">--function SPECTRE.BRAIN.formClusters(dataPoints)
+</span><span class="comment">--  local dataClusters = {}
+</span><span class="comment">--
+</span><span class="comment">--  if #dataPoints &gt; 0 then
+</span><span class="comment">--    self:generateDBSCANparams(_coal)
+</span><span class="comment">--    self:DBSCAN(_coal)
+</span><span class="comment">--    --  SPECTRE.IO.PersistenceToFile("/TEST/ZONEMGR/getHotspotGroups/" .. self.ZoneName .. "_" .. _coal .. "_DBScan.lua", self._DBScan[_coal])
+</span><span class="comment">--    self:post_process_clusters(_coal)
+</span><span class="comment">--    --  SPECTRE.IO.PersistenceToFile("/TEST/ZONEMGR/getHotspotGroups/" .. self.ZoneName .. "_" .. _coal .. "_process.lua", self.HotspotClusters[_coal])
+</span><span class="comment">--  end
+</span><span class="comment">--
+</span><span class="comment">--  return dataClusters
+</span><span class="comment">--end
+</span><span class="comment">--
+</span><span class="comment">----- Apply DBSCAN clustering algorithm to units within the zone based on coalition.
+</span><span class="comment">----
+</span><span class="comment">---- This function implements the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) algorithm to group units within the zone.
+</span><span class="comment">---- It is applied to units of a specific coalition (coal) and organizes them into clusters based on proximity. This clustering is crucial for identifying
+</span><span class="comment">---- significant gatherings or formations of units, allowing for a more nuanced understanding of the strategic situation within the zone. The function
+</span><span class="comment">---- marks units as part of a cluster or noise based on the parameters <code>epsilon</code> (radius) and <code>min_samples</code> (minimum number of units to form a cluster).
+</span><span class="comment">----
+</span><span class="comment">---- @param #ZONEMGR.Zone self The Zone instance for which the DBSCAN algorithm is to be applied.
+</span><span class="comment">---- @param coal The coalition (0, 1, or 2) for which the clustering is to be performed.
+</span><span class="comment">---- @return #ZONEMGR.Zone self The Zone instance after applying the DBSCAN algorithm.
+</span><span class="comment">---- @usage local clusteredZone = someZone:DBSCAN(coalition) -- Applies DBSCAN to units of the specified coalition within the zone.
+</span><span class="comment">--function SPECTRE.ZONEMGR.Zone:DBSCAN(coal)
+</span><span class="comment">--  -- Debug information consolidated
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DBSCAN | --------------------------------------------\n" ..
+</span><span class="comment">--    "| epsilon     | " .. self.epsilon .. "\n" ..
+</span><span class="comment">--    "| min_samples | " .. self.min_samples .. "\n" ..
+</span><span class="comment">--    "| numUnits    | " .. #self._detectedUnits[coal] .. "\n" ..
+</span><span class="comment">--    "| coal        | " .. coal .. "\n" ..
+</span><span class="comment">--    "| Area        | " .. self.Area)
+</span><span class="comment">--
+</span><span class="comment">--  -- Initialization
+</span><span class="comment">--  local UNMARKED, NOISE = 0, -1
+</span><span class="comment">--  local cluster_id = 0
+</span><span class="comment">--  self._DBScan[coal] = {}
+</span><span class="comment">--
+</span><span class="comment">--  -- Mark all units as unmarked initially
+</span><span class="comment">--  for _, unit in ipairs(self._detectedUnits[coal]) do
+</span><span class="comment">--    self._DBScan[coal][unit.unit] = UNMARKED
+</span><span class="comment">--  end
+</span><span class="comment">--
+</span><span class="comment">--  -- Main clustering loop
+</span><span class="comment">--  for _, unit in ipairs(self._detectedUnits[coal]) do
+</span><span class="comment">--    if self._DBScan[coal][unit.unit] == UNMARKED then
+</span><span class="comment">--      local neighbors = self:region_query(coal, unit)
+</span><span class="comment">--
+</span><span class="comment">--      if #neighbors &lt; self.min_samples then
+</span><span class="comment">--        self._DBScan[coal][unit.unit] = NOISE
+</span><span class="comment">--      else
+</span><span class="comment">--        cluster_id = cluster_id + 1
+</span><span class="comment">--        self:expand_cluster(coal, unit, neighbors, cluster_id)
+</span><span class="comment">--      end
+</span><span class="comment">--    end
+</span><span class="comment">--  end
+</span><span class="comment">--  return self
+</span><span class="comment">--end
+</span><span class="comment">--
+</span><span class="comment">----- Identify neighboring units within a specified radius for a given point.
+</span><span class="comment">----
+</span><span class="comment">---- This function is a key component of the DBSCAN clustering algorithm. It identifies neighboring units within a defined radius (<code>epsilon</code>)
+</span><span class="comment">---- from a given point. The function is essential for determining the local density of units, helping to categorize units as either part of a
+</span><span class="comment">---- cluster or as noise. It scans through all detected units of a specific coalition and identifies those that are within the radius of the
+</span><span class="comment">---- provided point, effectively gathering a list of neighbors.
+</span><span class="comment">----
+</span><span class="comment">---- @param #ZONEMGR.Zone The Zone instance in which the region query is performed.
+</span><span class="comment">---- @param coal The coalition (0, 1, or 2) of the units to consider.
+</span><span class="comment">---- @param point The reference point from which neighbors are to be identified.
+</span><span class="comment">---- @return neighbors A table containing units identified as neighbors within the specified radius.
+</span><span class="comment">---- @usage local neighbors = someZone:region_query(coalition, referencePoint) -- Identifies neighboring units within a radius from the reference point for the specified coalition.
+</span><span class="comment">--function SPECTRE.ZONEMGR.Zone:region_query(coal, point)
+</span><span class="comment">--  -- Debug information consolidated
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:region_query | --------------------------------------------\n" ..
+</span><span class="comment">--    "| coal        | " .. coal .. "\n" ..
+</span><span class="comment">--    "| point       | ", point)
+</span><span class="comment">--
+</span><span class="comment">--  local neighbors = {}
+</span><span class="comment">--  -- Iterate through detected units and find neighbors within the epsilon distance
+</span><span class="comment">--  for _, unit in ipairs(self._detectedUnits[coal]) do
+</span><span class="comment">--    if SPECTRE.POLY.distance(point.vec2, unit.vec2) &lt; self.epsilon then
+</span><span class="comment">--      table.insert(neighbors, unit)
+</span><span class="comment">--    end
+</span><span class="comment">--  end
+</span><span class="comment">--  return neighbors
+</span><span class="comment">--end
+</span><span class="comment">--
+</span><span class="comment">----- Expand a cluster by adding neighboring units that meet the criteria.
+</span><span class="comment">----
+</span><span class="comment">---- As part of the DBSCAN clustering algorithm, this function expands a given cluster by adding units that are neighbors and meet the
+</span><span class="comment">---- specified criteria. It examines each neighboring unit, determining if they should be part of the cluster based on their proximity and
+</span><span class="comment">---- the minimum samples threshold. This function is crucial in building clusters that accurately represent groups of units in the game,
+</span><span class="comment">---- allowing for a more detailed and strategic understanding of unit distribution within a zone.
+</span><span class="comment">----
+</span><span class="comment">---- @param #ZONEMGR.Zone The Zone instance in which the cluster is being expanded.
+</span><span class="comment">---- @param coal The coalition (0, 1, or 2) of the units being considered.
+</span><span class="comment">---- @param point The starting point of the cluster.
+</span><span class="comment">---- @param neighbors A list of neighboring units to the starting point.
+</span><span class="comment">---- @param cluster_id The identifier of the cluster being expanded.
+</span><span class="comment">---- @return #ZONEMGR.Zone self The Zone instance after expanding the cluster.
+</span><span class="comment">---- @usage someZone:expand_cluster(coalition, startingPoint, neighbors, clusterId) -- Expands the cluster with additional units meeting the DBSCAN criteria.
+</span><span class="comment">--function SPECTRE.ZONEMGR.Zone:expand_cluster(coal, point, neighbors, cluster_id)
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | -------------------------------------------- ")
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | coal        | " .. coal)
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | cluster_id  | " .. cluster_id)
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | point       | ", point)
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | neighbors   | ", neighbors)
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | labels      | ", self._DBScan[coal])
+</span><span class="comment">--
+</span><span class="comment">--  local UNMARKED, NOISE = 0, -1
+</span><span class="comment">--  self._DBScan[coal][point.unit] = cluster_id
+</span><span class="comment">--
+</span><span class="comment">--  local i = 1
+</span><span class="comment">--  while i &lt;= #neighbors do
+</span><span class="comment">--    local neighbor = neighbors[i]
+</span><span class="comment">--
+</span><span class="comment">--    if self._DBScan[coal][neighbor.unit] == NOISE or self._DBScan[coal][neighbor.unit] == UNMARKED then
+</span><span class="comment">--      self._DBScan[coal][neighbor.unit] = cluster_id
+</span><span class="comment">--      local new_neighbors = self:region_query(coal, neighbor)
+</span><span class="comment">--      if #new_neighbors &gt;= self.min_samples then
+</span><span class="comment">--        for _, new_neighbor in ipairs(new_neighbors) do
+</span><span class="comment">--          table.insert(neighbors, new_neighbor)
+</span><span class="comment">--        end
+</span><span class="comment">--      end
+</span><span class="comment">--    end
+</span><span class="comment">--
+</span><span class="comment">--    i = i + 1
+</span><span class="comment">--  end
+</span><span class="comment">--  return self
+</span><span class="comment">--end
+</span><span class="comment">--
+</span><span class="comment">----- Process and refine clusters for hotspots based on coalition.
+</span><span class="comment">----
+</span><span class="comment">---- Following the clustering of units using the DBSCAN algorithm, this function performs post-processing on the identified clusters.
+</span><span class="comment">---- It refines each cluster by calculating its geometric center and radius, effectively defining the hotspots more precisely.
+</span><span class="comment">---- This refinement is crucial for accurately representing the spatial characteristics of each hotspot, such as its central location
+</span><span class="comment">---- and the extent of its influence or area of coverage. The process aids in better understanding and visualization of strategic
+</span><span class="comment">---- groupings of units within the zone.
+</span><span class="comment">----
+</span><span class="comment">---- @param #ZONEMGR.Zone self The Zone instance for which cluster post-processing is to be conducted.
+</span><span class="comment">---- @param coal The coalition (0, 1, or 2) for which clusters are being processed.
+</span><span class="comment">---- @return #ZONEMGR.Zone self The Zone instance after post-processing the clusters.
+</span><span class="comment">---- @usage local refinedZone = someZone:post_process_clusters(coalition) -- Post-processes the clusters for the specified coalition.
+</span><span class="comment">--function SPECTRE.ZONEMGR.Zone:post_process_clusters(coal)
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | -------------------------------------------- ")
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | coal        | " .. coal)
+</span><span class="comment">--
+</span><span class="comment">--  local clusters = {}
+</span><span class="comment">--  local cluster_centers = {}
+</span><span class="comment">--  local cluster_radii = {}
+</span><span class="comment">--  self.HotspotClusters[coal] = {}
+</span><span class="comment">--  -- Group units by cluster
+</span><span class="comment">--  for _, unit in ipairs(self._detectedUnits[coal]) do
+</span><span class="comment">--    local cluster = self._DBScan[coal][unit.unit]
+</span><span class="comment">--    if not clusters[cluster] then
+</span><span class="comment">--      clusters[cluster] = {}
+</span><span class="comment">--    end
+</span><span class="comment">--    table.insert(clusters[cluster], unit)
+</span><span class="comment">--  end
+</span><span class="comment">--
+</span><span class="comment">--  -- Compute center and radius for each cluster
+</span><span class="comment">--  for cluster, units in pairs(clusters) do
+</span><span class="comment">--    local sum_x = 0
+</span><span class="comment">--    local sum_y = 0
+</span><span class="comment">--    local max_radius = 0
+</span><span class="comment">--    for _, unit in ipairs(units) do
+</span><span class="comment">--      sum_x = sum_x + unit.vec2.x
+</span><span class="comment">--      sum_y = sum_y + unit.vec2.y
+</span><span class="comment">--    end
+</span><span class="comment">--    local center = {x = sum_x / #units, y = sum_y / #units}
+</span><span class="comment">--    cluster_centers[cluster] = center
+</span><span class="comment">--
+</span><span class="comment">--    for _, unit in ipairs(units) do
+</span><span class="comment">--      local distance = SPECTRE.POLY.distance(center, unit.vec2)
+</span><span class="comment">--      if distance &gt; max_radius then
+</span><span class="comment">--        max_radius = distance
+</span><span class="comment">--      end
+</span><span class="comment">--    end
+</span><span class="comment">--    cluster_radii[cluster] = max_radius
+</span><span class="comment">--  end
+</span><span class="comment">--
+</span><span class="comment">--  local sorted_groups = {}
+</span><span class="comment">--  for cluster, units in pairs(clusters) do
+</span><span class="comment">--    if cluster &gt; 0 then
+</span><span class="comment">--      table.insert(sorted_groups, {
+</span><span class="comment">--        Units = units,
+</span><span class="comment">--        Center = cluster_centers[cluster],
+</span><span class="comment">--        CenterVec3 = mist.utils.makeVec3(cluster_centers[cluster]),
+</span><span class="comment">--        Radius = cluster_radii[cluster] + self._hotspotDrawExtension,
+</span><span class="comment">--      })
+</span><span class="comment">--    end
+</span><span class="comment">--  end
+</span><span class="comment">--  self.HotspotClusters[coal] = sorted_groups
+</span><span class="comment">--  return self
+</span><span class="comment">--end
+</span><span class="comment">--
+</span><span class="comment">----- Generate parameters for the DBSCAN clustering algorithm based on the zone's characteristics and unit count.
+</span><span class="comment">----
+</span><span class="comment">---- This function dynamically calculates the key parameters for the DBSCAN clustering algorithm: <code>epsilon</code> (the search radius)
+</span><span class="comment">---- and <code>min_samples</code> (the minimum number of units to form a cluster). The calculations are based on the total number of units
+</span><span class="comment">---- within the coalition and the area of the zone. These parameters are critical for adapting the DBSCAN algorithm to varying
+</span><span class="comment">---- densities and distributions of units, ensuring effective clustering that reflects the actual strategic layout within the zone.
+</span><span class="comment">----
+</span><span class="comment">---- @param #ZONEMGR.Zone self The Zone instance for which the DBSCAN parameters are to be generated.
+</span><span class="comment">---- @param coal The coalition (0, 1, or 2) for which the DBSCAN parameters are being calculated.
+</span><span class="comment">---- @return #ZONEMGR.Zone self The Zone instance after generating the DBSCAN parameters.
+</span><span class="comment">---- @usage local zoneWithParams = someZone:generateDBSCANparams(coalition) -- Generates DBSCAN parameters for the specified coalition.
+</span><span class="comment">--function SPECTRE.ZONEMGR.Zone:generateDBSCANparams(coal)
+</span><span class="comment">--  -- Initial calculations
+</span><span class="comment">--  local n = #self._detectedUnits[coal]
+</span><span class="comment">--  self.epsilon = self.f * math.sqrt(self.Area / n)
+</span><span class="comment">--  self.min_samples = math.ceil(self.p * n)
+</span><span class="comment">--
+</span><span class="comment">--  -- Debug information consolidated
+</span><span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:generateDBSCANparams | ------------------------\n" ..
+</span><span class="comment">--    "| NumUnits    | " .. n .. "\n" ..
+</span><span class="comment">--    "| ZoneArea    | " .. self.Area .. "\n" ..
+</span><span class="comment">--    "| f           | " .. self.f .. "\n" ..
+</span><span class="comment">--    "| p           | " .. self.p .. "\n" ..
+</span><span class="comment">--    "| epsilon     | " .. self.epsilon .. "\n" ..
+</span><span class="comment">--    "| min_samples | " .. self.min_samples)
+</span><span class="comment">--
+</span><span class="comment">--  return self
+</span><span class="comment">--end
+</span>
+<span class="keyword">local</span> dddd = <span class="string">""</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

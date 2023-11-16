@@ -1,0 +1,4806 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#1___Zone_Manager">1 - Zone Manager </a></li>
+<li><a href="#2___Enable_Toggles">2 - Enable Toggles </a></li>
+<li><a href="#x___Utilities">x - Utilities </a></li>
+<li><a href="#x___Spawner">x - Spawner </a></li>
+<li><a href="#x___Templates">x - Templates </a></li>
+<li><a href="#x___Init">x - Init </a></li>
+<li><a href="#x___Setup">x - Setup </a></li>
+<li><a href="#x___Internal">x - Internal </a></li>
+<li><a href="#x___Events">x - Events </a></li>
+<li><a href="#x___Live_Editor">x - Live Editor </a></li>
+<li><a href="#x___Live_Edit_Cfg">x - Live Edit Cfg </a></li>
+<li><a href="#Zone_TypeDef">Zone TypeDef </a></li>
+<li><a href="#x___Zone_Functions">x - Zone Functions </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><strong>ZONEMGR</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>ZONEMGR</code></h1>
+<p><strong>ZONEMGR</strong></p>
+
+<p> The brain of SPECTRE, allowing the game to interpret various units positioning and data with ML strategies.</p>
+<p> Intelligently manage hotspots, intelligence, sitrep, and automated spawning in the zones.</p>
+
+<p> The <a href="../modules/ZONEMGR.html#">ZONEMGR</a> module within the SPECTRE system is designed for dynamic zone management,
+ offering a centralized approach to handle various zone-related operations.</p>
+
+
+<h2><a href="#1___Zone_Manager">1 - Zone Manager </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR">SPECTRE.ZONEMGR</a></td>
+	<td class="summary">SPECTRE.ZONEMGR.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.AIRFIELDSPAWNERS">SPECTRE.ZONEMGR.AIRFIELDSPAWNERS</a></td>
+	<td class="summary">Dictionary to store airfield spawner instances.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.AirbaseSeed">SPECTRE.ZONEMGR.AirbaseSeed</a></td>
+	<td class="summary">A list to seed airbases.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Config">SPECTRE.ZONEMGR.Config</a></td>
+	<td class="summary">Configurations for ZONEMGR operations.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Config.operationLimit">SPECTRE.ZONEMGR.Config.operationLimit</a></td>
+	<td class="summary">Maximum number of operations that ZONEMGR can handle.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.FILLSPAWNERS">SPECTRE.ZONEMGR.FILLSPAWNERS</a></td>
+	<td class="summary">Dictionary to store fill spawner instances.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Hotspots">SPECTRE.ZONEMGR.Hotspots</a></td>
+	<td class="summary">Boolean Toggle for drawing unit hotspots (default false).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Intel">SPECTRE.ZONEMGR.Intel</a></td>
+	<td class="summary">Boolean Toggle for drawing hotspot intel (default false).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.SSB">SPECTRE.ZONEMGR.SSB</a></td>
+	<td class="summary">Flag indicating if SSB management is active.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.SSBoff">SPECTRE.ZONEMGR.SSBoff</a></td>
+	<td class="summary">Flags for SSB off states (default 100).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.SSBon">SPECTRE.ZONEMGR.SSBon</a></td>
+	<td class="summary">Flags for SSB on state (default 0).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.UpdateInterval">SPECTRE.ZONEMGR.UpdateInterval</a></td>
+	<td class="summary">How often to update self.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.UpdateIntervalNudge">SPECTRE.ZONEMGR.UpdateIntervalNudge</a></td>
+	<td class="summary">Adjust how often to update self.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.UpdateSched">SPECTRE.ZONEMGR.UpdateSched</a></td>
+	<td class="summary">Scheduler for periodic Zone ownership updates.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.UpdatingZones">SPECTRE.ZONEMGR.UpdatingZones</a></td>
+	<td class="summary">Flag indicating if zones are currently being updated.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zones">SPECTRE.ZONEMGR.Zones</a></td>
+	<td class="summary">Dictionary to store zone instances.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._AirfieldCaptureClean">SPECTRE.ZONEMGR._AirfieldCaptureClean</a></td>
+	<td class="summary">Flag for enabling _AirfieldCaptureClean functionality.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._AirfieldCaptureHandler">SPECTRE.ZONEMGR._AirfieldCaptureHandler</a></td>
+	<td class="summary">_AirfieldCaptureHandler</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._AirfieldCaptureSpawns">SPECTRE.ZONEMGR._AirfieldCaptureSpawns</a></td>
+	<td class="summary">Flag for enabling _AirfieldCaptureSpawns functionality.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._persistence">SPECTRE.ZONEMGR._persistence</a></td>
+	<td class="summary">Flag for enabling persistence functionality.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._randSeedMax">SPECTRE.ZONEMGR._randSeedMax</a></td>
+	<td class="summary">Maximum value for random seed generation.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._randSeedMin">SPECTRE.ZONEMGR._randSeedMin</a></td>
+	<td class="summary">Minimum value for random seed generation.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._randSeedNom">SPECTRE.ZONEMGR._randSeedNom</a></td>
+	<td class="summary">Nominal value for random seed generation.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._randSeedNudge">SPECTRE.ZONEMGR._randSeedNudge</a></td>
+	<td class="summary">Nudge factor for random seed adjustment.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._smartFillMinDistFactor">SPECTRE.ZONEMGR._smartFillMinDistFactor</a></td>
+	<td class="summary">keep small, for ex: zone with min distance from side to side = 148680m, a scale facor of 0.05 gives min dist from detected groups of 148680*0.05=7434m.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR._smartFillMinDistFactor">SPECTRE.ZONEMGR._smartFillMinDistFactor</a></td>
+	<td class="summary">Factor for determining minimum distance for smart fill (scale factor).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.codeMarker_">SPECTRE.ZONEMGR.codeMarker_</a></td>
+	<td class="summary">Code marker for the zones (default 1035200).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.generatedAirfields">SPECTRE.ZONEMGR.generatedAirfields</a></td>
+	<td class="summary">Dictionary to store generated airfield spawns.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.generatedFills">SPECTRE.ZONEMGR.generatedFills</a></td>
+	<td class="summary">Dictionary to store generated fill spawns.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.persistanceSettings">SPECTRE.ZONEMGR.persistanceSettings</a></td>
+	<td class="summary">Persistence settings for different templates.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:New">SPECTRE.ZONEMGR:New(ZONEMGR)</a></td>
+	<td class="summary">Create a new zone manager instance.</td>
+	</tr>
+</table>
+<h2><a href="#2___Enable_Toggles">2 - Enable Toggles </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:enableAirfieldCaptureSpawns">SPECTRE.ZONEMGR:enableAirfieldCaptureSpawns(ZONEMGR, enabled)</a></td>
+	<td class="summary">Enable or disable automatic spawns for the coalition that captures an airfield for the SPECTRE.ZONEMGR instance.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:enableHotspotIntel">SPECTRE.ZONEMGR:enableHotspotIntel(ZONEMGR, enabled)</a></td>
+	<td class="summary">Enables or disables hotspot intelligence within the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:enableHotspots">SPECTRE.ZONEMGR:enableHotspots(ZONEMGR, enabled)</a></td>
+	<td class="summary">Enables or disables hotspots within the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:enableLiveEdit">SPECTRE.ZONEMGR:enableLiveEdit(ZONEMGR)</a></td>
+	<td class="summary">Enables live editing of managed zones via markers.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:enablePersistance">SPECTRE.ZONEMGR:enablePersistance(ZONEMGR, enabled)</a></td>
+	<td class="summary">Enable or disable the persistence system for the SPECTRE.ZONEMGR instance.</td>
+	</tr>
+</table>
+<h2><a href="#x___Utilities">x - Utilities </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.FindUnitsInZone">SPECTRE.ZONEMGR.FindUnitsInZone(ZONEMGR, t_ZOBJ)</a></td>
+	<td class="summary">Identifies and categorizes units within a specified zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.buildGroupsFromUnits">SPECTRE.ZONEMGR.buildGroupsFromUnits(ZONEMGR, _detectedUnits, coal)</a></td>
+	<td class="summary">Constructs a list of group names from detected units based on their coalition.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.findZoneForVec2">SPECTRE.ZONEMGR.findZoneForVec2(ZONEMGR, vec2)</a></td>
+	<td class="summary">Determines the zone object for a given coordinate (Vec2).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.getSmartVec2">SPECTRE.ZONEMGR.getSmartVec2(ZONEMGR, quad_bounds, hotspot_clusters, coalition_bias, min_distance, max_distance)</a></td>
+	<td class="summary">Calculates a strategically positioned vector point within a zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.getZoneCoalition">SPECTRE.ZONEMGR.getZoneCoalition(ZONEMGR, zoneName)</a></td>
+	<td class="summary">Retrieves the coalition ownership of a specified zone.</td>
+	</tr>
+</table>
+<h2><a href="#x___Spawner">x - Spawner </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:spawnAirbase">SPECTRE.ZONEMGR:spawnAirbase(ZONEMGR, _airbaseName, _coalition, _country, _zoneNameT, SPWNR_)</a></td>
+	<td class="summary">Spawns airbase elements within specified zones.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:spawnAirbasesInZone">SPECTRE.ZONEMGR:spawnAirbasesInZone(ZONEMGR, _zoneName, _coalition, _country)</a></td>
+	<td class="summary">Spawns airbases within a specific zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:spawnFillAtVec2">SPECTRE.ZONEMGR:spawnFillAtVec2(ZONEMGR, vec2_SpawnCenter, diameter_SpawnZone, coalition, country, _zoneName, SPWNR_)</a></td>
+	<td class="summary">Spawns fill elements at a specified vector location within a zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:spawnFillInZone">SPECTRE.ZONEMGR:spawnFillInZone(ZONEMGR, _zoneName, coalition, country, SPWNR_)</a></td>
+	<td class="summary">Spawns fill elements within a specified zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:spawnFillInZoneSmart">SPECTRE.ZONEMGR:spawnFillInZoneSmart(ZONEMGR, _zoneName, coalition, country, SPWNR_, _bias)</a></td>
+	<td class="summary">Spawns fill elements within a specified zone using intelligent positioning.</td>
+	</tr>
+</table>
+<h2><a href="#x___Templates">x - Templates </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate">SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate(ZONEMGR, SPAWNER, name_, force)</a></td>
+	<td class="summary">Adds an airfield spawner template to the zone manager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:AddFillSpawnerTemplate">SPECTRE.ZONEMGR:AddFillSpawnerTemplate(ZONEMGR, SPAWNER, name_, force)</a></td>
+	<td class="summary">Adds a fill spawner template to the zone manager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_AddAirfieldSpawnerTemplate">SPECTRE.ZONEMGR:_AddAirfieldSpawnerTemplate(_Randname, _SPWNR)</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_AddFillSpawnerTemplate">SPECTRE.ZONEMGR:_AddFillSpawnerTemplate(_Randname, _SPWNR)</a></td>
+	<td class="summary">.</td>
+	</tr>
+</table>
+<h2><a href="#x___Init">x - Init </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:HotspotSchedInit">SPECTRE.ZONEMGR:HotspotSchedInit(ZONEMGR)</a></td>
+	<td class="summary">Initializes the scheduler for managing hotspots within zones.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:Init">SPECTRE.ZONEMGR:Init(ZONEMGR)</a></td>
+	<td class="summary">Initializes the ZoneManager with all necessary configurations.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:InitSSB">SPECTRE.ZONEMGR:InitSSB(ZONEMGR, enabled)</a></td>
+	<td class="summary">Activates the SSB (Side-Specific Behaviors) property within the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:UpdateSchedInit">SPECTRE.ZONEMGR:UpdateSchedInit(ZONEMGR)</a></td>
+	<td class="summary">Initializes a scheduler for periodic zone updates following base captures.</td>
+	</tr>
+</table>
+<h2><a href="#x___Setup">x - Setup </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:Setup">SPECTRE.ZONEMGR:Setup(ZONEMGR, ZoneNames)</a></td>
+	<td class="summary">Configures the ZoneManager with specified zones.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:setUpdateInterval">SPECTRE.ZONEMGR:setUpdateInterval(ZONEMGR, interval, nudge)</a></td>
+	<td class="summary">Sets the interval and nudge factor for periodic zone updates.</td>
+	</tr>
+</table>
+<h2><a href="#x___Internal">x - Internal </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:determineBorderingZones">SPECTRE.ZONEMGR:determineBorderingZones(ZONEMGR)</a></td>
+	<td class="summary">Identifies and defines the borders between adjacent zones.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:seedAirbase">SPECTRE.ZONEMGR:seedAirbase(ZONEMGR)</a></td>
+	<td class="summary">Identifies the airbases relevant to the current map.</td>
+	</tr>
+</table>
+<h2><a href="#x___Events">x - Events </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:AirfieldCapture">SPECTRE.ZONEMGR:AirfieldCapture(ZONEMGR, eventData)</a></td>
+	<td class="summary">Handle base capture events.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_AirfieldCapture">SPECTRE.ZONEMGR:_AirfieldCapture(ZONEMGR, eventData)</a></td>
+	<td class="summary">Handle base capture events.</td>
+	</tr>
+</table>
+<h2><a href="#x___Live_Editor">x - Live Editor </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_DELairfield">SPECTRE.ZONEMGR:_DELairfield(ZONEMGR, Packet)</a></td>
+	<td class="summary">Deletes an airfield and its associated elements based on a marker event in the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_DELallAirfield">SPECTRE.ZONEMGR:_DELallAirfield(ZONEMGR, Packet)</a></td>
+	<td class="summary">Deletes all airfields within a specific zone based on a marker event.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_DELcircle">SPECTRE.ZONEMGR:_DELcircle(ZONEMGR, Packet)</a></td>
+	<td class="summary">Deletes units within a specified circular area based on a marker event.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_DELmarkerDispatcher">SPECTRE.ZONEMGR:_DELmarkerDispatcher(ZONEMGR, Packet)</a></td>
+	<td class="summary">Dispatches delete operations based on marker events in the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_DELzone">SPECTRE.ZONEMGR:_DELzone(ZONEMGR, Packet)</a></td>
+	<td class="summary">Handles the deletion of a zone based on marker events in the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_EventMarker">SPECTRE.ZONEMGR:_EventMarker(ZONEMGR, Packet)</a></td>
+	<td class="summary">Processes marker events for live editing in the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_SPAWNairfield">SPECTRE.ZONEMGR:_SPAWNairfield(ZONEMGR, Packet)</a></td>
+	<td class="summary">Spawns an airfield based on a marker event in the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_SPAWNallAirfield">SPECTRE.ZONEMGR:_SPAWNallAirfield(ZONEMGR, Packet)</a></td>
+	<td class="summary">Spawns all airfields within a specific zone based on a marker event.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_SPAWNcircle">SPECTRE.ZONEMGR:_SPAWNcircle(ZONEMGR, Packet)</a></td>
+	<td class="summary">Spawns units within a specified circular area based on a marker event.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_SPAWNmarkerDispatcher">SPECTRE.ZONEMGR:_SPAWNmarkerDispatcher(ZONEMGR, Packet)</a></td>
+	<td class="summary">Dispatches spawn operations based on marker events in the ZoneManager.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:_SPAWNzone">SPECTRE.ZONEMGR:_SPAWNzone(ZONEMGR, Packet)</a></td>
+	<td class="summary">Handles spawning elements in a specific zone based on marker events in the ZoneManager.</td>
+	</tr>
+</table>
+<h2><a href="#x___Live_Edit_Cfg">x - Live Edit Cfg </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.MARKERS">SPECTRE.ZONEMGR.MARKERS</a></td>
+	<td class="summary">Marker settings for the SPECTRE.ZONEMGR module.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.MARKERS.Settings">SPECTRE.ZONEMGR.MARKERS.Settings</a></td>
+	<td class="summary">.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.MARKERS.Settings.DEL">SPECTRE.ZONEMGR.MARKERS.Settings.DEL</a></td>
+	<td class="summary">Marker settings for deletion commands.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN">SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN</a></td>
+	<td class="summary">Marker settings for spawn commands.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.MARKERS.TRACKERS">SPECTRE.ZONEMGR.MARKERS.TRACKERS</a></td>
+	<td class="summary">Tracker for marker events.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Settings">SPECTRE.ZONEMGR.Settings</a></td>
+	<td class="summary">Settings for the SPECTRE.ZONEMGR module.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Settings.Edit">SPECTRE.ZONEMGR.Settings.Edit</a></td>
+	<td class="summary">Settings for edit functionalities.</td>
+	</tr>
+</table>
+<h2><a href="#Zone_TypeDef">Zone TypeDef </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Airbases">SPECTRE.ZONEMGR.Zone.Airbases</a></td>
+	<td class="summary">List of airbases contained within the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Alpha">SPECTRE.ZONEMGR.Zone.Alpha</a></td>
+	<td class="summary">Transparency of the zone (Default: 0.80).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Area">SPECTRE.ZONEMGR.Zone.Area</a></td>
+	<td class="summary">Area of Zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.ArrowLength">SPECTRE.ZONEMGR.Zone.ArrowLength</a></td>
+	<td class="summary">Specifies the length of arrows for the zone (Default: 20000).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_">SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_</a></td>
+	<td class="summary">Event handler for base capture events within the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.BorderOffsetThreshold">SPECTRE.ZONEMGR.Zone.BorderOffsetThreshold</a></td>
+	<td class="summary">Value indicating the threshold for border offsets (Default: 800).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.BorderingZones">SPECTRE.ZONEMGR.Zone.BorderingZones</a></td>
+	<td class="summary">List of zones that share a border with the current zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Coalition">SPECTRE.ZONEMGR.Zone.Coalition</a></td>
+	<td class="summary">Specifies the coalition ownership of the zone (Default: All=-1).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Color">SPECTRE.ZONEMGR.Zone.Color</a></td>
+	<td class="summary">RGB values defining the color of the zone (Default: Black).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID">SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID</a></td>
+	<td class="summary">ID representing the drawn zone marker.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.FillAlpha">SPECTRE.ZONEMGR.Zone.FillAlpha</a></td>
+	<td class="summary">Specifies the transparency of the zone's fill color (Default: 0.20).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.FillColor">SPECTRE.ZONEMGR.Zone.FillColor</a></td>
+	<td class="summary">RGB values defining the fill color of the zone (Default: Black).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Handler_">SPECTRE.ZONEMGR.Zone.Handler_</a></td>
+	<td class="summary">Event handler for the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.HotspotClusters">SPECTRE.ZONEMGR.Zone.HotspotClusters</a></td>
+	<td class="summary">Processed DB clusters for ground units in zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.HotspotMarkers">SPECTRE.ZONEMGR.Zone.HotspotMarkers</a></td>
+	<td class="summary">Marker storage for DB clusters.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.HotspotSched">SPECTRE.ZONEMGR.Zone.HotspotSched</a></td>
+	<td class="summary">HotspotSched Scheduler for periodic unit hotspot drawing updates.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Hotspots">SPECTRE.ZONEMGR.Zone.Hotspots</a></td>
+	<td class="summary">Boolean Toggle for drawing unit hotspots (default false).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Intel">SPECTRE.ZONEMGR.Zone.Intel</a></td>
+	<td class="summary">Boolean Toggle for giving hotspot Intel (default false).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.IntelMarkers">SPECTRE.ZONEMGR.Zone.IntelMarkers</a></td>
+	<td class="summary">Intel Marker storage for DB clusters.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.LineType">SPECTRE.ZONEMGR.Zone.LineType</a></td>
+	<td class="summary">Specifies the line type of the zone's border (Default: 4=Dot dash).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.LinesVec2">SPECTRE.ZONEMGR.Zone.LinesVec2</a></td>
+	<td class="summary">Lines that define the boundaries of the zone in vector format.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.OwnedByCoalition">SPECTRE.ZONEMGR.Zone.OwnedByCoalition</a></td>
+	<td class="summary">Specifies the coalition that owns the zone (Default: 0=Neutral).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.ReadOnly">SPECTRE.ZONEMGR.Zone.ReadOnly</a></td>
+	<td class="summary">Flag indicating if the zone marker is read-only (Default: true).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.SSBList">SPECTRE.ZONEMGR.Zone.SSBList</a></td>
+	<td class="summary">List of Static Shore-Based (SSB) entities within the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.UpdateQueue">SPECTRE.ZONEMGR.Zone.UpdateQueue</a></td>
+	<td class="summary">Counter to track pending updates for the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.UpdatingHotspots">SPECTRE.ZONEMGR.Zone.UpdatingHotspots</a></td>
+	<td class="summary">UpdatingHotSpots Flag indicating if hotspots are currently being updated.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Vertices2D">SPECTRE.ZONEMGR.Zone.Vertices2D</a></td>
+	<td class="summary">2D vertices that define the boundaries of the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.Vertices3D">SPECTRE.ZONEMGR.Zone.Vertices3D</a></td>
+	<td class="summary">3D vertices that define the boundaries of the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.ZONEPOLYOBJ">SPECTRE.ZONEMGR.Zone.ZONEPOLYOBJ</a></td>
+	<td class="summary">Moose ZonePoly.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.ZoneManager">SPECTRE.ZONEMGR.Zone.ZoneManager</a></td>
+	<td class="summary">Reference to the ZoneManager managing this Zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.ZoneName">SPECTRE.ZONEMGR.Zone.ZoneName</a></td>
+	<td class="summary">Specifies the name of the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone._AirfieldCaptureSpawns">SPECTRE.ZONEMGR.Zone._AirfieldCaptureSpawns</a></td>
+	<td class="summary">Flag to indicate if _AirfieldCaptureSpawns.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone._ArrowColors">SPECTRE.ZONEMGR.Zone._ArrowColors</a></td>
+	<td class="summary">Lookup table for RGB arrow colors with transparency based on coalition ownership.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone._Colors">SPECTRE.ZONEMGR.Zone._Colors</a></td>
+	<td class="summary">Lookup table for RGB values based on coalition ownership.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone._DBScan">SPECTRE.ZONEMGR.Zone._DBScan</a></td>
+	<td class="summary">Density-based clustering for ground units in zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone._FillColors">SPECTRE.ZONEMGR.Zone._FillColors</a></td>
+	<td class="summary">Lookup table for RGB fill colors based on coalition ownership.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone._detectedUnits">SPECTRE.ZONEMGR.Zone._detectedUnits</a></td>
+	<td class="summary">Detected ground units in zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone._hotspotDrawExtension">SPECTRE.ZONEMGR.Zone._hotspotDrawExtension</a></td>
+	<td class="summary">Added to calculated radius for hotspot, extends radius of drawn circle, meters.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.epsilon">SPECTRE.ZONEMGR.Zone.epsilon</a></td>
+	<td class="summary">Epsilon value for DBSCAN clustering.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.f">SPECTRE.ZONEMGR.Zone.f</a></td>
+	<td class="summary">Adjust this factor based on desired granularity for hotspots.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.min_samples">SPECTRE.ZONEMGR.Zone.min_samples</a></td>
+	<td class="summary">Minimum sample size for DBSCAN clustering.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone.shapeId">SPECTRE.ZONEMGR.Zone.shapeId</a></td>
+	<td class="summary">Specifies the shape of the zone (Default: 7=Freeform).</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:New">SPECTRE.ZONEMGR.Zone:New(ZoneName, ZONEMGR)</a></td>
+	<td class="summary">Create a new Zone object.</td>
+	</tr>
+</table>
+<h2><a href="#x___Zone_Functions">x - Zone Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_">SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_(eventData)</a></td>
+	<td class="summary">Handle base capture events.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:ClearHotspots">SPECTRE.ZONEMGR.Zone:ClearHotspots()</a></td>
+	<td class="summary">Clear all drawn hotspots from the map for each coalition.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:ClearIntel">SPECTRE.ZONEMGR.Zone:ClearIntel()</a></td>
+	<td class="summary">Clear all intelligence markers from the map for each coalition.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DBSCAN">SPECTRE.ZONEMGR.Zone:DBSCAN(coal)</a></td>
+	<td class="summary">Apply DBSCAN clustering algorithm to units within the zone based on coalition.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups">SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups()</a></td>
+	<td class="summary">Create a table associating airbases with their client units for Simple Slot Block (SSB) handling.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All">SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All()</a></td>
+	<td class="summary">USE THIS FOR ALL SPAWN MONITORING.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone">SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone()</a></td>
+	<td class="summary">Identify and list all airbases within the specified zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DetermineDrawColor">SPECTRE.ZONEMGR.Zone:DetermineDrawColor()</a></td>
+	<td class="summary">Determine the drawing color for the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups">SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups()</a></td>
+	<td class="summary">FARP usage mainly, or "ground" spawns.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership">SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership()</a></td>
+	<td class="summary">Determine the ownership of the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DrawArrows">SPECTRE.ZONEMGR.Zone:DrawArrows()</a></td>
+	<td class="summary">Draw arrows from the zone to its bordering zones.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DrawHotspots">SPECTRE.ZONEMGR.Zone:DrawHotspots()</a></td>
+	<td class="summary">Draw hotspot circles on the map for each coalition.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:DrawZone">SPECTRE.ZONEMGR.Zone:DrawZone()</a></td>
+	<td class="summary">Draw the zone on the map.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:FindUnitsInZone">SPECTRE.ZONEMGR.Zone:FindUnitsInZone()</a></td>
+	<td class="summary">Identify and return all units within the specified Quadpoint zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:InitHandlers">SPECTRE.ZONEMGR.Zone:InitHandlers()</a></td>
+	<td class="summary">Bind the event handler for base capture events.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership">SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership()</a></td>
+	<td class="summary">Update the coalition ownership of each bordering zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield">SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield(Airfield)</a></td>
+	<td class="summary">Update SSB flags at an Airfield.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:_HotspotSchedInit">SPECTRE.ZONEMGR.Zone:_HotspotSchedInit()</a></td>
+	<td class="summary">Initialize a scheduler for managing hotspots within the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean">SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean(enabled)</a></td>
+	<td class="summary">Enable or disable automatic airfield cleanup on base capture.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns">SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns(enabled)</a></td>
+	<td class="summary">Enable or disable automatic spawns for the coalition that captures an airfield for the SPECTRE.ZONEMGR instance.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:enableHotspotIntel">SPECTRE.ZONEMGR.Zone:enableHotspotIntel(enabled)</a></td>
+	<td class="summary">Enable or disable hotspot intelligence for the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:enableZoneHotspot">SPECTRE.ZONEMGR.Zone:enableZoneHotspot(enabled)</a></td>
+	<td class="summary">Enable or disable the hotspot feature for the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:expand_cluster">SPECTRE.ZONEMGR.Zone:expand_cluster(coal, point, neighbors, cluster_id)</a></td>
+	<td class="summary">Expand a cluster by adding neighboring units that meet the criteria.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:generateDBSCANparams">SPECTRE.ZONEMGR.Zone:generateDBSCANparams(coal)</a></td>
+	<td class="summary">Generate parameters for the DBSCAN clustering algorithm based on the zone's characteristics and unit count.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:getHotspotGroups">SPECTRE.ZONEMGR.Zone:getHotspotGroups()</a></td>
+	<td class="summary">Retrieve and organize groups of units as hotspots within the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:getHotspotsIntel">SPECTRE.ZONEMGR.Zone:getHotspotsIntel()</a></td>
+	<td class="summary">Gather and display intelligence information for hotspots in the zone.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:post_process_clusters">SPECTRE.ZONEMGR.Zone:post_process_clusters(coal)</a></td>
+	<td class="summary">Process and refine clusters for hotspots based on coalition.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR.Zone:region_query">SPECTRE.ZONEMGR.Zone:region_query(coal, point)</a></td>
+	<td class="summary">Identify neighboring units within a specified radius for a given point.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header has-description"><a name="1___Zone_Manager"></a>1 - Zone Manager </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR"></a>
+    <strong>SPECTRE.ZONEMGR</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#31">line 31</a>
+    </dt>
+    <dd>
+    SPECTRE.ZONEMGR. </p>
+
+<p> The brain of SPECTRE, allowing the game to interpret various units positioning and data with ML strategies.</p>
+
+<p> Intelligently manage hotspots, intelligence, sitrep, and automated spawning in the zones.</p>
+
+<p> The <a href="../modules/ZONEMGR.html#">ZONEMGR</a> module within the SPECTRE system is designed for dynamic zone management,
+ offering a centralized approach to handle various zone-related operations.
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.AIRFIELDSPAWNERS"></a>
+    <strong>SPECTRE.ZONEMGR.AIRFIELDSPAWNERS</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#81">line 81</a>
+    </dt>
+    <dd>
+    Dictionary to store airfield spawner instances.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.AirbaseSeed"></a>
+    <strong>SPECTRE.ZONEMGR.AirbaseSeed</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#124">line 124</a>
+    </dt>
+    <dd>
+    A list to seed airbases.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Config"></a>
+    <strong>SPECTRE.ZONEMGR.Config</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#35">line 35</a>
+    </dt>
+    <dd>
+    Configurations for ZONEMGR operations.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Config.operationLimit"></a>
+    <strong>SPECTRE.ZONEMGR.Config.operationLimit</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#39">line 39</a>
+    </dt>
+    <dd>
+    Maximum number of operations that ZONEMGR can handle.
+ Defines the upper limit for ZONEMGR operations.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.FILLSPAWNERS"></a>
+    <strong>SPECTRE.ZONEMGR.FILLSPAWNERS</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#85">line 85</a>
+    </dt>
+    <dd>
+    Dictionary to store fill spawner instances.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Hotspots"></a>
+    <strong>SPECTRE.ZONEMGR.Hotspots</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#114">line 114</a>
+    </dt>
+    <dd>
+    Boolean Toggle for drawing unit hotspots (default false).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Intel"></a>
+    <strong>SPECTRE.ZONEMGR.Intel</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#117">line 117</a>
+    </dt>
+    <dd>
+    Boolean Toggle for drawing hotspot intel (default false).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.SSB"></a>
+    <strong>SPECTRE.ZONEMGR.SSB</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#105">line 105</a>
+    </dt>
+    <dd>
+    Flag indicating if SSB management is active.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.SSBoff"></a>
+    <strong>SPECTRE.ZONEMGR.SSBoff</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#111">line 111</a>
+    </dt>
+    <dd>
+    Flags for SSB off states (default 100).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.SSBon"></a>
+    <strong>SPECTRE.ZONEMGR.SSBon</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#108">line 108</a>
+    </dt>
+    <dd>
+    Flags for SSB on state (default 0).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.UpdateInterval"></a>
+    <strong>SPECTRE.ZONEMGR.UpdateInterval</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#130">line 130</a>
+    </dt>
+    <dd>
+    How often to update self.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.UpdateIntervalNudge"></a>
+    <strong>SPECTRE.ZONEMGR.UpdateIntervalNudge</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#133">line 133</a>
+    </dt>
+    <dd>
+    Adjust how often to update self.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.UpdateSched"></a>
+    <strong>SPECTRE.ZONEMGR.UpdateSched</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#100">line 100</a>
+    </dt>
+    <dd>
+    Scheduler for periodic Zone ownership updates.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.UpdatingZones"></a>
+    <strong>SPECTRE.ZONEMGR.UpdatingZones</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#96">line 96</a>
+    </dt>
+    <dd>
+    Flag indicating if zones are currently being updated.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zones"></a>
+    <strong>SPECTRE.ZONEMGR.Zones</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#77">line 77</a>
+    </dt>
+    <dd>
+    Dictionary to store zone instances.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._AirfieldCaptureClean"></a>
+    <strong>SPECTRE.ZONEMGR._AirfieldCaptureClean</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#64">line 64</a>
+    </dt>
+    <dd>
+    Flag for enabling _AirfieldCaptureClean functionality.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._AirfieldCaptureHandler"></a>
+    <strong>SPECTRE.ZONEMGR._AirfieldCaptureHandler</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#103">line 103</a>
+    </dt>
+    <dd>
+    _AirfieldCaptureHandler
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._AirfieldCaptureSpawns"></a>
+    <strong>SPECTRE.ZONEMGR._AirfieldCaptureSpawns</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#62">line 62</a>
+    </dt>
+    <dd>
+    Flag for enabling _AirfieldCaptureSpawns functionality.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._persistence"></a>
+    <strong>SPECTRE.ZONEMGR._persistence</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#59">line 59</a>
+    </dt>
+    <dd>
+    Flag for enabling persistence functionality.
+ Indicates if persistence is active in ZONEMGR.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._randSeedMax"></a>
+    <strong>SPECTRE.ZONEMGR._randSeedMax</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#47">line 47</a>
+    </dt>
+    <dd>
+    Maximum value for random seed generation.
+ Sets the upper bound for random seed values.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._randSeedMin"></a>
+    <strong>SPECTRE.ZONEMGR._randSeedMin</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#43">line 43</a>
+    </dt>
+    <dd>
+    Minimum value for random seed generation.
+ Sets the lower bound for random seed values.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._randSeedNom"></a>
+    <strong>SPECTRE.ZONEMGR._randSeedNom</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#51">line 51</a>
+    </dt>
+    <dd>
+    Nominal value for random seed generation.
+ The default or standard seed value used in randomization.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._randSeedNudge"></a>
+    <strong>SPECTRE.ZONEMGR._randSeedNudge</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#55">line 55</a>
+    </dt>
+    <dd>
+    Nudge factor for random seed adjustment.
+ Modifier to fine-tune the randomization process.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._smartFillMinDistFactor"></a>
+    <strong>SPECTRE.ZONEMGR._smartFillMinDistFactor</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#73">line 73</a>
+    </dt>
+    <dd>
+    keep small, for ex: zone with min distance from side to side = 148680m, a scale facor of 0.05 gives min dist from detected groups of 148680*0.05=7434m.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR._smartFillMinDistFactor"></a>
+    <strong>SPECTRE.ZONEMGR._smartFillMinDistFactor</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#127">line 127</a>
+    </dt>
+    <dd>
+    Factor for determining minimum distance for smart fill (scale factor).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.codeMarker_"></a>
+    <strong>SPECTRE.ZONEMGR.codeMarker_</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#120">line 120</a>
+    </dt>
+    <dd>
+    Code marker for the zones (default 1035200).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.generatedAirfields"></a>
+    <strong>SPECTRE.ZONEMGR.generatedAirfields</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#89">line 89</a>
+    </dt>
+    <dd>
+    Dictionary to store generated airfield spawns.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.generatedFills"></a>
+    <strong>SPECTRE.ZONEMGR.generatedFills</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#93">line 93</a>
+    </dt>
+    <dd>
+    Dictionary to store generated fill spawns.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.persistanceSettings"></a>
+    <strong>SPECTRE.ZONEMGR.persistanceSettings</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#67">line 67</a>
+    </dt>
+    <dd>
+    Persistence settings for different templates.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:New"></a>
+    <strong>SPECTRE.ZONEMGR:New(ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#144">line 144</a>
+    </dt>
+    <dd>
+    Create a new zone manager instance. </p>
+
+<p> This function initializes a new instance of the SPECTRE.ZONEMGR class. It inherits from the BASE class
+ and sets up the random seed count based on predefined parameters. The random seed generation is an integral
+ part of managing various zone-related functionalities within the SPECTRE framework.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The newly created instance of the zone manager.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new zone manager instance.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="2___Enable_Toggles"></a>2 - Enable Toggles </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All toggles associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:enableAirfieldCaptureSpawns"></a>
+    <strong>SPECTRE.ZONEMGR:enableAirfieldCaptureSpawns(ZONEMGR, enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#193">line 193</a>
+    </dt>
+    <dd>
+    Enable or disable automatic spawns for the coalition that captures an airfield for the SPECTRE.ZONEMGR instance. </p>
+
+<p>  EX: If enabled, when Blue captures an airfield, will pull a random AIRFIELDSPAWNER template from ZONEMGR db and spawn friendly blue units at the field.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager to adjust the persistence setting.
+        </li>
+        <li><span class="parameter">enabled</span>
+         A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with the updated persistence setting.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">zoneManager:enableAirfieldCaptureSpawns(<span class="keyword">true</span>) <span class="comment">-- Enables automatic spawns for the coalition that captures an airfield at the airfield.</span></pre></li>
+        <li><pre class="example">zoneManager:enableAirfieldCaptureSpawns(<span class="keyword">false</span>) <span class="comment">-- Disables automatic spawns for the coalition that captures an airfield at the airfield.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:enableHotspotIntel"></a>
+    <strong>SPECTRE.ZONEMGR:enableHotspotIntel(ZONEMGR, enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#227">line 227</a>
+    </dt>
+    <dd>
+    Enables or disables hotspot intelligence within the ZoneManager. </p>
+
+<p> This function manages the activation of hotspot intelligence in the ZoneManager, which provides strategic insights
+ about key areas within game zones. It allows the game to offer enhanced interactive and tactical experiences based on hotspot activities.
+ The function can be configured to enable or disable this feature, with a default behavior of enabling it if no specific instruction is provided.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">enabled</span>
+         (optional) Boolean value to enable (true) or disable (false) the hotspot intelligence feature. Defaults to true if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with the hotspot intelligence feature enabled or disabled as specified.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneManagerWithIntel = SPECTRE.ZONEMGR:enableHotspotIntel() <span class="comment">-- Enables hotspot intelligence in the ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:enableHotspots"></a>
+    <strong>SPECTRE.ZONEMGR:enableHotspots(ZONEMGR, enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#210">line 210</a>
+    </dt>
+    <dd>
+    Enables or disables hotspots within the ZoneManager. </p>
+
+<p> This function is responsible for activating or deactivating hotspot functionality in the ZoneManager. Hotspots are key areas or points
+ of interest within game zones, and managing their activation is crucial for dynamic gameplay. The function takes an optional parameter
+ to specify whether hotspots should be enabled or disabled, defaulting to true (enabled) if not specified.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">enabled</span>
+         (optional) Boolean value to enable (true) or disable (false) hotspots. Defaults to true if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with hotspots enabled or disabled as specified.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneManagerWithHotspots = SPECTRE.ZONEMGR:enableHotspots() <span class="comment">-- Enables hotspots in the ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:enableLiveEdit"></a>
+    <strong>SPECTRE.ZONEMGR:enableLiveEdit(ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#261">line 261</a>
+    </dt>
+    <dd>
+
+<p>Enables live editing of managed zones via markers. </p>
+
+<p> This function allows for real-time modifications to the managed zones through the use of in-game markers.
+ It supports various commands for deleting and spawning elements like zones, airfields, and circles,
+ providing flexibility and dynamic control over the game's strategic elements. The function handles different
+ edit types and sets up event handlers for marker changes, enabling users to interactively manage zones directly within the game environment.</p>
+
+<p> Delete: /del [command] [coal] [opt param, ...]</p>
+
+<pre><code>  /del zone [coal]
+  /del airfield [coal]
+  /del allairfield [coal]
+  /del circle [coal] [Circle Diameter (meters), centered on marker]
+</code></pre>
+
+<p> Spawn: /spawn [command] [coal] [opt param, ...]</p>
+
+<pre><code>  /spawn zone [coal] [country] [smart] [bias]
+  /spawn zone 1 1 1 2
+  /spawn airfield [coal] [country]
+  /spawn allairfield [coal] [country]
+  /spawn circle [coal] [Circle Diameter (meters), centered on marker] [country] [name]
+</code></pre>
+
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with live edit functionality enabled.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneManagerWithLiveEdit = SPECTRE.ZONEMGR:enableLiveEdit() <span class="comment">-- Enables live editing of zones in the ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:enablePersistance"></a>
+    <strong>SPECTRE.ZONEMGR:enablePersistance(ZONEMGR, enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#174">line 174</a>
+    </dt>
+    <dd>
+    Enable or disable the persistence system for the SPECTRE.ZONEMGR instance. </p>
+
+<p> This function controls the activation state of the persistence system within the SPECTRE.ZONEMGR class.
+ It allows the persistence feature to be toggled on or off. When enabled, the persistence system maintains
+ stateful data across different game sessions or events. The function defaults to enabling persistence if no
+ specific value is provided.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager to adjust the persistence setting.
+        </li>
+        <li><span class="parameter">enabled</span>
+         A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with the updated persistence setting.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">zoneManager:enablePersistance(<span class="keyword">true</span>) <span class="comment">-- Enables the persistence system.</span></pre></li>
+        <li><pre class="example">zoneManager:enablePersistance(<span class="keyword">false</span>) <span class="comment">-- Disables the persistence system.</span></pre></li>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Utilities"></a>x - Utilities </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Misc utilities associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.FindUnitsInZone"></a>
+    <strong>SPECTRE.ZONEMGR.FindUnitsInZone(ZONEMGR, t_ZOBJ)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#496">line 496</a>
+    </dt>
+    <dd>
+    Identifies and categorizes units within a specified zone. </p>
+
+<p> This function scans a defined zone (<code>t_ZOBJ</code>) for all units, including ground units, structures, and ships.
+ It categorizes detected units based on their coalition, providing an organized list of units within the zone.
+ This is useful for understanding the distribution and alignment of forces within a specific area, which can be
+ critical for strategic planning and decision making in gameplay scenarios.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">t_ZOBJ</span>
+         The zone object within which units are to be scanned and identified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        temp_detectedUnits A table categorizing detected units by coalition (0 for neutral, 1 for red, 2 for blue).
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> detectedUnits = zoneManager:FindUnitsInZone(zoneObject) <span class="comment">-- Scans and categorizes units within the specified zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.buildGroupsFromUnits"></a>
+    <strong>SPECTRE.ZONEMGR.buildGroupsFromUnits(ZONEMGR, _detectedUnits, coal)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#530">line 530</a>
+    </dt>
+    <dd>
+    Constructs a list of group names from detected units based on their coalition. </p>
+
+<p> This function processes a list of detected units, filtering them by a specified coalition.
+ It retrieves the names of the groups to which these units belong.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">_detectedUnits</span>
+         A table containing units detected within a specific zone, categorized by coalition.
+        </li>
+        <li><span class="parameter">coal</span>
+         The coalition identifier (1 for red, 2 for blue) used to filter the detected units.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        _GroupNames A table containing the names of groups that belong to the specified coalition.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> groupNames = zoneManager:buildGroupsFromUnits(detectedUnits, coalitionId) <span class="comment">-- Retrieves group names for units of a specific coalition.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.findZoneForVec2"></a>
+    <strong>SPECTRE.ZONEMGR.findZoneForVec2(ZONEMGR, vec2)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#556">line 556</a>
+    </dt>
+    <dd>
+    Determines the zone object for a given coordinate (Vec2). </p>
+
+<p> This function iterates through all the zones managed by the ZoneManager and identifies which zone
+ a given set of coordinates (Vec2 format) falls into. This is particularly useful for pinpointing
+ the specific zone in which a marker, unit, or event is located based on its coordinates.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">vec2</span>
+         The Vec2 coordinates used to determine the relevant zone.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone _zoneObjectRETURN The zone object that contains the specified coordinates.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneObject = zoneManager:findZoneForVec2(coordinates) <span class="comment">-- Retrieves the zone object for given coordinates.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.getSmartVec2"></a>
+    <strong>SPECTRE.ZONEMGR.getSmartVec2(ZONEMGR, quad_bounds, hotspot_clusters, coalition_bias, min_distance, max_distance)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#357">line 357</a>
+    </dt>
+    <dd>
+    Calculates a strategically positioned vector point within a zone. </p>
+
+<p> This function computes a vector point within specified boundaries that adheres to certain strategic constraints such as
+ coalition bias, minimum and maximum distances from hotspots, and clustering effects. It is designed to smartly position
+ game elements in a way that respects the current state of the battlefield and strategic considerations, making it a key
+ component for dynamic gameplay and scenario generation within the SPECTRE.ZONEMGR system.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">quad_bounds</span>
+         The bounding coordinates defining the area within which the point is to be generated.
+        </li>
+        <li><span class="parameter">hotspot_clusters</span>
+         Clusters of hotspots that influence the positioning of the point.
+        </li>
+        <li><span class="parameter">coalition_bias</span>
+         Bias towards a specific coalition in determining the point's position.
+        </li>
+        <li><span class="parameter">min_distance</span>
+         The minimum distance the point should maintain from any hotspot.
+        </li>
+        <li><span class="parameter">max_distance</span>
+         The maximum distance within which the point should be from any hotspot.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        point The calculated vector point that satisfies the given constraints.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example"><span class="keyword">local</span> strategicPoint = newZoneManager:getSmartVec2(quadBounds, hotspots, coalitionBias, minDist, maxDist) <span class="comment">-- Calculates a strategic point within the specified parameters.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.getZoneCoalition"></a>
+    <strong>SPECTRE.ZONEMGR.getZoneCoalition(ZONEMGR, zoneName)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#335">line 335</a>
+    </dt>
+    <dd>
+    Retrieves the coalition ownership of a specified zone. </p>
+
+<p> This function determines and returns the current coalition ownership of a specific zone within the SPECTRE.ZONEMGR system.
+ It first calls a method to determine the zone's current ownership status and then retrieves the coalition (either Red, Blue, or None)
+ that owns the zone. This information is crucial for various gameplay mechanics and strategies related to zone control.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">zoneName</span>
+         The name of the zone whose coalition ownership is to be determined.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        ownedBy The current coalition (Red, Blue, or None) that owns the specified zone.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> owningCoalition = zoneManager:getZoneCoalition(<span class="string">"Zone1"</span>) <span class="comment">-- Retrieves the coalition owning "Zone1".</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Spawner"></a>x - Spawner </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All functions associated with Zone Manager spawning.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:spawnAirbase"></a>
+    <strong>SPECTRE.ZONEMGR:spawnAirbase(ZONEMGR, _airbaseName, _coalition, _country, _zoneNameT, SPWNR_)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#594">line 594</a>
+    </dt>
+    <dd>
+    Spawns airbase elements within specified zones. </p>
+
+<p> This function is responsible for spawning airbase elements within the game environment. It can process one or multiple zones,
+ spawning airbases with specific characteristics such as coalition, country, and size. The function also handles the dynamic generation
+ of airfield structures based on the specified parameters. It's crucial for setting up the airbase infrastructure within different zones
+ managed by the ZONEMGR system.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">_airbaseName</span>
+         The name of the airbase to be spawned.
+        </li>
+        <li><span class="parameter">_coalition</span>
+         The coalition to which the airbase belongs.
+        </li>
+        <li><span class="parameter">_country</span>
+         The country to which the airbase belongs.
+        </li>
+        <li><span class="parameter">_zoneNameT</span>
+         (optional) Specific zone name to process, or all zones if not provided.
+        </li>
+        <li><span class="parameter">SPWNR_</span>
+         (optional) Spawner to use for airbase generation.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after spawning the airbase elements.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">newZoneManager:spawnAirbase(<span class="string">"Airbase1"</span>, <span class="number">2</span>, <span class="string">"USA"</span>, <span class="string">"Zone1"</span>) <span class="comment">-- Spawns "Airbase1" in "Zone1" for the Blue coalition and USA.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:spawnAirbasesInZone"></a>
+    <strong>SPECTRE.ZONEMGR:spawnAirbasesInZone(ZONEMGR, _zoneName, _coalition, _country)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#633">line 633</a>
+    </dt>
+    <dd>
+    Spawns airbases within a specific zone. </p>
+
+<p> This function is designed to spawn all airbases within a given zone. It iterates through each airbase in the specified zone,
+ invoking the <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR:spawnAirbase">spawnAirbase</a> method for each airbase with designated coalition and country parameters. This is essential for
+ populating specific zones with the required airbase infrastructure, tailored to the needs of the specified coalition and country.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">_zoneName</span>
+         The name of the zone where airbases are to be spawned.
+        </li>
+        <li><span class="parameter">_coalition</span>
+         The coalition to which the airbases will belong.
+        </li>
+        <li><span class="parameter">_country</span>
+         The country to which the airbases will belong.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after spawning the airbases in the specified zone.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">newZoneManager:spawnAirbasesInZone(<span class="string">"Zone1"</span>, <span class="number">2</span>, <span class="string">"USA"</span>) <span class="comment">-- Spawns all airbases in "Zone1" for the Blue coalition and USA.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:spawnFillAtVec2"></a>
+    <strong>SPECTRE.ZONEMGR:spawnFillAtVec2(ZONEMGR, vec2_SpawnCenter, diameter_SpawnZone, coalition, country, _zoneName, SPWNR_)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#662">line 662</a>
+    </dt>
+    <dd>
+    Spawns fill elements at a specified vector location within a zone. </p>
+
+<p> This function is designed to spawn fill elements, such as troops or equipment, at a given vector location within a specified zone.
+ It allows customization of the spawn area's diameter, coalition, and country. The function selects a spawner template randomly or
+ uses a provided one, setting up the necessary parameters for dynamic generation within the zone. This feature is essential for
+ populating zones with various in-game elements, adding realism and strategic depth to the game environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">vec2_SpawnCenter</span>
+         The vector location (x, y coordinates) where fill elements are to be spawned.
+        </li>
+        <li><span class="parameter">diameter_SpawnZone</span>
+         The diameter of the spawn zone around the vector location.
+        </li>
+        <li><span class="parameter">coalition</span>
+         The coalition to which the fill elements will belong.
+        </li>
+        <li><span class="parameter">country</span>
+         The country to which the fill elements will belong.
+        </li>
+        <li><span class="parameter">_zoneName</span>
+         The name of the zone where the elements are to be spawned.
+        </li>
+        <li><span class="parameter">SPWNR_</span>
+         (optional) The spawner to use for fill generation.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after spawning the fill elements.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">newZoneManager:spawnFillAtVec2({x = <span class="number">1000</span>, y = <span class="number">2000</span>}, <span class="number">5000</span>, <span class="number">2</span>, <span class="string">"USA"</span>, <span class="string">"Zone1"</span>) <span class="comment">-- Spawns fill elements at the specified location in "Zone1".</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:spawnFillInZone"></a>
+    <strong>SPECTRE.ZONEMGR:spawnFillInZone(ZONEMGR, _zoneName, coalition, country, SPWNR_)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#694">line 694</a>
+    </dt>
+    <dd>
+    Spawns fill elements within a specified zone. </p>
+
+<p> This function handles the spawning of fill elements like troops or equipment within a specific zone. It selects a spawner template,
+ either provided or picked randomly from available templates, and determines a central point within the zone to spawn these elements.
+ The function ensures that the spawning point and area are strategically viable and do not conflict with restricted zones. This is essential
+ for dynamically populating game zones with various elements, enhancing the gameplay experience and the tactical complexity of the zone.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">_zoneName</span>
+         The name of the zone where fill elements are to be spawned.
+        </li>
+        <li><span class="parameter">coalition</span>
+         The coalition to which the fill elements will belong.
+        </li>
+        <li><span class="parameter">country</span>
+         The country to which the fill elements will belong.
+        </li>
+        <li><span class="parameter">SPWNR_</span>
+         (optional) The spawner to use for fill generation.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after spawning the fill elements in the specified zone.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">newZoneManager:spawnFillInZone(<span class="string">"Zone1"</span>, <span class="number">2</span>, <span class="string">"USA"</span>) <span class="comment">-- Spawns fill elements in "Zone1" for the Blue coalition and USA.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:spawnFillInZoneSmart"></a>
+    <strong>SPECTRE.ZONEMGR:spawnFillInZoneSmart(ZONEMGR, _zoneName, coalition, country, SPWNR_, _bias)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#746">line 746</a>
+    </dt>
+    <dd>
+    Spawns fill elements within a specified zone using intelligent positioning. </p>
+
+<p> This function takes a strategic approach to spawn fill elements, such as troops or equipment, within a specified zone.
+ It utilizes the <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.getSmartVec2">getSmartVec2</a> method to determine an optimal spawning location based on various factors, including
+ minimum and maximum distances, hotspot clustering, and coalition bias. The function ensures the spawn point is outside
+ restricted areas and dynamically calculates the spawn zone's diameter. It's pivotal for introducing intelligent and
+ adaptive gameplay elements within the zones managed by the ZONEMGR system.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">_zoneName</span>
+         The name of the zone where fill elements are to be strategically spawned.
+        </li>
+        <li><span class="parameter">coalition</span>
+         The coalition to which the fill elements will belong.
+        </li>
+        <li><span class="parameter">country</span>
+         The country to which the fill elements will belong.
+        </li>
+        <li><span class="parameter">SPWNR_</span>
+         (optional) The spawner to use for fill generation.
+        </li>
+        <li><span class="parameter">_bias</span>
+         (optional) A bias factor towards a specific coalition in positioning the fill elements.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after strategically spawning the fill elements in the specified zone.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">newZoneManager:spawnFillInZoneSmart(<span class="string">"Zone1"</span>, <span class="number">2</span>, <span class="string">"USA"</span>, <span class="keyword">nil</span>, <span class="number">0</span>) <span class="comment">-- Strategically spawns fill elements in "Zone1" for the Blue coalition and USA.</span></pre></li>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Templates"></a>x - Templates </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All functions associated with Zone Manager templates.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate"></a>
+    <strong>SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate(ZONEMGR, SPAWNER, name_, force)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#843">line 843</a>
+    </dt>
+    <dd>
+    Adds an airfield spawner template to the zone manager. </p>
+
+<p> This function is responsible for adding a new airfield spawner template or retrieving an existing one from a persistence file.
+ It generates a unique identifier for the template and checks for existing persistence files, loading them if present. If no file
+ is found, or if the force creation flag is set, a new template is created from the provided spawner object. This functionality
+ is crucial for maintaining a consistent set of airfield spawner templates that can be reused and persist across game sessions.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">SPAWNER</span>
+         _SPWNR The spawner object from which the airfield template is created.
+        </li>
+        <li><span class="parameter">name_</span>
+         (optional) The name of the airfield template. Defaults to a unique identifier based on the current time.
+        </li>
+        <li><span class="parameter">force</span>
+         (optional) A boolean flag to force the creation of a new template, overriding existing persistence.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after adding or updating the airfield spawner template.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">newZoneManager:AddAirfieldSpawnerTemplate(spawnerObject, <span class="string">"AirfieldName"</span>, <span class="keyword">true</span>) <span class="comment">-- Adds or updates an airfield template named "AirfieldName".</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:AddFillSpawnerTemplate"></a>
+    <strong>SPECTRE.ZONEMGR:AddFillSpawnerTemplate(ZONEMGR, SPAWNER, name_, force)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#805">line 805</a>
+    </dt>
+    <dd>
+    Adds a fill spawner template to the zone manager. </p>
+
+<p> This function adds a new spawner template or retrieves an existing one from a persistence file. It creates a unique identifier
+ for the template, checks for existing persistence files, and loads them if present. If the file is not found or if the force flag
+ is set, a new template is created from the provided spawner object. The function is essential for managing spawner templates,
+ ensuring that they are consistent and retrievable across game sessions when persistence is enabled.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">SPAWNER</span>
+         _SPWNR The spawner object from which the template is created.
+        </li>
+        <li><span class="parameter">name_</span>
+         (optional) The name of the template. Defaults to a unique identifier based on the current time.
+        </li>
+        <li><span class="parameter">force</span>
+         (optional) A boolean flag to force creation of a new template, regardless of existing persistence.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after adding or updating the spawner template.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">newZoneManager:AddFillSpawnerTemplate(spawnerObject, <span class="string">"TemplateName"</span>, <span class="keyword">true</span>) <span class="comment">-- Adds or updates a template named "TemplateName".</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_AddAirfieldSpawnerTemplate"></a>
+    <strong>SPECTRE.ZONEMGR:_AddAirfieldSpawnerTemplate(_Randname, _SPWNR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#862">line 862</a>
+    </dt>
+    <dd>
+    .
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_Randname</span>
+
+
+
+        </li>
+        <li><span class="parameter">_SPWNR</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_AddFillSpawnerTemplate"></a>
+    <strong>SPECTRE.ZONEMGR:_AddFillSpawnerTemplate(_Randname, _SPWNR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#823">line 823</a>
+    </dt>
+    <dd>
+    .
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">_Randname</span>
+
+
+
+        </li>
+        <li><span class="parameter">_SPWNR</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Init"></a>x - Init </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:HotspotSchedInit"></a>
+    <strong>SPECTRE.ZONEMGR:HotspotSchedInit(ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1011">line 1011</a>
+    </dt>
+    <dd>
+    Initializes the scheduler for managing hotspots within zones. </p>
+
+<p> This function iterates through all zones managed by the ZONEMGR system and initializes individual hotspot schedulers
+ for zones where hotspots are enabled. It ensures that hotspots, which are critical for dynamic and strategic gameplay,
+ are actively managed and updated within each zone. This process is vital for maintaining a dynamic and engaging game
+ environment where strategic points (hotspots) can influence player actions and scenarios.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with hotspot schedulers initialized for relevant zones.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> zoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">zoneManager:HotspotSchedInit() <span class="comment">-- Initializes hotspot schedulers for zones with hotspots enabled.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:Init"></a>
+    <strong>SPECTRE.ZONEMGR:Init(ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#887">line 887</a>
+    </dt>
+    <dd>
+    Initializes the ZoneManager with all necessary configurations. </p>
+
+<p> This function is essential for starting a new ZoneManager object. It goes through a series of steps to fully initialize
+ the ZoneManager, including determining zone ownership, updating border ownership, setting drawing properties, and initializing
+ event handlers and update schedulers for each zone. This comprehensive setup ensures that all zones are properly configured
+ and ready for strategic gameplay and interactions within the game environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after initialization.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> initializedZoneManager = SPECTRE.ZONEMGR:Init() <span class="comment">-- Initializes and configures the ZoneManager with all necessary settings.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:InitSSB"></a>
+    <strong>SPECTRE.ZONEMGR:InitSSB(ZONEMGR, enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#989">line 989</a>
+    </dt>
+    <dd>
+    Activates the SSB (Side-Specific Behaviors) property within the ZoneManager. </p>
+
+<p> This function enables the SSB property for the ZoneManager.
+ It also sets a user flag to indicate the SSB status, ensuring that SSB-related functionalities are properly handled within the game environment.
+ The function allows for an optional parameter to enable or disable the SSB property, defaulting to true (enabled) if not specified.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">enabled</span>
+         (optional) Boolean value to enable (true) or disable (false) the SSB property. Defaults to true if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with the SSB property initialized.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneManagerWithSSB = SPECTRE.ZONEMGR:InitSSB() <span class="comment">-- Initializes the SSB property in the ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:UpdateSchedInit"></a>
+    <strong>SPECTRE.ZONEMGR:UpdateSchedInit(ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#938">line 938</a>
+    </dt>
+    <dd>
+    Initializes a scheduler for periodic zone updates following base captures. </p>
+
+<p> This function sets up a scheduler within the ZONEMGR system to periodically check and update zones. The updates are triggered
+ by changes resulting from base captures. It ensures that the zone states within the game environment are accurately updated to
+ reflect the latest developments, such as changes in ownership, borders, and zone draw colors. This dynamic updating is crucial
+ for maintaining an up-to-date and strategically accurate game map.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with the update scheduler initialized.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> updatedZoneManager = SPECTRE.ZONEMGR:UpdateSchedInit() <span class="comment">-- Initializes the update scheduler for the ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Setup"></a>x - Setup </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:Setup"></a>
+    <strong>SPECTRE.ZONEMGR:Setup(ZONEMGR, ZoneNames)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1061">line 1061</a>
+    </dt>
+    <dd>
+    Configures the ZoneManager with specified zones. </p>
+
+<p> This function is essential for initializing the ZoneManager with a specific set of zones. It seeds the airbases,
+ creates new Zone objects for each zone name provided, and determines the bordering zones. It also configures
+ zone-specific properties like airbases, ownership, and SSB groups. This setup is crucial for ensuring that
+ the ZoneManager is properly configured to manage the specified zones, facilitating strategic gameplay and zone
+ interactions within the game environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">ZoneNames</span>
+         A list of strings representing the names of the zones to be managed (e.g., {"Zone1", "Zone2"}).
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after setup with the specified zones.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> setupZoneManager = SPECTRE.ZONEMGR:Setup({<span class="string">"Zone1"</span>, <span class="string">"Zone2"</span>}) <span class="comment">-- Sets up the ZoneManager with "Zone1" and "Zone2".</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:setUpdateInterval"></a>
+    <strong>SPECTRE.ZONEMGR:setUpdateInterval(ZONEMGR, interval, nudge)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1041">line 1041</a>
+    </dt>
+    <dd>
+    Sets the interval and nudge factor for periodic zone updates. </p>
+
+<p> This function configures the time interval and nudge factor for periodic updates of zones within the ZONEMGR system. The interval
+ determines how frequently the zone states are checked and potentially updated, while the nudge factor allows for slight adjustments
+ in timing to ensure optimal performance. This configuration is important for balancing the need for timely zone updates with
+ resource efficiency in the game environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">interval</span>
+         (optional) The time interval in seconds for zone updates. Defaults to 25 seconds if not specified.
+        </li>
+        <li><span class="parameter">nudge</span>
+         (optional) A nudge factor to adjust the update timing. Defaults to 0.25 if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance with the updated interval settings.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example"><span class="keyword">local</span> zoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre></li>
+        <li><pre class="example">zoneManager:setUpdateInterval(<span class="number">30</span>, <span class="number">0.5</span>) <span class="comment">-- Sets the update interval to 30 seconds with a nudge factor of 0.5.</span></pre></li>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Internal"></a>x - Internal </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:determineBorderingZones"></a>
+    <strong>SPECTRE.ZONEMGR:determineBorderingZones(ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1098">line 1098</a>
+    </dt>
+    <dd>
+    Identifies and defines the borders between adjacent zones. </p>
+
+<p> This function plays a crucial role in the ZONEMGR system by identifying which zones border each other and determining
+ the specific sides where these borders occur. It comprehensively assesses each zone in relation to others, ensuring
+ that bordering zones are accurately recognized and their border details correctly established. This process is essential
+ for strategic gameplay elements, as it impacts zone control, movement, and conflict dynamics within the game environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after determining the bordering zones.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneManagerWithBorders = SPECTRE.ZONEMGR:determineBorderingZones() <span class="comment">-- Determines and defines the borders between adjacent zones in the ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:seedAirbase"></a>
+    <strong>SPECTRE.ZONEMGR:seedAirbase(ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1188">line 1188</a>
+    </dt>
+    <dd>
+    Identifies the airbases relevant to the current map. </p>
+
+<p> This function is crucial for establishing the correct context within the ZoneManager by identifying the airbases associated
+ with the current map. It utilizes a pre-defined lookup table that maps map names to their respective airbases, ensuring that
+ the ZoneManager is aware of the relevant airbases for zone management and related strategic decisions. This is essential for
+ accurately reflecting the geographical and strategic realities of the game's environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after identifying the relevant airbases for the current map.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneManagerWithAirbase = SPECTRE.ZONEMGR:seedAirbase() <span class="comment">-- Identifies and sets the airbases for the current map in the ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Events"></a>x - Events </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:AirfieldCapture"></a>
+    <strong>SPECTRE.ZONEMGR:AirfieldCapture(ZONEMGR, eventData)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1227">line 1227</a>
+    </dt>
+    <dd>
+    Handle base capture events.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self
+        </li>
+        <li><span class="parameter">eventData</span>
+         Table containing the base captured event data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_AirfieldCapture"></a>
+    <strong>SPECTRE.ZONEMGR:_AirfieldCapture(ZONEMGR, eventData)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1216">line 1216</a>
+    </dt>
+    <dd>
+    Handle base capture events.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self
+        </li>
+        <li><span class="parameter">eventData</span>
+         Table containing the base captured event data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self</h1>
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Live_Editor"></a>x - Live Editor </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_DELairfield"></a>
+    <strong>SPECTRE.ZONEMGR:_DELairfield(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1412">line 1412</a>
+    </dt>
+    <dd>
+    Deletes an airfield and its associated elements based on a marker event in the ZoneManager. </p>
+
+<p> This function processes a marker event designated for deleting an airfield within a specific zone. It identifies the closest airfield based on the marker's location,
+ then finds and deletes all related groups within a defined radius of the airfield. This allows for dynamic changes in the game environment in response to player inputs via markers.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the delete airfield marker event, including marker type, position, and coalition.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the delete airfield marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_DELairfield(packetData) <span class="comment">-- Processes the deletion of an airfield and its associated elements based on the marker event details.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_DELallAirfield"></a>
+    <strong>SPECTRE.ZONEMGR:_DELallAirfield(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1484">line 1484</a>
+    </dt>
+    <dd>
+    Deletes all airfields within a specific zone based on a marker event. </p>
+
+<p> This function is responsible for handling a marker event that signals the deletion of all airfields within a designated zone.
+ It identifies the airbases within the zone specified by the marker's position and then proceeds to remove any related units
+ for the specified coalition. This function allows for dynamic and strategic control of airfield availability in the game environment,
+ offering an advanced level of interactivity and adaptability in response to player inputs.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the delete all airfield marker event, including marker type, position, and coalition.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the delete all airfield marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_DELallAirfield(packetData) <span class="comment">-- Processes the deletion of all airfields in a specified zone based on the marker event.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_DELcircle"></a>
+    <strong>SPECTRE.ZONEMGR:_DELcircle(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1557">line 1557</a>
+    </dt>
+    <dd>
+    Deletes units within a specified circular area based on a marker event. </p>
+
+<p> This function processes a marker event that indicates the deletion of units within a circular area. It identifies the center
+ and radius of the circle from the marker's position and the additional parameters specified in the marker. The function then finds all units
+ within this area belonging to the specified coalition and removes them. This offers a precise and dynamic way to modify the game environment
+ based on player inputs, allowing for flexible manipulation of unit distributions within a defined radius.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the delete circle marker event, including the marker type, position, coalition, and radius.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the delete circle marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_DELcircle(packetData) <span class="comment">-- Processes the deletion of units within a circular area based on the marker event.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_DELmarkerDispatcher"></a>
+    <strong>SPECTRE.ZONEMGR:_DELmarkerDispatcher(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1299">line 1299</a>
+    </dt>
+    <dd>
+    Dispatches delete operations based on marker events in the ZoneManager. </p>
+
+<p> This function interprets marker events designated for deletion commands and routes them to the appropriate deletion functions.
+ It can handle a variety of deletion types, including zones, airfields, all airfields, and circles, providing a comprehensive
+ method for dynamically removing game elements via marker inputs.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the delete marker event, including the specific delete type and associated parameters.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the delete marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_DELmarkerDispatcher(packetData) <span class="comment">-- Dispatches the delete operation based on the marker event details.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_DELzone"></a>
+    <strong>SPECTRE.ZONEMGR:_DELzone(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1347">line 1347</a>
+    </dt>
+    <dd>
+    Handles the deletion of a zone based on marker events in the ZoneManager. </p>
+
+<p> This function processes a marker event designated for deleting a specific zone. It identifies the zone's location from the marker,
+ finds the relevant zone, and proceeds to delete any units within that zone for the specified coalition. This allows for dynamic
+ modification of the game environment in response to player inputs via markers.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the delete zone marker event, including marker type, position, and coalition.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the delete zone marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_DELzone(packetData) <span class="comment">-- Processes the deletion of a zone based on the marker event details.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_EventMarker"></a>
+    <strong>SPECTRE.ZONEMGR:_EventMarker(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1275">line 1275</a>
+    </dt>
+    <dd>
+    Processes marker events for live editing in the ZoneManager. </p>
+
+<p> This function handles marker events triggered by players, allowing for dynamic modifications to the game's zones.
+ It distinguishes between deletion and spawning commands, dispatching the appropriate actions based on the marker's content.
+ The function removes the original marker after processing the event to maintain a clean game environment.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the marker event, including the marker type and player information.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_EventMarker(packetData) <span class="comment">-- Processes the marker event based on the provided packet data.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_SPAWNairfield"></a>
+    <strong>SPECTRE.ZONEMGR:_SPAWNairfield(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1445">line 1445</a>
+    </dt>
+    <dd>
+    Spawns an airfield based on a marker event in the ZoneManager. </p>
+
+<p> This function handles a marker event designated for spawning an airfield within a specific zone. It calculates the closest airfield to the marker's position,
+ and then initiates the spawning of the airfield with the specified coalition and country parameters. This functionality allows for dynamic and strategic modifications
+ to the game environment in response to player inputs via markers.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the spawn airfield marker event, including marker type, position, coalition, and country.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the spawn airfield marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_SPAWNairfield(packetData) <span class="comment">-- Processes the spawning of an airfield based on the marker event details.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_SPAWNallAirfield"></a>
+    <strong>SPECTRE.ZONEMGR:_SPAWNallAirfield(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1517">line 1517</a>
+    </dt>
+    <dd>
+    Spawns all airfields within a specific zone based on a marker event. </p>
+
+<p> This function handles a marker event that instructs the spawning of all airfields within a designated zone. It determines
+ the airbases within the zone specified by the marker's position and spawns them for the specified coalition and country. This function
+ offers a dynamic approach to manage airfield availability within the game environment, responding to player inputs to adaptively modify
+ the strategic landscape.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the spawn all airfield marker event, including marker type, position, coalition, and country.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the spawn all airfield marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_SPAWNallAirfield(packetData) <span class="comment">-- Processes the spawning of all airfields in a specified zone based on the marker event.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_SPAWNcircle"></a>
+    <strong>SPECTRE.ZONEMGR:_SPAWNcircle(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1585">line 1585</a>
+    </dt>
+    <dd>
+    Spawns units within a specified circular area based on a marker event. </p>
+
+<p> This function processes a marker event that indicates the spawning of units within a circular area. It identifies the center,
+ radius, coalition, and country for the spawn area from the marker's details. The function then spawns units accordingly within this
+ circular zone, offering dynamic gameplay changes based on player inputs. This enables the creation of new units in specific areas,
+ allowing for flexible and strategic gameplay alterations.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the spawn circle marker event, including the marker type, position, coalition, radius, and country.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the spawn circle marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_SPAWNcircle(packetData) <span class="comment">-- Processes the spawning of units within a circular area based on the marker event.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_SPAWNmarkerDispatcher"></a>
+    <strong>SPECTRE.ZONEMGR:_SPAWNmarkerDispatcher(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1323">line 1323</a>
+    </dt>
+    <dd>
+    Dispatches spawn operations based on marker events in the ZoneManager. </p>
+
+<p> This function interprets marker events designated for spawning commands and directs them to the corresponding spawning functions.
+ It is capable of handling various types of spawn requests, such as zones, airfields, all airfields, and circles,
+ providing versatile options for adding new game elements dynamically through markers.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the spawn marker event, including the specific spawn type and related parameters.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after executing the spawn marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_SPAWNmarkerDispatcher(packetData) <span class="comment">-- Executes the spawn operation according to the details in the marker event.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR:_SPAWNzone"></a>
+    <strong>SPECTRE.ZONEMGR:_SPAWNzone(ZONEMGR, Packet)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1369">line 1369</a>
+    </dt>
+    <dd>
+    Handles spawning elements in a specific zone based on marker events in the ZoneManager. </p>
+
+<p> This function processes a marker event designated for spawning elements within a specific zone. It identifies the zone's location from the marker,
+ finds the relevant zone, and proceeds to spawn elements within that zone based on the specified coalition, country, and smart spawn parameters.
+ This allows for dynamic and strategic gameplay interactions through player inputs via markers.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZONEMGR</span>
+         self The instance of the zone manager.
+        </li>
+        <li><span class="parameter">Packet</span>
+         Table containing details about the spawn zone marker event, including marker type, position, coalition, country, and smart spawn parameters.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR self The zone manager instance after processing the spawn zone marker event.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zoneManager:_SPAWNzone(packetData) <span class="comment">-- Processes the spawning of elements in a zone based on the marker event details.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Live_Edit_Cfg"></a>x - Live Edit Cfg </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone Manager operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.MARKERS"></a>
+    <strong>SPECTRE.ZONEMGR.MARKERS</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1614">line 1614</a>
+    </dt>
+    <dd>
+    Marker settings for the SPECTRE.ZONEMGR module.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.MARKERS.Settings"></a>
+    <strong>SPECTRE.ZONEMGR.MARKERS.Settings</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1618">line 1618</a>
+    </dt>
+    <dd>
+    .
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.MARKERS.Settings.DEL"></a>
+    <strong>SPECTRE.ZONEMGR.MARKERS.Settings.DEL</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1621">line 1621</a>
+    </dt>
+    <dd>
+    Marker settings for deletion commands.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN"></a>
+    <strong>SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1629">line 1629</a>
+    </dt>
+    <dd>
+    Marker settings for spawn commands.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.MARKERS.TRACKERS"></a>
+    <strong>SPECTRE.ZONEMGR.MARKERS.TRACKERS</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1637">line 1637</a>
+    </dt>
+    <dd>
+    Tracker for marker events.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Settings"></a>
+    <strong>SPECTRE.ZONEMGR.Settings</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1640">line 1640</a>
+    </dt>
+    <dd>
+    Settings for the SPECTRE.ZONEMGR module.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Settings.Edit"></a>
+    <strong>SPECTRE.ZONEMGR.Settings.Edit</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1642">line 1642</a>
+    </dt>
+    <dd>
+    Settings for edit functionalities.
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Zone_TypeDef"></a>Zone TypeDef </h2>
+
+          <div class="section-description">
+
+
+
+<p> Defines and manages properties and attributes associated with a Zone in the SPECTRE.ZONEMGR system.</p>
+
+<p> This class is responsible for:</p>
+
+<ul>
+    <li>Defining properties of a zone such as its shape, coalition, color, and more.</li>
+    <li>Handling interactions with airbases and neighboring zones.</li>
+    <li>Managing event handling and related attributes.</li>
+</ul>
+
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Airbases"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Airbases</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1759">line 1759</a>
+    </dt>
+    <dd>
+    List of airbases contained within the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Alpha"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Alpha</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1723">line 1723</a>
+    </dt>
+    <dd>
+    Transparency of the zone (Default: 0.80).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Area"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Area</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1685">line 1685</a>
+    </dt>
+    <dd>
+    Area of Zone.
+ Hotspots
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.ArrowLength"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.ArrowLength</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1780">line 1780</a>
+    </dt>
+    <dd>
+    Specifies the length of arrows for the zone (Default: 20000).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1765">line 1765</a>
+    </dt>
+    <dd>
+    Event handler for base capture events within the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.BorderOffsetThreshold"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.BorderOffsetThreshold</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1777">line 1777</a>
+    </dt>
+    <dd>
+    Value indicating the threshold for border offsets (Default: 800).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.BorderingZones"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.BorderingZones</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1783">line 1783</a>
+    </dt>
+    <dd>
+    List of zones that share a border with the current zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Coalition"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Coalition</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1717">line 1717</a>
+    </dt>
+    <dd>
+    Specifies the coalition ownership of the zone (Default: All=-1).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Color"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Color</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1720">line 1720</a>
+    </dt>
+    <dd>
+    RGB values defining the color of the zone (Default: Black).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1774">line 1774</a>
+    </dt>
+    <dd>
+    ID representing the drawn zone marker.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.FillAlpha"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.FillAlpha</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1750">line 1750</a>
+    </dt>
+    <dd>
+    Specifies the transparency of the zone's fill color (Default: 0.20).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.FillColor"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.FillColor</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1726">line 1726</a>
+    </dt>
+    <dd>
+    RGB values defining the fill color of the zone (Default: Black).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Handler_"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Handler_</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1762">line 1762</a>
+    </dt>
+    <dd>
+    Event handler for the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.HotspotClusters"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.HotspotClusters</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1674">line 1674</a>
+    </dt>
+    <dd>
+    Processed DB clusters for ground units in zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.HotspotMarkers"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.HotspotMarkers</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1677">line 1677</a>
+    </dt>
+    <dd>
+    Marker storage for DB clusters.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.HotspotSched"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.HotspotSched</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1709">line 1709</a>
+    </dt>
+    <dd>
+    HotspotSched Scheduler for periodic unit hotspot drawing updates.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Hotspots"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Hotspots</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1711">line 1711</a>
+    </dt>
+    <dd>
+    Boolean Toggle for drawing unit hotspots (default false).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Intel"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Intel</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1713">line 1713</a>
+    </dt>
+    <dd>
+    Boolean Toggle for giving hotspot Intel (default false).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.IntelMarkers"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.IntelMarkers</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1680">line 1680</a>
+    </dt>
+    <dd>
+    Intel Marker storage for DB clusters.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.LineType"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.LineType</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1753">line 1753</a>
+    </dt>
+    <dd>
+    Specifies the line type of the zone's border (Default: 4=Dot dash).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.LinesVec2"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.LinesVec2</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1802">line 1802</a>
+    </dt>
+    <dd>
+    Lines that define the boundaries of the zone in vector format.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.OwnedByCoalition"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.OwnedByCoalition</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1771">line 1771</a>
+    </dt>
+    <dd>
+    Specifies the coalition that owns the zone (Default: 0=Neutral).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.ReadOnly"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.ReadOnly</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1756">line 1756</a>
+    </dt>
+    <dd>
+    Flag indicating if the zone marker is read-only (Default: true).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.SSBList"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.SSBList</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1768">line 1768</a>
+    </dt>
+    <dd>
+    List of Static Shore-Based (SSB) entities within the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.UpdateQueue"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.UpdateQueue</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1701">line 1701</a>
+    </dt>
+    <dd>
+    Counter to track pending updates for the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.UpdatingHotspots"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.UpdatingHotspots</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1706">line 1706</a>
+    </dt>
+    <dd>
+    UpdatingHotSpots Flag indicating if hotspots are currently being updated.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Vertices2D"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Vertices2D</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1786">line 1786</a>
+    </dt>
+    <dd>
+    2D vertices that define the boundaries of the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.Vertices3D"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.Vertices3D</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1794">line 1794</a>
+    </dt>
+    <dd>
+    3D vertices that define the boundaries of the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.ZONEPOLYOBJ"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.ZONEPOLYOBJ</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1665">line 1665</a>
+    </dt>
+    <dd>
+    Moose ZonePoly.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.ZoneManager"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.ZoneManager</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1704">line 1704</a>
+    </dt>
+    <dd>
+    Reference to the ZoneManager managing this Zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.ZoneName"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.ZoneName</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1662">line 1662</a>
+    </dt>
+    <dd>
+    Specifies the name of the zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone._AirfieldCaptureSpawns"></a>
+    <strong>SPECTRE.ZONEMGR.Zone._AirfieldCaptureSpawns</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1660">line 1660</a>
+    </dt>
+    <dd>
+    Flag to indicate if _AirfieldCaptureSpawns.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone._ArrowColors"></a>
+    <strong>SPECTRE.ZONEMGR.Zone._ArrowColors</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1743">line 1743</a>
+    </dt>
+    <dd>
+    Lookup table for RGB arrow colors with transparency based on coalition ownership.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone._Colors"></a>
+    <strong>SPECTRE.ZONEMGR.Zone._Colors</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1729">line 1729</a>
+    </dt>
+    <dd>
+    Lookup table for RGB values based on coalition ownership.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone._DBScan"></a>
+    <strong>SPECTRE.ZONEMGR.Zone._DBScan</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1671">line 1671</a>
+    </dt>
+    <dd>
+    Density-based clustering for ground units in zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone._FillColors"></a>
+    <strong>SPECTRE.ZONEMGR.Zone._FillColors</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1736">line 1736</a>
+    </dt>
+    <dd>
+    Lookup table for RGB fill colors based on coalition ownership.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone._detectedUnits"></a>
+    <strong>SPECTRE.ZONEMGR.Zone._detectedUnits</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1668">line 1668</a>
+    </dt>
+    <dd>
+    Detected ground units in zone.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone._hotspotDrawExtension"></a>
+    <strong>SPECTRE.ZONEMGR.Zone._hotspotDrawExtension</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1682">line 1682</a>
+    </dt>
+    <dd>
+    Added to calculated radius for hotspot, extends radius of drawn circle, meters.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.epsilon"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.epsilon</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1688">line 1688</a>
+    </dt>
+    <dd>
+    Epsilon value for DBSCAN clustering.
+ Hotspots
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.f"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.f</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1694">line 1694</a>
+    </dt>
+    <dd>
+    Adjust this factor based on desired granularity for hotspots.
+ Hotspots
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.min_samples"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.min_samples</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1691">line 1691</a>
+    </dt>
+    <dd>
+    Minimum sample size for DBSCAN clustering.
+ Hotspots
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone.shapeId"></a>
+    <strong>SPECTRE.ZONEMGR.Zone.shapeId</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1715">line 1715</a>
+    </dt>
+    <dd>
+    Specifies the shape of the zone (Default: 7=Freeform).
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:New"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:New(ZoneName, ZONEMGR)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1817">line 1817</a>
+    </dt>
+    <dd>
+    Create a new Zone object. </p>
+
+<p> This function initializes a new Zone object within the SPECTRE.ZONEMGR system. It involves inheriting properties from the BASE class,
+ setting essential attributes like ZoneManager and ZoneName, and performing geometric conversions. The function handles the transformation
+ of the zone's 2D vertices into lines and 3D coordinates, essential for zone manipulation and management in a 3D environment.
+ This method is vital for creating zones with accurately defined boundaries and properties.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ZoneName</span>
+         The name of the quadpoint zone to be transformed into a Zone object.
+        </li>
+        <li><span class="parameter">ZONEMGR</span> ZoneManager The parent ZoneManager managing this Zone.
+        <ul>
+        <li><span class="parameter">Zone</span>
+         self The base instance from which the new Zone object is derived.
+        </li>
+        </li></ul>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The newly created and initialized Zone object.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> newZone = SPECTRE.ZONEMGR.Zone:New(<span class="string">"SomeZoneName"</span>, someZoneManager) <span class="comment">-- Creates a new Zone object with the specified name and ZoneManager.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Zone_Functions"></a>x - Zone Functions </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All Functions associated with Zone operations.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_(eventData)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1859">line 1859</a>
+    </dt>
+    <dd>
+    Handle base capture events. </p>
+
+<p> This function is triggered when a base capture event occurs within the game. It plays a crucial role in updating the zone's state
+ in response to these events. Specifically, it increments the UpdateQueue each time a base is captured. Additionally, if the captured
+ airbase lies within the current zone and the SSB system is enabled in the ZoneManager, it updates
+ the SSB airfield configuration accordingly. This ensures that changes in base control are accurately reflected within the zone's operational context.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">eventData</span>
+         Table containing the base captured event data.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after processing the base capture event.</h1>
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:ClearHotspots"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:ClearHotspots()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2880">line 2880</a>
+    </dt>
+    <dd>
+    Clear all drawn hotspots from the map for each coalition. </p>
+
+<p> This function removes the visual representation of all hotspots previously drawn on the map for each coalition.
+ It ensures that the map reflects the current state of hotspots, allowing for updates or changes in strategic situations.
+ This clearing process is essential for maintaining an accurate and up-to-date visual depiction of the zone's hotspots.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after clearing the hotspots from the map.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithClearedHotspots = someZone:ClearHotspots() <span class="comment">-- Clears all hotspot markers for each coalition in the zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:ClearIntel"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:ClearIntel()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2963">line 2963</a>
+    </dt>
+    <dd>
+    Clear all intelligence markers from the map for each coalition. </p>
+
+<p> This function is responsible for removing all intelligence markers related to hotspots from the map.
+ It iterates through each coalition's intel markers and clears them, ensuring that the map reflects the most current intelligence information.
+ This action is crucial for maintaining an accurate and up-to-date strategic view of the zone, especially when situations change rapidly.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after clearing all intelligence markers.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithClearedIntel = someZone:ClearIntel() <span class="comment">-- Clears all intelligence markers for each coalition in the zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DBSCAN"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DBSCAN(coal)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2629">line 2629</a>
+    </dt>
+    <dd>
+    Apply DBSCAN clustering algorithm to units within the zone based on coalition. </p>
+
+<p> This function implements the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) algorithm to group units within the zone.
+ It is applied to units of a specific coalition (coal) and organizes them into clusters based on proximity. This clustering is crucial for identifying
+ significant gatherings or formations of units, allowing for a more nuanced understanding of the strategic situation within the zone. The function
+ marks units as part of a cluster or noise based on the parameters <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.Zone.epsilon">epsilon</a> (radius) and <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.Zone.min_samples">min_samples</a> (minimum number of units to form a cluster).
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coal</span>
+         The coalition (0, 1, or 2) for which the clustering is to be performed.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after applying the DBSCAN algorithm.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> clusteredZone = someZone:DBSCAN(coalition) <span class="comment">-- Applies DBSCAN to units of the specified coalition within the zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2155">line 2155</a>
+    </dt>
+    <dd>
+    Create a table associating airbases with their client units for Simple Slot Block (SSB) handling. </p>
+
+<p>  Detects all client spawn slots at airfields (airfield spawn) and all client slots within 5 Km of the airfield's vec2 (ground spawns)</p>
+
+<p>  Adds these units to the SSB manager for automatic toggling when the airfield changes coalition.</p>
+
+<p> This function constructs a mapping between airbases and their client units for managing Simple Slot Blocks (SSB) in the game.
+ SSB is responsible for enabling or disabling player spawn slots. The function identifies client units at each airbase and
+ creates associations necessary for the strategic control of player spawn points. This mapping is essential for effectively
+ managing player access to specific airbases, reflecting real-time conditions and strategic decisions within the zone.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after creating the SSB airbase-client unit mapping.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() <span class="comment">-- Creates a mapping for airbases and client units for SSB handling.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2265">line 2265</a>
+    </dt>
+    <dd>
+    USE THIS FOR ALL SPAWN MONITORING. </p>
+
+<p> The Airfield and FARP methods are efficient for their specific purpose. This does them both but faster.</p>
+
+<p> Create a table associating airbases with their client units for Simple Slot Block (SSB) handling.</p>
+
+<p>  Detects all client spawn slots at airfields (airfield spawn) and all client slots within 5 Km of the airfield's vec2 (ground spawns)</p>
+
+<p>  Adds these units to the SSB manager for automatic toggling when the airfield changes coalition.</p>
+
+<p> This function constructs a mapping between airbases and their client units for managing Simple Slot Blocks (SSB) in the game.
+ SSB is responsible for enabling or disabling player spawn slots. The function identifies client units at each airbase and
+ creates associations necessary for the strategic control of player spawn points. This mapping is essential for effectively
+ managing player access to specific airbases, reflecting real-time conditions and strategic decisions within the zone.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after creating the SSB airbase-client unit mapping.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() <span class="comment">-- Creates a mapping for airbases and client units for SSB handling.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2365">line 2365</a>
+    </dt>
+    <dd>
+    Identify and list all airbases within the specified zone. </p>
+
+<p> This function is essential for understanding the strategic layout of the zone by identifying all airbases within its boundaries.
+ It scans each airbase from the ZoneManager's list, checking if it is located within the zone's defined area. The function
+ ensures that only airbases lying within the zone are considered for further operations and strategies, thereby aligning
+ in-game elements with the zone's geographical constraints and characteristics.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after identifying and listing all airbases within it.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithIdentifiedAirbases = someZone:DetermineAirbasesInZone() <span class="comment">-- Identifies and lists all the airbases located within the given zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DetermineDrawColor"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DetermineDrawColor()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1990">line 1990</a>
+    </dt>
+    <dd>
+    Determine the drawing color for the zone. </p>
+
+<p> This function assigns a drawing color to the zone based on its current coalition ownership. It checks the zone's coalition status
+ and selects a corresponding color from predefined color sets (_Colors and _FillColors). If no matching color is found in these sets,
+ the zone retains its existing color. This functionality is crucial for visually representing the dynamic control of different coalitions
+ over zones, enhancing the player's understanding and strategic decision-making based on territorial control.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after determining and setting the drawing color.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithDrawColor = someZone:DetermineDrawColor() <span class="comment">-- Determines the drawing color for the specified zone based on its coalition ownership.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2316">line 2316</a>
+    </dt>
+    <dd>
+    FARP usage mainly, or "ground" spawns. </p>
+
+<p>  Detects all ground spawns in a Zone not assigned to an airfield and adds it to the Airfield SSB Manager for the closest airfield.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after creating the SSB airbase-client unit mapping.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() <span class="comment">-- Creates a mapping for airbases and client units for SSB handling.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1930">line 1930</a>
+    </dt>
+    <dd>
+    Determine the ownership of the zone. </p>
+
+<p> This function assesses which coalition currently owns a particular zone based on the count of airbases under the control of each coalition within the zone.
+ It iterates through the airbases, tallying those controlled by the red and blue coalitions. The ownership of the zone is then determined by the coalition
+ with the majority of airbases. This function is essential for dynamically reflecting the shifting control of territories within the game environment.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after determining its ownership.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithOwnership = someZone:DetermineZoneOwnership() <span class="comment">-- Determines the ownership of the specified zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DrawArrows"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DrawArrows()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2044">line 2044</a>
+    </dt>
+    <dd>
+    Draw arrows from the zone to its bordering zones. </p>
+
+<p> This function graphically represents the territorial dynamics between the current zone and its bordering zones.
+ It draws arrows pointing from the current zone to adjacent zones whenever there is a difference in coalition ownership.
+ This visual indication helps to illustrate the direction of territorial influence or contention, enhancing the strategic
+ comprehension of the game's geopolitical landscape for players. The function ensures that previous markers are cleared
+ before drawing new arrows to reflect the current state accurately.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after drawing arrows to its bordering zones.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithArrows = someZone:DrawArrows() <span class="comment">-- Draws arrows from the specified zone to its bordering zones based on coalition differences.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DrawHotspots"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DrawHotspots()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2840">line 2840</a>
+    </dt>
+    <dd>
+    Draw hotspot circles on the map for each coalition. </p>
+
+<p> This function visualizes hotspots on the map by drawing circles representing their locations and extents.
+ It iterates through hotspots identified for each coalition and draws a circle for each, using a specific color and fill color.
+ The function plays a crucial role in providing a visual representation of areas of high activity or strategic importance within the zone,
+ enhancing situational awareness and strategic planning.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after drawing the hotspots on the map.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithDrawnHotspots = someZone:DrawHotspots() <span class="comment">-- Draws hotspot circles for each coalition in the zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:DrawZone"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:DrawZone()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2009">line 2009</a>
+    </dt>
+    <dd>
+    Draw the zone on the map. </p>
+
+<p> This function is responsible for visually representing the zone on the map using its defined color properties. It first checks if a marker
+ for the zone already exists and removes it to avoid duplication. The function then draws the new zone using its current color and fill color,
+ along with other defined properties. This visual representation is key for players to easily identify and differentiate zones based on their
+ current status and coalition control, enhancing the strategic aspect of the game.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after being drawn on the map.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> drawnZone = someZone:DrawZone() <span class="comment">-- Draws the specified zone on the map using its color properties.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:FindUnitsInZone"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:FindUnitsInZone()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2404">line 2404</a>
+    </dt>
+    <dd>
+    Identify and return all units within the specified Quadpoint zone. </p>
+
+<p> This function is designed to identify all units within the boundaries of the current zone. It scans through each unit from
+ the ZoneManager's list, checking if they are located within the zone's defined area. The function is crucial for gathering
+ comprehensive data about the units present in the zone, which can be used for various strategic and management purposes
+ within the game. It adds an additional layer of situational awareness by providing detailed information about the ground,
+ structure, and ship units present in the zone.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after identifying all units within it.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithIdentifiedUnits = someZone:FindUnitsInZone() <span class="comment">-- Identifies and returns all units located within the given zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:InitHandlers"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:InitHandlers()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1913">line 1913</a>
+    </dt>
+    <dd>
+    Bind the event handler for base capture events. </p>
+
+<p> This function is crucial for integrating the zone with the game's event system, specifically for base capture events.
+ It binds the <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_">BaseCapturedHandler_</a> function to the <code>BaseCaptured</code> event, allowing the zone to appropriately respond
+ and handle situations when a base within its boundaries is captured. This binding ensures that the zone's state and behavior
+ are dynamically updated in response to in-game actions and changes, particularly those involving base control.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after binding the event handler.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithHandler = someZone:InitHandlers() <span class="comment">-- Binds the <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_">BaseCapturedHandler_</a> to handle base capture events for the specified zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1970">line 1970</a>
+    </dt>
+    <dd>
+    Update the coalition ownership of each bordering zone. </p>
+
+<p> This function is vital for maintaining the dynamic and interconnected nature of territorial control within the game.
+ It iterates over each zone that borders the current zone and updates its coalition ownership to reflect the coalition status
+ of the main zone's bordering zones. This approach ensures that changes in territorial control ripple out appropriately to
+ neighboring zones, reflecting a more realistic and strategic environment.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after updating the ownership of its bordering zones.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithUpdatedBorders = someZone:UpdateBorderOwnership() <span class="comment">-- Updates the coalition ownership of each bordering zone for the specified zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield(Airfield)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2104">line 2104</a>
+    </dt>
+    <dd>
+    Update SSB flags at an Airfield. </p>
+
+<p> This function plays a critical role in updating the user flags for each airfield within a zone, based on its coalition ownership and
+ its relationship to the SSB list. The function ensures that the correct flags are set for each airfield,
+ accurately indicating its current operational state. This is essential for managing airfield control and player spawns.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Airfield</span>
+         The name of the airfield, part of the self[Airbases] table.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after updating the SSB flags at the specified airfield.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> updatedZone = someZone:UpdateSSBAirfield(<span class="string">"SomeAirfield"</span>) <span class="comment">-- Updates the SSB flags for the specified airfield in the zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:_HotspotSchedInit"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:_HotspotSchedInit()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2501">line 2501</a>
+    </dt>
+    <dd>
+    Initialize a scheduler for managing hotspots within the zone. </p>
+
+<p> This function sets up a scheduler to periodically check and update hotspots within the zone. It ensures that the hotspots
+ and any related intelligence data are refreshed at regular intervals. The scheduler also accounts for ongoing updates,
+ avoiding overlaps in processing. This systematic approach to managing hotspots enhances the zone's dynamics, ensuring
+ that changes in game conditions are regularly reflected in hotspot statuses and information.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after initializing the hotspot scheduler.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithScheduler = someZone:_HotspotSchedInit() <span class="comment">-- Initializes the hotspot scheduler for the specified zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean(enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2578">line 2578</a>
+    </dt>
+    <dd>
+    Enable or disable automatic airfield cleanup on base capture. </p>
+
+<p>  EX: If enabled, when .
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">enabled</span>
+         A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The zone manager instance with the updated persistence setting.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(<span class="keyword">true</span>) <span class="comment">-- Enables automatic spawns for the coalition that captures an airfield at the airfield.</span></pre></li>
+        <li><pre class="example">zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(<span class="keyword">false</span>) <span class="comment">-- Disables automatic spawns for the coalition that captures an airfield at the airfield.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns(enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2563">line 2563</a>
+    </dt>
+    <dd>
+    Enable or disable automatic spawns for the coalition that captures an airfield for the SPECTRE.ZONEMGR instance. </p>
+
+<p>  EX: If enabled, when Blue captures an airfield, will pull a random AIRFIELDSPAWNER template from ZONEMGR db and spawn friendly blue units at the field.</p>
+
+<p>  does not spawn units if old ownership coalition value was contested or same as new ownership.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">enabled</span>
+         A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The zone manager instance with the updated persistence setting.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(<span class="keyword">true</span>) <span class="comment">-- Enables automatic spawns for the coalition that captures an airfield at the airfield.</span></pre></li>
+        <li><pre class="example">zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(<span class="keyword">false</span>) <span class="comment">-- Disables automatic spawns for the coalition that captures an airfield at the airfield.</span></pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:enableHotspotIntel"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:enableHotspotIntel(enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2544">line 2544</a>
+    </dt>
+    <dd>
+    Enable or disable hotspot intelligence for the zone. </p>
+
+<p> This function toggles the intelligence feature related to hotspots within the zone. When enabled, it allows for the collection
+ and processing of additional intelligence data associated with hotspots. This feature is essential for enhancing strategic
+ decision-making by providing more detailed insights into areas of interest within the zone.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">enabled</span>
+         (Optional) A boolean value to enable (true) or disable (false) the hotspot intelligence feature. Defaults to false if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after toggling the hotspot intelligence feature.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithHotspotIntel = someZone:enableHotspotIntel(<span class="keyword">true</span>) <span class="comment">-- Enables the hotspot intelligence feature for the specified zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:enableZoneHotspot"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:enableZoneHotspot(enabled)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2484">line 2484</a>
+    </dt>
+    <dd>
+    Enable or disable the hotspot feature for the zone. </p>
+
+<p> This function allows for toggling the hotspot feature of a zone on or off. A hotspot is typically an area of
+ strategic interest within the zone. Enabling the hotspot feature could be used to trigger specific behaviors
+ or responses related to the zone. The ability to enable or disable this feature programmatically adds flexibility
+ in how the zone is interacted with and managed during gameplay.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">enabled</span>
+         (Optional) A boolean value to enable (true) or disable (false) the hotspot feature. Defaults to false if not specified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after toggling the hotspot feature.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> updatedZone = someZone:enableZoneHotspot(<span class="keyword">true</span>) <span class="comment">-- Enables the hotspot feature for the specified zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:expand_cluster"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:expand_cluster(coal, point, neighbors, cluster_id)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2706">line 2706</a>
+    </dt>
+    <dd>
+    Expand a cluster by adding neighboring units that meet the criteria. </p>
+
+<p> As part of the DBSCAN clustering algorithm, this function expands a given cluster by adding units that are neighbors and meet the
+ specified criteria. It examines each neighboring unit, determining if they should be part of the cluster based on their proximity and
+ the minimum samples threshold. This function is crucial in building clusters that accurately represent groups of units in the game,
+ allowing for a more detailed and strategic understanding of unit distribution within a zone.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coal</span>
+         The coalition (0, 1, or 2) of the units being considered.
+        </li>
+        <li><span class="parameter">point</span>
+         The starting point of the cluster.
+        </li>
+        <li><span class="parameter">neighbors</span>
+         A list of neighboring units to the starting point.
+        </li>
+        <li><span class="parameter">cluster_id</span>
+         The identifier of the cluster being expanded.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after expanding the cluster.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">someZone:expand_cluster(coalition, startingPoint, neighbors, clusterId) <span class="comment">-- Expands the cluster with additional units meeting the DBSCAN criteria.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:generateDBSCANparams"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:generateDBSCANparams(coal)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2812">line 2812</a>
+    </dt>
+    <dd>
+    Generate parameters for the DBSCAN clustering algorithm based on the zone's characteristics and unit count. </p>
+
+<p> This function dynamically calculates the key parameters for the DBSCAN clustering algorithm: <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.Zone.epsilon">epsilon</a> (the search radius)
+ and <a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.Zone.min_samples">min_samples</a> (the minimum number of units to form a cluster). The calculations are based on the total number of units
+ within the coalition and the area of the zone. These parameters are critical for adapting the DBSCAN algorithm to varying
+ densities and distributions of units, ensuring effective clustering that reflects the actual strategic layout within the zone.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coal</span>
+         The coalition (0, 1, or 2) for which the DBSCAN parameters are being calculated.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after generating the DBSCAN parameters.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithParams = someZone:generateDBSCANparams(coalition) <span class="comment">-- Generates DBSCAN parameters for the specified coalition.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:getHotspotGroups"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:getHotspotGroups()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2596">line 2596</a>
+    </dt>
+    <dd>
+    Retrieve and organize groups of units as hotspots within the zone. </p>
+
+<p> This function plays a key role in identifying and categorizing groups of units within the zone as hotspots. It first locates all units
+ in the zone and then applies a clustering algorithm (DBSCAN) to group these units based on proximity and coalition. This process results
+ in the formation of hotspots, which are clusters of units representing areas of strategic interest or activity within the zone. This organized
+ approach to identifying hotspots is crucial for understanding the distribution and concentration of forces or resources within the zone.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after identifying and organizing hotspot groups.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithHotspots = someZone:getHotspotGroups() <span class="comment">-- Retrieves and organizes groups of units as hotspots within the zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:getHotspotsIntel"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:getHotspotsIntel()</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2912">line 2912</a>
+    </dt>
+    <dd>
+    Gather and display intelligence information for hotspots in the zone. </p>
+
+<p> This function compiles intelligence data for each hotspot in the zone, summarizing the types of units present within each hotspot.
+ It then visually represents this intelligence on the map, providing insights into the composition of forces or resources at strategic locations.
+ This information is valuable for tactical decision-making and understanding the nature of the opposition within different hotspots.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after gathering and displaying intelligence information for its hotspots.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> zoneWithIntel = someZone:getHotspotsIntel() <span class="comment">-- Gathers and displays intelligence data for hotspots in the zone.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:post_process_clusters"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:post_process_clusters(coal)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2748">line 2748</a>
+    </dt>
+    <dd>
+    Process and refine clusters for hotspots based on coalition. </p>
+
+<p> Following the clustering of units using the DBSCAN algorithm, this function performs post-processing on the identified clusters.
+ It refines each cluster by calculating its geometric center and radius, effectively defining the hotspots more precisely.
+ This refinement is crucial for accurately representing the spatial characteristics of each hotspot, such as its central location
+ and the extent of its influence or area of coverage. The process aids in better understanding and visualization of strategic
+ groupings of units within the zone.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coal</span>
+         The coalition (0, 1, or 2) for which clusters are being processed.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+
+<h1>ZONEMGR.Zone self The Zone instance after post-processing the clusters.</h1>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> refinedZone = someZone:post_process_clusters(coalition) <span class="comment">-- Post-processes the clusters for the specified coalition.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.ZONEMGR.Zone:region_query"></a>
+    <strong>SPECTRE.ZONEMGR.Zone:region_query(coal, point)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2676">line 2676</a>
+    </dt>
+    <dd>
+    Identify neighboring units within a specified radius for a given point. </p>
+
+<p> This function is a key component of the DBSCAN clustering algorithm. It identifies neighboring units within a defined radius (<a href="../modules/ZONEMGR.html#SPECTRE.ZONEMGR.Zone.epsilon">epsilon</a>)
+ from a given point. The function is essential for determining the local density of units, helping to categorize units as either part of a
+ cluster or as noise. It scans through all detected units of a specific coalition and identifies those that are within the radius of the
+ provided point, effectively gathering a list of neighbors.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">coal</span>
+         The coalition (0, 1, or 2) of the units to consider.
+        </li>
+        <li><span class="parameter">point</span>
+         The reference point from which neighbors are to be identified.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        neighbors A table containing units identified as neighbors within the specified radius.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> neighbors = someZone:region_query(coalition, referencePoint) <span class="comment">-- Identifies neighboring units within a radius from the reference point for the specified coalition.</span></pre>
+    </ul>
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

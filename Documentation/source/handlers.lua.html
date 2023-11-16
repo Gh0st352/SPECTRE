@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>S.P.E.C.T.R.E.</h1>
+
+
+<ul>
+  <li><a href="../manual.html">Index</a></li>
+</ul>
+
+
+
+<h2>Source</h2>
+<ul class="nowrap">
+  <li><a href="../source/ai.lua.html">ai.lua</a></li>
+  <li><a href="../source/brain.lua.html">brain.lua</a></li>
+  <li><strong>handlers.lua</strong></li>
+  <li><a href="../source/iads.lua.html">iads.lua</a></li>
+  <li><a href="../source/io.lua.html">io.lua</a></li>
+  <li><a href="../source/markers.lua.html">markers.lua</a></li>
+  <li><a href="../source/menu.lua.html">menu.lua</a></li>
+  <li><a href="../source/plyrmgr.lua.html">plyrmgr.lua</a></li>
+  <li><a href="../source/poly.lua.html">poly.lua</a></li>
+  <li><a href="../source/rewards.lua.html">rewards.lua</a></li>
+  <li><a href="../source/spawner.lua.html">spawner.lua</a></li>
+  <li><a href="../source/spectre.lua.html">spectre.lua</a></li>
+  <li><a href="../source/utils.lua.html">utils.lua</a></li>
+  <li><a href="../source/world.lua.html">world.lua</a></li>
+  <li><a href="../source/zonemgr.lua.html">zonemgr.lua</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/AI.html">AI</a></li>
+  <li><a href="../modules/BRAIN.html">BRAIN</a></li>
+  <li><a href="../modules/HANDLERS.html">HANDLERS</a></li>
+  <li><a href="../modules/IADS.html">IADS</a></li>
+  <li><a href="../modules/IO.html">IO</a></li>
+  <li><a href="../modules/MARKERS.html">MARKERS</a></li>
+  <li><a href="../modules/MENU.html">MENU</a></li>
+  <li><a href="../modules/PLYRMGR.html">PLYRMGR</a></li>
+  <li><a href="../modules/POLY.html">POLY</a></li>
+  <li><a href="../modules/REWARDS.html">REWARDS</a></li>
+  <li><a href="../modules/SPAWNER.html">SPAWNER</a></li>
+  <li><a href="../modules/SPECTRE.html">SPECTRE</a></li>
+  <li><a href="../modules/UTILS.html">UTILS</a></li>
+  <li><a href="../modules/WORLD.html">WORLD</a></li>
+  <li><a href="../modules/ZONEMGR.html">ZONEMGR</a></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/readme.md.html">readme</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <h2>handlers.lua</h2>
+<pre>
+<span class="comment">--- **HANDLERS**
+</span><span class="comment">--
+</span><span class="comment">-- Various prebuilt event handlers.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- @module HANDLERS
+</span><span class="comment">-- @extends SPECTRE
+</span>
+
+<span class="comment">--- SPECTRE.HANDLERS.
+</span><span class="comment">--
+</span><span class="comment">-- Various prebuilt event handlers.
+</span><span class="comment">--
+</span><a id="16"></a><span class="comment">-- @field #HANDLERS
+</span>SPECTRE.HANDLERS = {}
+
+<span class="comment">--- New HANDLERS instance.
+</span><span class="comment">-- @param #HANDLERS
+</span><a id="21"></a><span class="comment">-- @return #HANDLERS self
+</span><span class="keyword">function</span> SPECTRE.HANDLERS:New()
+  <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+
+<span class="comment">--- ParachuteCleanup.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- Automatically clean up pesky parachute markers on the map upon touchdown.
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section SPECTRE.HANDLERS
+</span>
+<span class="comment">---.
+</span><a id="37"></a><span class="comment">-- @field #HANDLERS.ParachuteCleanup
+</span>SPECTRE.HANDLERS.ParachuteCleanup = EVENT:New()
+
+<span class="comment">--- Init remove parachutes from map on landing.
+</span><span class="comment">-- @param #HANDLERS.ParachuteCleanup
+</span><a id="42"></a><span class="comment">-- @return #HANDLERS.ParachuteCleanup self
+</span><span class="keyword">function</span> SPECTRE.HANDLERS.ParachuteCleanup:Init()
+  self:HandleEvent(EVENTS.LandingAfterEjection, self.OnEventLandingAfterEjection)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
+<span class="comment">--- Removes parachutes from map on landing.
+</span><span class="comment">-- @param #HANDLERS.ParachuteCleanup
+</span><span class="comment">-- @param parashooEvent
+</span><a id="51"></a><span class="comment">-- @return #HANDLERS.ParachuteCleanup self
+</span><span class="keyword">function</span> SPECTRE.HANDLERS.ParachuteCleanup.OnEventLandingAfterEjection(parashooEvent)
+  Unit.destroy(parashooEvent.initiator)
+  <span class="keyword">return</span> self
+<span class="keyword">end</span></pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
