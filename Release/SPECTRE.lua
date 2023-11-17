@@ -5,9 +5,9 @@
 -- ------------------------------------------------------------------------------------------
 -- 
 -- S. - Special         |
--- P. - Purpose         | CompileTime : Wednesday, November 15, 2023 6:48:27 PM
+-- P. - Purpose         | CompileTime : Thursday, November 16, 2023 7:41:28 PM
 -- E. - Extension for   |      Commit : 6adc313af566c4a566e5aefe11b85fc2bd03d026
--- C. - Creating        |	    Version : 0.9.5
+-- C. - Creating        |	    Version : 0.9.6
 -- T. - Truly           |      Github : https://github.com/Gh0st352
 -- R. - Reactive        |      Author : Gh0st
 -- E. - Environments    |     Discord : gh0st352
@@ -112,7 +112,7 @@ SPECTRE = {}
 SPECTRE.DebugEnabled = 0
 
 --- Name of the map SPECTRE is operating on.
-SPECTRE.MAPNAME = "Syria" --(DCS.getCurrentMission().mission.theatre)
+SPECTRE.MAPNAME = "Syria"
 
 --- Coalition definitions used by SPECTRE.
 SPECTRE.Coalitions = {
@@ -171,6 +171,70 @@ SPECTRE.USERSTORAGE = {}
 function SPECTRE:New()
   local self=BASE:Inherit(self, BASE:New())
   --local self = UTILS.DeepCopy(self)
+  return self
+end
+
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainSyria()
+  self.MAPNAME = "Syria"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainPersianGulf()
+  self.MAPNAME = "Persia"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainCaucasus()
+  self.MAPNAME = "Caucasus"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainSinai()
+  self.MAPNAME = "Sinai"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainMarianaIslands()
+  self.MAPNAME = "MarianaIslands"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainNevada()
+  self.MAPNAME = "Nevada"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainNormandy()
+  self.MAPNAME = "Normandy"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainSouthAtlantic()
+  self.MAPNAME = "SouthAtlantic"
+  return self
+end
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainTheChannel()
+  self.MAPNAME = "TheChannel"
   return self
 end
 
@@ -285,6 +349,8 @@ function SPECTRE:EndMissionSave()
   SPECTRE.IO.PersistenceToFile(self._masterProfileFile, SPECTRE_settings, true)
   return self
 end
+
+
 
 
 
@@ -1478,8 +1544,25 @@ SPECTRE.BRAIN = {}
 -- @param _InputFunction The function to be executed on the object if the persistence file does not exist or is bypassed.
 -- @param ... Additional parameters to be passed to the _InputFunction.
 -- @return _Object The object after loading from a persistence file or processing through the _InputFunction.
--- @usage SPECTRE.BRAIN.checkAndPersist("PATH/PATH/filename.lua", false, myObject, true, processFunction, additionalParam1, additionalParam2)
---        -- Checks and manages the persistence of 'myObject', potentially processing it with 'processFunction'.
+-- @usage  Example:
+--          
+--             self.FILLSPAWNERS[_Randname] = SPECTRE.BRAIN.checkAndPersist(
+--              _filename,
+--              force,
+--              self.FILLSPAWNERS[_Randname],
+--              self._persistence,
+--              function(_Object)  -- Update: Include _Object as a parameter
+--                return self._CreateSpawnerTemplate(_SPWNR, _Object)  -- Update: Pass _Object to the new function
+--              end
+--            )
+--  where
+--  
+--            function SPECTRE.ZONEMGR._CreateSpawnerTemplate(_SPWNR, _Object)
+--              -- Update _Object with the new template and return it
+--              _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
+--              return _Object
+--            end
+--            
 function SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)
   SPECTRE.UTILS.debugInfo("SPECTRE.BRAIN.checkAndPersist | PERSISTENCE  | ----------------------")
   SPECTRE.UTILS.debugInfo("SPECTRE.BRAIN.checkAndPersist | PATH         | " .. tostring(_filename))
@@ -1507,7 +1590,7 @@ function SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, 
 
     if _InputFunction then
       -- Run the input function with parameters
-      _InputFunction(...)
+     _Object = _InputFunction(_Object, ...)
     end
     -- Save the object if persistence is enabled and object was not loaded
     if _persistence and not loaded then
@@ -2936,7 +3019,7 @@ do
   -- @param item The item (potentially a table) whose references are to be counted.
   -- @usage refCount(objRefCountTable, myTable) -- Counts references for `myTable` and updates `objRefCountTable`.
   refCount = function (objRefCount, item)
-    SPECTRE.UTILS.debugInfo("SPECTRE.IO:refCount | ~~~~~ ")
+    --SPECTRE.UTILS.debugInfo("SPECTRE.IO:refCount | ~~~~~ ")
     -- only count reference types (tables)
     if type(item) == "table" then
       -- Increase ref count
@@ -7127,13 +7210,13 @@ function SPECTRE.SPAWNER:DetectTypeTemplates(TemplatePrefix, force)
     force,
     self.TEMPLATETYPES_,
     self._persistence,
-    function() self:_detectHighestAttributes() end
+    function(_Object)
+      return self:_detectHighestAttributes(TemplatePrefix, _Object)
+    end
   )
-
   if self.Benchmark == true then
     self.BenchmarkLog.DetectTypeTemplates.Time.stop = os.clock()
   end
-
   return self
 end
 
@@ -7796,7 +7879,7 @@ end
 
 
 --- 9 - Zone TypeDef.
--- 
+--
 -- ===
 --
 -- Defines properties and attributes associated with a zone in the `SPECTRE.SPAWNER` system.
@@ -8055,7 +8138,7 @@ end
 
 
 --- Configuration settings for spawn amounts within a zone.
--- 
+--
 -- This template defines various settings related to the spawning of units or objects within a zone.
 -- It includes factors affecting spawn quantities, such as nudge factors, ratios, and thresholds.
 -- @field #SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate
@@ -8158,7 +8241,7 @@ function SPECTRE.SPAWNER.SpacingSettings_:New()
 end
 
 --- Configuration settings for spawn amounts within a zone.
--- 
+--
 -- This structure defines both the configured and dynamically generated settings related to the number of entities to be spawned within a zone.
 -- It includes extra types and units settings, as well as specific configurations for spawn amounts.
 -- @field #SPAWNER.Zone_.SpawnAmountSettings
@@ -8176,7 +8259,7 @@ SPECTRE.SPAWNER.Zone_.SpawnAmountSettings = {
 }
 
 --- Configuration settings for spacing within a zone.
--- 
+--
 -- This structure defines the general spacing configurations for groups and units within a zone.
 -- It includes settings for minimum and maximum separations between groups and units, and the distance from buildings.
 -- @field #SPAWNER.Zone_.SpacingSettings
@@ -8188,7 +8271,7 @@ SPECTRE.SPAWNER.Zone_.SpacingSettings = {
 
 
 --- 10 - ZONEMGR.
--- 
+--
 -- ===
 --
 -- *All Functions associated with ZONEMGR operations.*
@@ -8598,8 +8681,10 @@ function SPECTRE.SPAWNER:DynamicGenerationZONE(vec2, name, benchmark, summary)
   self:setSpawnAmountsZONE_B()
   self:RollSpawnGroupSizes()
   self:Generate()
+  if self.Benchmark then
   if benchmark then self:_SaveBenchmark() end
   if summary then self:Summary() end
+  end
   return self
 end
 
@@ -8850,7 +8935,7 @@ function SPECTRE.SPAWNER:_Spawn(_zoneObject)
 end
 
 --- Called by DetectTypeTemplates.
-function SPECTRE.SPAWNER:_detectHighestAttributes()
+function SPECTRE.SPAWNER:_detectHighestAttributes(TemplatePrefix, _Object)
   SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:DetectTypeTemplates | DETECT HIGHEST PRIORITY ATTRIBUTE ---------------------------------")
 
   -- Nested function to find the template type with the highest priority
@@ -8870,17 +8955,17 @@ function SPECTRE.SPAWNER:_detectHighestAttributes()
     return matchingType
   end
   for Group_, GroupObject in pairs(mist.DBs.groupsByName) do
-    if string.find(Group_, self.TemplatePrefix, 1, true) then
+    if string.find(Group_, TemplatePrefix, 1, true) then
       local _groupAttributes = SPECTRE.UTILS.GetGroupAttributes(Group_)
       SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:DetectTypeTemplates | GROUP:  " .. Group_ .. " | ATTRIBUTES: ", _groupAttributes)
-      local matchedType = findTypeIndex(self.TEMPLATETYPES_, _groupAttributes)
+      local matchedType = findTypeIndex(_Object, _groupAttributes)
       if matchedType then
         -- Add the group name to the matched type
-        SPECTRE.UTILS.safeInsert(self.TEMPLATETYPES_[matchedType].GroupNames, Group_)
+        SPECTRE.UTILS.safeInsert(_Object[matchedType].GroupNames, Group_)
       end
     end
   end
-  return self
+  return _Object
 end
 
 --- Distributes difference in spawn amounts across subzones and introduces randomness.
@@ -10117,7 +10202,7 @@ end
 -- *All Functions associated with Game Manipulation operations.*
 --
 -- ===
--- @section SPECTRE.PLYRMGR
+-- @section SPECTRE.UTILS
 
 ---Get all type attributes related to all units in a group.
 -- @param GroupName_ String name of group
@@ -10242,7 +10327,7 @@ end
 -- *All Functions associated with Maths operations.*
 --
 -- ===
--- @section SPECTRE.PLYRMGR
+-- @section SPECTRE.UTILS
 
 
 --- .
@@ -10344,18 +10429,17 @@ end
 -- *All Functions associated with Template operations.*
 --
 -- ===
--- @section SPECTRE.PLYRMGR
+-- @section SPECTRE.UTILS
 
 --- .
 -- @param OBJECT_
 -- @return _template
--- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
 function SPECTRE.UTILS.templateFromObject(OBJECT_)
   local serialString_ = SPECTRE.IO.persistence.serializeNoFunc(OBJECT_)
   local _template = SPECTRE.IO.persistence.deSerialize(serialString_)
   return _template
 end
----.Sets all values in output_ to those in template_.
+---Sets all values in output_ to those in template_.
 --  Skips overwriting functions and __index.
 -- @param template_
 -- @param output_
@@ -10382,7 +10466,7 @@ end
 -- *All Functions associated with DEBUG operations.*
 --
 -- ===
--- @section SPECTRE.PLYRMGR
+-- @section SPECTRE.UTILS
 
 --- Log debug information if debugging is enabled.
 --
@@ -10514,14 +10598,14 @@ end
 --- **WORLD**
 --
 --  *Functions for tracking zone game data and state.*
---  
+--
 -- ===
 --
 -- @module WORLD
 -- @extends SPECTRE
 
 --- SPECTRE.WORLD.
--- 
+--
 -- *Functions for tracking zone game data and state.*
 --
 -- @section WORLD
@@ -10583,7 +10667,7 @@ end
 -- @section SPECTRE.WORLD
 
 --- Create a red target marker at a specified coordinate if units of a given category and coalition exist within a zone.
--- 
+--
 -- Old function kept for sentimental value. Still works.
 --
 -- @param ZoneName string: The name of the zone to check for units.
@@ -10631,6 +10715,8 @@ end
 -- @param _vec2 table: A table containing the x and y coordinates of the given point (e.g., {x=0, y=0}).
 -- @return table: A list containing the name and 3D vector coordinates of the nearest airbase.
 function SPECTRE.WORLD.FindNearestAirbaseToPointVec2(AirbaseList, _vec2)
+  SPECTRE.UTILS.debugInfo("SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | -------------------------------------------------------------------------")
+
   local maxInitialDistance = 99999999999
   local closestAirbaseDistance = maxInitialDistance
   local closestAirbaseDetails
@@ -10638,17 +10724,23 @@ function SPECTRE.WORLD.FindNearestAirbaseToPointVec2(AirbaseList, _vec2)
 
   -- Iterate over each airbase in the provided list and find the closest
   for _, airbaseName in ipairs(AirbaseList) do
+    SPECTRE.UTILS.debugInfo("SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | airbaseName: " .. airbaseName)
 
     local airbaseVec3 = AIRBASE:FindByName(airbaseName):GetVec3()
     local airbaseCoord = COORDINATE:NewFromVec3(airbaseVec3)
     local currentDistance = queryPointCoord:Get2DDistance(airbaseCoord)
 
+    SPECTRE.UTILS.debugInfo("SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | currentDistance: " .. currentDistance)
+
     if currentDistance < closestAirbaseDistance then
+      SPECTRE.UTILS.debugInfo("SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | closest so far --")
       closestAirbaseDistance = currentDistance
       closestAirbaseDetails = {airbaseName, airbaseVec3}
     end
   end
-
+  SPECTRE.UTILS.debugInfo("SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | CLOSEST: ")
+  SPECTRE.UTILS.debugInfo("SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | Name   : " .. closestAirbaseDetails[1])
+  SPECTRE.UTILS.debugInfo("SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | Vec3   : " , closestAirbaseDetails[2])
   -- Return the details of the closest airbase
   return closestAirbaseDetails
 end
@@ -10663,7 +10755,12 @@ function SPECTRE.WORLD.GetOwnedAirbaseCoal(coal)
     ["Syria"] = AIRBASE.Syria,
     ["Persia"] = AIRBASE.PersianGulf,
     ["Caucasus"] = AIRBASE.Caucasus,
-    ["Sinai"] = AIRBASE.Sinai
+    ["Sinai"] = AIRBASE.Sinai,
+    ["MarianaIslands"] = AIRBASE.MarianaIslands,
+    ["Nevada"] = AIRBASE.Nevada,
+    ["Normandy"] = AIRBASE.Normandy,
+    ["SouthAtlantic"] = AIRBASE.SouthAtlantic,
+    ["TheChannel"] = AIRBASE.TheChannel
   }
 
   local _AirbaseListTheatre = airbaseMapLookup[SPECTRE.MAPNAME] or {} -- Initialize using the lookup
@@ -10934,7 +11031,7 @@ end
 function SPECTRE.ZONEMGR:enableHotspots(enabled)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:InitHotspots | ---------------------")
   enabled = enabled or true
-  -- Enable the SSB property.
+
   self.Hotspots = enabled
   return self
 end
@@ -10951,7 +11048,7 @@ end
 function SPECTRE.ZONEMGR:enableHotspotIntel(enabled)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:enableHotspotIntel | ---------------------")
   enabled = enabled or true
-  -- Enable the SSB property.
+
   self.Intel = enabled
   return self
 end
@@ -11529,24 +11626,17 @@ end
 function SPECTRE.ZONEMGR:AddFillSpawnerTemplate(_SPWNR, name_, force)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AddFillSpawnerTemplate | ----------- " , _SPWNR )
   force = force or false
-  local loaded = false
   local _Randname = name_ or os.time()
   local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. self.persistanceSettings.FillTemplates .. _Randname .. ".lua"
-
   self.FILLSPAWNERS[_Randname] = SPECTRE.BRAIN.checkAndPersist(
     _filename,
     force,
     self.FILLSPAWNERS[_Randname],
     self._persistence,
-    function(_Randname, _SPWNR) self:_AddFillSpawnerTemplate(_Randname, _SPWNR) end,
-    _Randname, _SPWNR
+    function(_Object)  -- Update: Include _Object as a parameter
+      return self._CreateSpawnerTemplate(_SPWNR, _Object)  -- Update: Pass _Object to the new function
+    end
   )
-  return self
-end
----.
-function SPECTRE.ZONEMGR:_AddFillSpawnerTemplate(_Randname, _SPWNR)
-  local _template = self:templateFromObject(_SPWNR)
-  self.FILLSPAWNERS[_Randname] = _template
   return self
 end
 
@@ -11567,7 +11657,6 @@ end
 function SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate(_SPWNR, name_, force)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate | ----------- " , _SPWNR )
   force = force or false
-  local loaded = false
   local _Randname = name_ or os.time()
   local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. self.persistanceSettings.AirfieldTemplates .. _Randname .. ".lua"
 
@@ -11576,17 +11665,18 @@ function SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate(_SPWNR, name_, force)
     force,
     self.AIRFIELDSPAWNERS[_Randname],
     self._persistence,
-    function(_Randname, _SPWNR) self:_AddAirfieldSpawnerTemplate(_Randname, _SPWNR) end,
-    _Randname, _SPWNR
+    function(_Object)  -- Update: Include _Object as a parameter
+      return self._CreateSpawnerTemplate(_SPWNR, _Object)  -- Update: Pass _Object to the new function
+    end
   )
-
   return self
 end
+
 ---.
-function SPECTRE.ZONEMGR:_AddAirfieldSpawnerTemplate(_Randname, _SPWNR)
-  local _template = self:templateFromObject(_SPWNR)
-  self.AIRFIELDSPAWNERS[_Randname] = _template
-  return self
+function SPECTRE.ZONEMGR._CreateSpawnerTemplate(_SPWNR, _Object)
+  -- Update _Object with the new template and return it
+  _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
+  return _Object
 end
 
 --- x - Init.
@@ -11794,8 +11884,9 @@ function SPECTRE.ZONEMGR:Setup(ZoneNames)
 
     currentZone:DetermineAirbasesInZone()
     currentZone:DetermineZoneOwnership()
-    currentZone:DetermineAirbaseSSBGroups_All()
-    --currentZone:DetermineAirbaseSSBGroups()
+    --currentZone:DetermineAirbaseSSBGroups_All()
+    currentZone:DetermineAirbaseSSBGroups()
+    --currentZone:DetermineFARPSSBGroups()
   end
 
   return self
@@ -11916,7 +12007,12 @@ function SPECTRE.ZONEMGR:seedAirbase()
     ["Syria"] = AIRBASE.Syria,
     ["Persia"] = AIRBASE.PersianGulf,
     ["Caucasus"] = AIRBASE.Caucasus,
-    ["Sinai"] = AIRBASE.Sinai
+    ["Sinai"] = AIRBASE.Sinai,
+    ["MarianaIslands"] = AIRBASE.MarianaIslands,
+    ["Nevada"] = AIRBASE.Nevada,
+    ["Normandy"] = AIRBASE.Normandy,
+    ["SouthAtlantic"] = AIRBASE.SouthAtlantic,
+    ["TheChannel"] = AIRBASE.TheChannel
   }
 
   -- Set the AirbaseSeed property based on the current map name.
@@ -12829,11 +12925,15 @@ function SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield(Airfield)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield | ---------------------")
   -- Get the object associated with the specified airbase.
   local ABobject = self.Airbases[Airfield]
-
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield | ABobject" , ABobject)
   -- Retrieve flags associated with the zone manager.
   local flagOn = self.ZoneManager.SSBon
   local flagOff = self.ZoneManager.SSBoff
   local currentFlag
+
+
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield | flagOn  :" .. flagOn)
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield | flagOff :" .. flagOff)
 
   -- Iterate over each airbase and its group array in the SSBList.
   for airbaseName, groupArray in pairs(self.SSBList) do
@@ -12847,6 +12947,9 @@ function SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield(Airfield)
     else
       airbaseOwner = "neutral"
     end
+
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield | airbaseName :" .. airbaseName)
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield | airbaseOwner :" .. airbaseOwner)
 
     -- Set user flags based on coalition ownership.
     for _, groupDetails in ipairs(groupArray) do
@@ -12926,6 +13029,12 @@ function SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups()
       end
     end
   end
+  if SPECTRE.DebugEnabled == 1 then
+    local force = true
+    local _Randname = "SSBList_Airfield"
+    local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
+    SPECTRE.IO.PersistenceToFile(_filename, _SSBAirfieldArrays, force)
+  end
   -- DETECT AND ADD GROUND SPAWNS WITHIN 5000 METERS OF AIRFIELDS TO THE AIRFIELD SSB MANAGER
   for groupName, groupData in pairs(allGroups) do
     if groupData and groupData.units then
@@ -12963,12 +13072,19 @@ function SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups()
   end
   -- Update the instance's SSBList with the gathered data.
   self.SSBList = _SSBAirfieldArrays
-  --SPECTRE.IO.PersistenceToFile("TEST/SSB/" .. self.ZoneName .. "_SSBList.lua", _SSBAirfieldArrays, true)
+
+  if SPECTRE.DebugEnabled == 1 then
+    local force = true
+    local _Randname =  "SSBList_Ground"
+    local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/" .. self.ZoneName .. "/" .. _Randname .. ".lua"
+    SPECTRE.IO.PersistenceToFile(_filename, _SSBAirfieldArrays, force)
+  end
+
   return self
 end
 
 
---- USE THIS FOR ALL SPAWN MONITORING.
+--- DO NOT USE THIS YET.
 --
 -- The Airfield and FARP methods are efficient for their specific purpose. This does them both but faster.
 --
@@ -13004,9 +13120,13 @@ function SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All()
           local _vec2 = {x = unitData.x, y = unitData.y}
           local _nearestAB = SPECTRE.WORLD.FindNearestAirbaseToPointVec2(airbaseNames, _vec2)
           local _nearestABname = _nearestAB[1]
+          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All | groupData.groupName : " .. groupData.groupName)
+          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All | _nearestABname      : " ..  _nearestABname)
+          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All | _SSBAirfieldArrays  : " , _SSBAirfieldArrays)
           if SPECTRE.UTILS.table_contains(_SSBAirfieldArrays, _nearestABname) then
             for _, _group in ipairs(_SSBAirfieldArrays[_nearestABname]) do
               if _group.name == groupData.groupName then
+                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All | Already Exists, Do not add")
                 _flagAddUnit = false
                 break
               end
@@ -13026,7 +13146,12 @@ function SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All()
   end
   -- Update the instance's SSBList with the gathered data.
   self.SSBList = _SSBAirfieldArrays
-  -- SPECTRE.IO.PersistenceToFile("TEST/SSB/" .. self.ZoneName .. "_SSBList.lua", _SSBAirfieldArrays, true)
+  if SPECTRE.DebugEnabled == 1 then
+    local force = true
+    local _Randname =  "SSBList_All"
+    local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
+    SPECTRE.IO.PersistenceToFile(_filename, _SSBAirfieldArrays, force)
+  end
   return self
 end
 
@@ -13073,6 +13198,12 @@ function SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups()
         end
       end
     end
+  end
+  if SPECTRE.DebugEnabled == 1 then
+    local force = true
+    local _Randname =  "SSBList_FARP"
+    local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
+    SPECTRE.IO.PersistenceToFile(_filename, self.SSBList, force)
   end
   return self
 end
@@ -13136,6 +13267,8 @@ function SPECTRE.ZONEMGR.Zone:FindUnitsInZone()
   self.ZONEPOLYOBJ:Scan({Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
 
   local scanData = self.ZONEPOLYOBJ.ScanData
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:FindUnitsInZone | scanData     | " , scanData)
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:FindUnitsInZone | SPECTRE.SPAWNER.TEMPLATETYPES_     | " , SPECTRE.SPAWNER.TEMPLATETYPES_)
   if scanData then
     -- Units
     if scanData.Units then
@@ -13322,7 +13455,13 @@ function SPECTRE.ZONEMGR.Zone:getHotspotGroups()
 
   self:FindUnitsInZone()
 
-  --SPECTRE.IO.PersistenceToFile("/TEST/ZONEMGR/getHotspotGroups/" .. self.ZoneName .. "_detectedUnits.lua", self._detectedUnits)
+  if SPECTRE.DebugEnabled == 1 then
+    local force = true
+    local _Randname = "Hotspot_DetectedUnits"
+    local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
+    SPECTRE.IO.PersistenceToFile(_filename, self._detectedUnits, force)
+  end
+
 
   self.HotspotClusters = {}
   self._DBScan = {}
@@ -13331,9 +13470,23 @@ function SPECTRE.ZONEMGR.Zone:getHotspotGroups()
     if self._detectedUnits[_coal] and #self._detectedUnits[_coal] > 0 then
       self:generateDBSCANparams(_coal)
       self:DBSCAN(_coal)
-      --  SPECTRE.IO.PersistenceToFile("/TEST/ZONEMGR/getHotspotGroups/" .. self.ZoneName .. "_" .. _coal .. "_DBScan.lua", self._DBScan[_coal])
+
+      if SPECTRE.DebugEnabled == 1 then
+        local force = true
+        local _Randname = "Hotspot_DBscan"
+        local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
+        SPECTRE.IO.PersistenceToFile(_filename, self._DBScan[_coal], force)
+      end
+
       self:post_process_clusters(_coal)
-      --  SPECTRE.IO.PersistenceToFile("/TEST/ZONEMGR/getHotspotGroups/" .. self.ZoneName .. "_" .. _coal .. "_process.lua", self.HotspotClusters[_coal])
+
+      if SPECTRE.DebugEnabled == 1 then
+        local force = true
+        local _Randname = "Hotspot_processed"
+        local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
+        SPECTRE.IO.PersistenceToFile(_filename, self.HotspotClusters[_coal], force)
+      end
+
     end
   end
   return self
