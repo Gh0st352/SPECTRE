@@ -165,6 +165,10 @@
 	<td class="name" ><a href="#SPECTRE.UTILS.deleteGroupsByName">SPECTRE.UTILS.deleteGroupsByName(_GroupNames)</a></td>
 	<td class="summary">.</td>
 	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.UTILS.getGroupNamesbyStringMatch">SPECTRE.UTILS.getGroupNamesbyStringMatch(string)</a></td>
+	<td class="summary">.</td>
+	</tr>
 </table>
 <h2><a href="#Maths">Maths </a></h2>
 <table class="function_list">
@@ -193,7 +197,7 @@
 <table class="function_list">
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.setTableValues">SPECTRE.UTILS.setTableValues(template_, output_)</a></td>
-	<td class="summary">.Sets all values in output_ to those in template_.</td>
+	<td class="summary">Sets all values in output_ to those in template_.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.templateFromObject">SPECTRE.UTILS.templateFromObject(OBJECT_)</a></td>
@@ -859,6 +863,32 @@
 
 
 </dd>
+    <dt>
+    <a name = "SPECTRE.UTILS.getGroupNamesbyStringMatch"></a>
+    <strong>SPECTRE.UTILS.getGroupNamesbyStringMatch(string)</strong>
+    <a style="float:right;" href="../source/UTILS.lua.html#351">line 351</a>
+    </dt>
+    <dd>
+    .
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">string</span>
+         string that the group name contains.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        _groupNames ipair strings
+    </ol>
+
+
+
+
+</dd>
 </dl>
     <h2 class="section-header has-description"><a name="Maths"></a>Maths </h2>
 
@@ -876,7 +906,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.computeRatio"></a>
     <strong>SPECTRE.UTILS.computeRatio(A, B)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#443">line 443</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#457">line 457</a>
     </dt>
     <dd>
     Compute the ratio between two numbers. </p>
@@ -911,7 +941,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.generateNominal"></a>
     <strong>SPECTRE.UTILS.generateNominal(Nominal, Min, Max, NudgeFactor)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#396">line 396</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#410">line 410</a>
     </dt>
     <dd>
     .
@@ -954,7 +984,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.generateNudge"></a>
     <strong>SPECTRE.UTILS.generateNudge(NudgeFactor)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#360">line 360</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#374">line 374</a>
     </dt>
     <dd>
     .
@@ -982,7 +1012,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.randomDecimalBetween"></a>
     <strong>SPECTRE.UTILS.randomDecimalBetween(a, b)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#381">line 381</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#395">line 395</a>
     </dt>
     <dd>
     .
@@ -1015,7 +1045,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.trunc"></a>
     <strong>SPECTRE.UTILS.trunc(num, digits)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#430">line 430</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#444">line 444</a>
     </dt>
     <dd>
     Truncate a number to a specified number of decimal places. </p>
@@ -1064,10 +1094,10 @@
     <dt>
     <a name = "SPECTRE.UTILS.setTableValues"></a>
     <strong>SPECTRE.UTILS.setTableValues(template_, output_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#472">line 472</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#485">line 485</a>
     </dt>
     <dd>
-    .Sets all values in output_ to those in template_.
+    Sets all values in output_ to those in template_.
   Skips overwriting functions and __index.
 
 
@@ -1098,7 +1128,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.templateFromObject"></a>
     <strong>SPECTRE.UTILS.templateFromObject(OBJECT_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#462">line 462</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#475">line 475</a>
     </dt>
     <dd>
     .
@@ -1121,10 +1151,6 @@
 
 
 
-    <h3>Usage:</h3>
-    <ul>
-        <pre class="example"><span class="keyword">local</span> newZoneManager = SPECTRE.ZONEMGR:New() <span class="comment">-- Creates a new ZoneManager instance.</span></pre>
-    </ul>
 
 </dd>
 </dl>
@@ -1144,7 +1170,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUG_PRINT"></a>
     <strong>SPECTRE.UTILS.DEBUG_PRINT(self_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#511">line 511</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#524">line 524</a>
     </dt>
     <dd>
     .
@@ -1167,7 +1193,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#550">line 550</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#563">line 563</a>
     </dt>
     <dd>
     UTILS.DEBUGoutput.
@@ -1190,7 +1216,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoGroupSettings"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoGroupSettings(zone_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#605">line 605</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#618">line 618</a>
     </dt>
     <dd>
     .
@@ -1213,7 +1239,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoZoneCFG"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoZoneCFG(zone_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#562">line 562</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#575">line 575</a>
     </dt>
     <dd>
     .
@@ -1236,7 +1262,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoZoneGEN"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoZoneGEN(zone_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#583">line 583</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#596">line 596</a>
     </dt>
     <dd>
     .
@@ -1259,7 +1285,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoZoneWeights"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoZoneWeights(mainZone, subZones)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#553">line 553</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#566">line 566</a>
     </dt>
     <dd>
     .
@@ -1287,7 +1313,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.PrintTable"></a>
     <strong>SPECTRE.UTILS.PrintTable(tbl, level, maxLevel)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#519">line 519</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#532">line 532</a>
     </dt>
     <dd>
     .
@@ -1320,7 +1346,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.ToggleDebugMessages"></a>
     <strong>SPECTRE.UTILS.ToggleDebugMessages()</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#534">line 534</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#547">line 547</a>
     </dt>
     <dd>
     .
@@ -1335,7 +1361,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.debugInfo"></a>
     <strong>SPECTRE.UTILS.debugInfo(message, data)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#503">line 503</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#516">line 516</a>
     </dt>
     <dd>
     Log debug information if debugging is enabled. </p>
@@ -1369,7 +1395,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

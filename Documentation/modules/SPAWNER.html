@@ -739,7 +739,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
 	<td class="summary">Create and return a group settings object based on the provided size and group spacing configurations.</td>
 	</tr>
 	<tr>
-	<td class="name" ><a href="#SPECTRE.SPAWNER:_detectHighestAttributes">SPECTRE.SPAWNER:_detectHighestAttributes()</a></td>
+	<td class="name" ><a href="#SPECTRE.SPAWNER:_detectHighestAttributes">SPECTRE.SPAWNER:_detectHighestAttributes(TemplatePrefix, _Object)</a></td>
 	<td class="summary">Called by DetectTypeTemplates.</td>
 	</tr>
 	<tr>
@@ -4142,7 +4142,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:Summary"></a>
     <strong>SPECTRE.SPAWNER:Summary(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2112">line 2112</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2114">line 2114</a>
     </dt>
     <dd>
     Generates and saves a summary report for SPAWNER activities. </p>
@@ -4176,7 +4176,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_SaveBenchmark"></a>
     <strong>SPECTRE.SPAWNER:_SaveBenchmark(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2081">line 2081</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2083">line 2083</a>
     </dt>
     <dd>
     Saves and reports benchmarking data for the SPAWNER instance. </p>
@@ -4224,7 +4224,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER.GroupSettings_"></a>
     <strong>SPECTRE.SPAWNER.GroupSettings_</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#3173">line 3173</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#3175">line 3175</a>
     </dt>
     <dd>
     Group settings for the SPECTRE spawner system.
@@ -4241,7 +4241,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER.GroupSettings_:New"></a>
     <strong>SPECTRE.SPAWNER.GroupSettings_:New()</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#3221">line 3221</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#3223">line 3223</a>
     </dt>
     <dd>
     Create a new instance of GroupSettings for the SPECTRE spawner system. </p>
@@ -4267,7 +4267,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER.GroupSettings_:setGroupSettings"></a>
     <strong>SPECTRE.SPAWNER.GroupSettings_:setGroupSettings(size, numGroups, groupsMinSeperation, groupsMaxSeperation, unitsMinSeperation, unitsMaxSeperation, distanceFromBuildings)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#3244">line 3244</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#3246">line 3246</a>
     </dt>
     <dd>
     Set the configurations for a group within the SPECTRE.SPAWNER.GroupSettings_ object. </p>
@@ -4323,7 +4323,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER.templateTypesObject"></a>
     <strong>SPECTRE.SPAWNER.templateTypesObject</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#3119">line 3119</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#3121">line 3121</a>
     </dt>
     <dd>
     Blueprint for template type objects in the <a href="../modules/SPAWNER.html#SPECTRE.SPAWNER">SPECTRE.SPAWNER</a> system.
@@ -4339,7 +4339,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER.templateTypesObject:New"></a>
     <strong>SPECTRE.SPAWNER.templateTypesObject:New(Priority)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#3153">line 3153</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#3155">line 3155</a>
     </dt>
     <dd>
     Create a new templateTypesObject. </p>
@@ -4376,7 +4376,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:Set_Vec2_GroupCenters"></a>
     <strong>SPECTRE.SPAWNER:Set_Vec2_GroupCenters(SPAWNER, _zoneObject)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#3055">line 3055</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#3057">line 3057</a>
     </dt>
     <dd>
     Set the central vector positions for groups within a zone. </p>
@@ -4415,7 +4415,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:Set_Vec2_UnitTemplates"></a>
     <strong>SPECTRE.SPAWNER:Set_Vec2_UnitTemplates(SPAWNER, _zoneObject)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2883">line 2883</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2885">line 2885</a>
     </dt>
     <dd>
     Set the vector positions for unit templates within each group of a zone. </p>
@@ -4454,7 +4454,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_RollUpdates"></a>
     <strong>SPECTRE.SPAWNER:_RollUpdates(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2498">line 2498</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2500">line 2500</a>
     </dt>
     <dd>
     Execute a sequence of updates on the SPECTRE.SPAWNER object. </p>
@@ -4493,7 +4493,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_SetupSpawnGroups"></a>
     <strong>SPECTRE.SPAWNER:_SetupSpawnGroups(SPAWNER, _zoneObject)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2971">line 2971</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2973">line 2973</a>
     </dt>
     <dd>
     Set up spawn groups for a specific zone object. </p>
@@ -4533,7 +4533,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_Spawn"></a>
     <strong>SPECTRE.SPAWNER:_Spawn(SPAWNER, _zoneObject)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2270">line 2270</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2272">line 2272</a>
     </dt>
     <dd>
     Execute the spawning process for a specific zone object. </p>
@@ -4571,7 +4571,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_assignAndUpdateSubZones"></a>
     <strong>SPECTRE.SPAWNER:_assignAndUpdateSubZones(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2525">line 2525</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2527">line 2527</a>
     </dt>
     <dd>
     Assign computed values to subzones and perform updates. </p>
@@ -4606,7 +4606,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_confirmTotals"></a>
     <strong>SPECTRE.SPAWNER:_confirmTotals(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2619">line 2619</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2621">line 2621</a>
     </dt>
     <dd>
     Confirm the total spawns across all subzones. </p>
@@ -4642,7 +4642,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_createGroupSettings"></a>
     <strong>SPECTRE.SPAWNER:_createGroupSettings(SPAWNER, size, numGroupSize, SpacingSettings_)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2859">line 2859</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2861">line 2861</a>
     </dt>
     <dd>
     Create and return a group settings object based on the provided size and group spacing configurations. </p>
@@ -4684,13 +4684,26 @@ allowing users to tailor the spawning process to specific needs <span class="key
 </dd>
     <dt>
     <a name = "SPECTRE.SPAWNER:_detectHighestAttributes"></a>
-    <strong>SPECTRE.SPAWNER:_detectHighestAttributes()</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2312">line 2312</a>
+    <strong>SPECTRE.SPAWNER:_detectHighestAttributes(TemplatePrefix, _Object)</strong>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2314">line 2314</a>
     </dt>
     <dd>
     Called by DetectTypeTemplates.
 
 
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">TemplatePrefix</span>
+
+
+
+        </li>
+        <li><span class="parameter">_Object</span>
+
+
+
+        </li>
+    </ul>
 
 
 
@@ -4700,7 +4713,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_distributeDifference"></a>
     <strong>SPECTRE.SPAWNER:_distributeDifference(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2447">line 2447</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2449">line 2449</a>
     </dt>
     <dd>
     Distribute difference in spawn amounts across subzones. </p>
@@ -4735,7 +4748,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_generateGroupTemplates"></a>
     <strong>SPECTRE.SPAWNER:_generateGroupTemplates(SPAWNER, _zoneObject)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2743">line 2743</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2745">line 2745</a>
     </dt>
     <dd>
     Generate group templates for a specific zone object. </p>
@@ -4773,7 +4786,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_generateGroupTypes"></a>
     <strong>SPECTRE.SPAWNER:_generateGroupTypes(SPAWNER, _zoneObject)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2661">line 2661</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2663">line 2663</a>
     </dt>
     <dd>
     Calculate and assign group types for a given zone. </p>
@@ -4811,7 +4824,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_introduceRandomness"></a>
     <strong>SPECTRE.SPAWNER:_introduceRandomness(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2396">line 2396</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2398">line 2398</a>
     </dt>
     <dd>
     Introduce randomness in the spawn distribution. </p>
@@ -4847,7 +4860,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_seedRollUpdates"></a>
     <strong>SPECTRE.SPAWNER:_seedRollUpdates(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2354">line 2354</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2356">line 2356</a>
     </dt>
     <dd>
     Distributes difference in spawn amounts across subzones and introduces randomness. </p>
@@ -4882,7 +4895,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_seedTypes"></a>
     <strong>SPECTRE.SPAWNER:_seedTypes(SPAWNER)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2792">line 2792</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2794">line 2794</a>
     </dt>
     <dd>
     Initialize and assign type settings for the SPAWNER. </p>
@@ -4920,7 +4933,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER:_thresholdClamp"></a>
     <strong>SPECTRE.SPAWNER:_thresholdClamp(SPAWNER, zoneName)</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#2569">line 2569</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#2571">line 2571</a>
     </dt>
     <dd>
     Adjust spawn values based on threshold violations. </p>
@@ -4971,7 +4984,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
     <dt>
     <a name = "SPECTRE.SPAWNER.TEMPLATETYPES_"></a>
     <strong>SPECTRE.SPAWNER.TEMPLATETYPES_</strong>
-    <a style="float:right;" href="../source/SPAWNER.lua.html#3269">line 3269</a>
+    <a style="float:right;" href="../source/SPAWNER.lua.html#3271">line 3271</a>
     </dt>
     <dd>
     Definitions and attributes for template types in the <a href="../modules/SPAWNER.html#SPECTRE.SPAWNER">SPECTRE.SPAWNER</a> system. </p>
@@ -4993,7 +5006,7 @@ allowing users to tailor the spawning process to specific needs <span class="key
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

@@ -200,6 +200,8 @@
 </span><span class="comment">-- @param _vec2 table: A table containing the x and y coordinates of the given point (e.g., {x=0, y=0}).
 </span><a id="120"></a><span class="comment">-- @return table: A list containing the name and 3D vector coordinates of the nearest airbase.
 </span><span class="keyword">function</span> SPECTRE.WORLD.FindNearestAirbaseToPointVec2(AirbaseList, _vec2)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | -------------------------------------------------------------------------"</span>)
+
   <span class="keyword">local</span> maxInitialDistance = <span class="number">99999999999</span>
   <span class="keyword">local</span> closestAirbaseDistance = maxInitialDistance
   <span class="keyword">local</span> closestAirbaseDetails
@@ -207,17 +209,23 @@
 </span>
   <span class="comment">-- Iterate over each airbase in the provided list and find the closest
 </span>  <span class="keyword">for</span> _, airbaseName <span class="keyword">in</span> <span class="global">ipairs</span>(AirbaseList) <span class="keyword">do</span>
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | airbaseName: "</span> .. airbaseName)
 
     <span class="keyword">local</span> airbaseVec3 = AIRBASE:FindByName(airbaseName):GetVec3()
     <span class="keyword">local</span> airbaseCoord = COORDINATE:NewFromVec3(airbaseVec3)
     <span class="keyword">local</span> currentDistance = queryPointCoord:Get2DDistance(airbaseCoord)
 
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | currentDistance: "</span> .. currentDistance)
+
     <span class="keyword">if</span> currentDistance &lt; closestAirbaseDistance <span class="keyword">then</span>
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | closest so far --"</span>)
       closestAirbaseDistance = currentDistance
       closestAirbaseDetails = {airbaseName, airbaseVec3}
     <span class="keyword">end</span>
   <span class="keyword">end</span>
-
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | CLOSEST: "</span>)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | Name   : "</span> .. closestAirbaseDetails[<span class="number">1</span>])
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.WORLD.FindNearestAirbaseToPointVec2 | Vec3   : "</span> , closestAirbaseDetails[<span class="number">2</span>])
   <span class="comment">-- Return the details of the closest airbase
 </span>  <span class="keyword">return</span> closestAirbaseDetails
 <span class="keyword">end</span>
@@ -225,14 +233,19 @@
 <span class="comment">--- Retrieve a list of airbases owned by a specific coalition for a given map.
 </span><span class="comment">--
 </span><span class="comment">-- @param coal number: The coalition code (e.g., 0 = neutral, 1 = red, 2 = blue).
-</span><a id="147"></a><span class="comment">-- @return table: A list of airbases owned by the specified coalition in the given map.
+</span><a id="155"></a><span class="comment">-- @return table: A list of airbases owned by the specified coalition in the given map.
 </span><span class="keyword">function</span> SPECTRE.WORLD.GetOwnedAirbaseCoal(coal)
   <span class="comment">-- Lookup table to determine the correct list of airbases based on the map parameter
 </span>  <span class="keyword">local</span> airbaseMapLookup = {
     [<span class="string">"Syria"</span>] = AIRBASE.Syria,
     [<span class="string">"Persia"</span>] = AIRBASE.PersianGulf,
     [<span class="string">"Caucasus"</span>] = AIRBASE.Caucasus,
-    [<span class="string">"Sinai"</span>] = AIRBASE.Sinai
+    [<span class="string">"Sinai"</span>] = AIRBASE.Sinai,
+    [<span class="string">"MarianaIslands"</span>] = AIRBASE.MarianaIslands,
+    [<span class="string">"Nevada"</span>] = AIRBASE.Nevada,
+    [<span class="string">"Normandy"</span>] = AIRBASE.Normandy,
+    [<span class="string">"SouthAtlantic"</span>] = AIRBASE.SouthAtlantic,
+    [<span class="string">"TheChannel"</span>] = AIRBASE.TheChannel
   }
 
   <span class="keyword">local</span> _AirbaseListTheatre = airbaseMapLookup[SPECTRE.MAPNAME] <span class="keyword">or</span> {} <span class="comment">-- Initialize using the lookup
@@ -258,7 +271,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param coal number: The coalition code (0 = neutral, 1 = red, 2 = blue).
 </span><span class="comment">-- @param _vec2 table: A table containing the x and y coordinates of the given point (e.g., {x=0, y=0}).
-</span><a id="180"></a><span class="comment">-- @return table: Information about the nearest airbase, containing its name and 3D vector coordinates.
+</span><a id="193"></a><span class="comment">-- @return table: Information about the nearest airbase, containing its name and 3D vector coordinates.
 </span><span class="keyword">function</span> SPECTRE.WORLD.ClosestAirfieldVec2(coal, _vec2)
   <span class="comment">-- Get airfields owned by the coalition
 </span>  <span class="keyword">local</span> _Airfields = SPECTRE.WORLD.GetOwnedAirbaseCoal(coal)
@@ -279,7 +292,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param p1 table: A table containing the x and y coordinates of the first point (e.g., {x=0, y=0}).
 </span><span class="comment">-- @param p2 table: A table containing the x and y coordinates of the second point (e.g., {x=1, y=1}).
-</span><a id="201"></a><span class="comment">-- @return number: The Euclidean distance between the two points.
+</span><a id="214"></a><span class="comment">-- @return number: The Euclidean distance between the two points.
 </span><span class="keyword">function</span> SPECTRE.WORLD.f_distance(p1, p2)
   <span class="comment">-- Calculate the differences in x and y coordinates
 </span>  <span class="keyword">local</span> dx = p1.x - p2.x
@@ -294,7 +307,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

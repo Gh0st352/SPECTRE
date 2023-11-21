@@ -308,7 +308,7 @@
 </span><span class="comment">-- *All Functions associated with Game Manipulation operations.*
 </span><span class="comment">--
 </span><span class="comment">-- ===
-</span><span class="comment">-- @section SPECTRE.PLYRMGR
+</span><span class="comment">-- @section SPECTRE.UTILS
 </span>
 <span class="comment">---Get all type attributes related to all units in a group.
 </span><span class="comment">-- @param GroupName_ String name of group
@@ -427,18 +427,32 @@
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
+<span class="comment">--- .
+</span><span class="comment">-- @param string string that the group name contains.
+</span><a id="351"></a><span class="comment">-- @return _groupNames ipair strings
+</span><span class="keyword">function</span> SPECTRE.UTILS.getGroupNamesbyStringMatch(<span class="global">string</span>)
+  <span class="keyword">local</span> _groupNames = {}
+  <span class="keyword">local</span> allGroups = mist.DBs.groupsByName
+  <span class="keyword">for</span> groupName, groupData <span class="keyword">in</span> <span class="global">pairs</span>(allGroups) <span class="keyword">do</span>
+    <span class="keyword">if</span> <span class="global">string</span>.match(groupData.groupName, <span class="global">string</span>) <span class="keyword">then</span>
+      <span class="global">table</span>.insert(_groupNames, groupData.groupName)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> _groupNames
+<span class="keyword">end</span>
+
 <span class="comment">--- Maths.
 </span><span class="comment">-- ===
 </span><span class="comment">--
 </span><span class="comment">-- *All Functions associated with Maths operations.*
 </span><span class="comment">--
 </span><span class="comment">-- ===
-</span><span class="comment">-- @section SPECTRE.PLYRMGR
+</span><span class="comment">-- @section SPECTRE.UTILS
 </span>
 
 <span class="comment">--- .
 </span><span class="comment">-- @param NudgeFactor
-</span><a id="360"></a><span class="comment">-- @return returnValue
+</span><a id="374"></a><span class="comment">-- @return returnValue
 </span><span class="keyword">function</span> SPECTRE.UTILS.generateNudge(NudgeFactor)
   <span class="comment">--SPECTRE.UTILS.debugInfo("SPECTRE.UTILS.generateNudge : " .. NudgeFactor )
 </span>  <span class="comment">-- Check if NudgeFactor is 1 or 0
@@ -459,7 +473,7 @@
 <span class="comment">--- .
 </span><span class="comment">-- @param a
 </span><span class="comment">-- @param b
-</span><a id="381"></a><span class="comment">-- @return randomDecimal
+</span><a id="395"></a><span class="comment">-- @return randomDecimal
 </span><span class="keyword">function</span> SPECTRE.UTILS.randomDecimalBetween(a, b)
   <span class="global">math</span>.random()
   <span class="global">math</span>.random()
@@ -474,7 +488,7 @@
 </span><span class="comment">-- @param Min
 </span><span class="comment">-- @param Max
 </span><span class="comment">-- @param NudgeFactor
-</span><a id="396"></a><span class="comment">-- @return returnNominal
+</span><a id="410"></a><span class="comment">-- @return returnNominal
 </span><span class="keyword">function</span> SPECTRE.UTILS.generateNominal(Nominal, Min, Max, NudgeFactor)
   <span class="global">math</span>.random()
   <span class="global">math</span>.random()
@@ -508,7 +522,7 @@
 </span><span class="comment">-- @param num The number to be truncated.
 </span><span class="comment">-- @param digits The number of decimal places to which the number should be truncated. Defaults to 0 if not provided.
 </span><span class="comment">-- @return number The truncated number.
-</span><a id="430"></a><span class="comment">-- @usage local truncatedNum = SPECTRE.UTILS.trunc(3.14159, 2) -- Returns 3.14.
+</span><a id="444"></a><span class="comment">-- @usage local truncatedNum = SPECTRE.UTILS.trunc(3.14159, 2) -- Returns 3.14.
 </span><span class="keyword">function</span> SPECTRE.UTILS.trunc(num, digits)
   <span class="keyword">local</span> mult = <span class="number">10</span>^(digits <span class="keyword">or</span> <span class="number">0</span>)  <span class="comment">-- default to 0 if digits is nil
 </span>  <span class="keyword">return</span> <span class="global">math</span>.modf(num * mult) / mult
@@ -521,7 +535,7 @@
 </span><span class="comment">-- @param A The first number.
 </span><span class="comment">-- @param B The second number.
 </span><span class="comment">-- @return number The computed ratio.
-</span><a id="443"></a><span class="comment">-- @usage local ratio = SPECTRE.UTILS.computeRatio(4, 2) -- Returns 0.5.
+</span><a id="457"></a><span class="comment">-- @usage local ratio = SPECTRE.UTILS.computeRatio(4, 2) -- Returns 0.5.
 </span><span class="keyword">function</span> SPECTRE.UTILS.computeRatio(A, B)
   <span class="keyword">if</span> A == <span class="number">0</span> <span class="keyword">or</span> B == <span class="number">0</span> <span class="keyword">then</span>
     <span class="keyword">return</span> <span class="number">0.00</span>
@@ -535,22 +549,21 @@
 </span><span class="comment">-- *All Functions associated with Template operations.*
 </span><span class="comment">--
 </span><span class="comment">-- ===
-</span><span class="comment">-- @section SPECTRE.PLYRMGR
+</span><span class="comment">-- @section SPECTRE.UTILS
 </span>
 <span class="comment">--- .
 </span><span class="comment">-- @param OBJECT_
-</span><span class="comment">-- @return _template
-</span><a id="462"></a><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
+</span><a id="475"></a><span class="comment">-- @return _template
 </span><span class="keyword">function</span> SPECTRE.UTILS.templateFromObject(OBJECT_)
   <span class="keyword">local</span> serialString_ = SPECTRE.IO.persistence.serializeNoFunc(OBJECT_)
   <span class="keyword">local</span> _template = SPECTRE.IO.persistence.deSerialize(serialString_)
   <span class="keyword">return</span> _template
 <span class="keyword">end</span>
-<span class="comment">---.Sets all values in output_ to those in template_.
+<span class="comment">---Sets all values in output_ to those in template_.
 </span><span class="comment">--  Skips overwriting functions and __index.
 </span><span class="comment">-- @param template_
 </span><span class="comment">-- @param output_
-</span><a id="472"></a><span class="comment">-- @return output_
+</span><a id="485"></a><span class="comment">-- @return output_
 </span><span class="keyword">function</span> SPECTRE.UTILS.setTableValues(template_, output_)
   <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="global">pairs</span>(template_) <span class="keyword">do</span>
     <span class="comment">-- Skip if the key is __index or if the value in output_ is a function
@@ -573,7 +586,7 @@
 </span><span class="comment">-- *All Functions associated with DEBUG operations.*
 </span><span class="comment">--
 </span><span class="comment">-- ===
-</span><span class="comment">-- @section SPECTRE.PLYRMGR
+</span><span class="comment">-- @section SPECTRE.UTILS
 </span>
 <span class="comment">--- Log debug information if debugging is enabled.
 </span><span class="comment">--
@@ -581,7 +594,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param message The debug message to be logged.
 </span><span class="comment">-- @param data Optional data to be logged.
-</span><a id="503"></a><span class="comment">-- @usage SPECTRE.UTILS.debugInfo("Debug Message", {key="value"}) -- Logs the message and data if debugging is enabled.
+</span><a id="516"></a><span class="comment">-- @usage SPECTRE.UTILS.debugInfo("Debug Message", {key="value"}) -- Logs the message and data if debugging is enabled.
 </span><span class="keyword">function</span> SPECTRE.UTILS.debugInfo(message, data)
   <span class="keyword">if</span> SPECTRE.DebugEnabled == <span class="number">1</span> <span class="keyword">then</span>
     env.info(message)
@@ -589,7 +602,7 @@
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-<a id="511"></a><span class="comment">---.
+<a id="524"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUG_PRINT(self_)
   <span class="keyword">if</span> self.DebugEnabled == <span class="number">1</span> <span class="keyword">then</span>
     BASE:E(<span class="string">"SPECTRE|SPAWNER - DEBUG_PRINT_self()"</span>)
@@ -597,7 +610,7 @@
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-<a id="519"></a><span class="comment">---.
+<a id="532"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.PrintTable(tbl, level, maxLevel)
   <span class="keyword">if</span> level &gt; maxLevel <span class="keyword">then</span>
     <span class="keyword">return</span>
@@ -612,7 +625,7 @@
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-<a id="534"></a><span class="comment">---.
+<a id="547"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.ToggleDebugMessages()
   <span class="keyword">if</span> SPECTRE.DebugEnabled == <span class="number">0</span> <span class="keyword">then</span>
     SPECTRE.DebugEnabled = <span class="number">1</span>
@@ -628,10 +641,10 @@
 
 
 <span class="comment">--- UTILS.DEBUGoutput.
-</span><a id="550"></a><span class="comment">-- @field #DEBUGoutput
+</span><a id="563"></a><span class="comment">-- @field #DEBUGoutput
 </span>SPECTRE.UTILS.DEBUGoutput = {}
 
-<a id="553"></a><span class="comment">---.
+<a id="566"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoZoneWeights(mainZone, subZones)
   SPECTRE.UTILS.debugInfo(<span class="global">string</span>.format(<span class="string">"SPECTRE.SPAWNER:infoZoneWeights | ZONE: %s | WEIGHT: %f"</span>, mainZone.name, mainZone.weight))
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneWeights | ---------------------------"</span>)
@@ -640,7 +653,7 @@
   <span class="keyword">end</span>
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneWeights | -------------------------------------------------------------------------"</span>)
 <span class="keyword">end</span>
-<a id="562"></a><span class="comment">---.
+<a id="575"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoZoneCFG(zone_)
   <span class="keyword">local</span> CFGSpawnAmountSettings_ = zone_.SpawnAmountSettings.Config
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneCFG              | -------------------------------------------------------------------------"</span>)
@@ -661,7 +674,7 @@
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneCFG              | CHECK      | MAX        |  OVER | "</span> .. CFGSpawnAmountSettings_.Thresholds.overMax)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneCFG              | CHECK      | MIN        | UNDER | "</span> .. CFGSpawnAmountSettings_.Thresholds.underMin)
 <span class="keyword">end</span>
-<a id="583"></a><span class="comment">---.
+<a id="596"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoZoneGEN(zone_)
   <span class="keyword">local</span> GENSpawnAmountSettings_ = zone_.SpawnAmountSettings.Generated
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneGEN              | -------------------------------------------------------------------------"</span>)
@@ -683,7 +696,7 @@
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneGEN              | CHECK      | MIN        | UNDER | "</span> .. GENSpawnAmountSettings_.Thresholds.underMin)
 <span class="keyword">end</span>
 
-<a id="605"></a><span class="comment">---.
+<a id="618"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoGroupSettings(zone_)
   SPECTRE.UTILS.DEBUGoutput.infoZoneGEN(zone_)
   <span class="keyword">for</span> _i = <span class="number">1</span>, #zone_.GroupSettings <span class="keyword">do</span>
@@ -705,7 +718,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

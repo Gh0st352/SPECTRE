@@ -96,10 +96,11 @@
 </span><span class="comment">--
 </span><a id="16"></a><span class="comment">-- @field #HANDLERS
 </span>SPECTRE.HANDLERS = {}
+SPECTRE.HANDLERS._Handlers = EVENT:New()
 
 <span class="comment">--- New HANDLERS instance.
 </span><span class="comment">-- @param #HANDLERS
-</span><a id="21"></a><span class="comment">-- @return #HANDLERS self
+</span><a id="22"></a><span class="comment">-- @return #HANDLERS self
 </span><span class="keyword">function</span> SPECTRE.HANDLERS:New()
   <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
   <span class="keyword">return</span> self
@@ -114,33 +115,88 @@
 </span><span class="comment">-- ===
 </span><span class="comment">-- @section SPECTRE.HANDLERS
 </span>
-<span class="comment">---.
-</span><a id="37"></a><span class="comment">-- @field #HANDLERS.ParachuteCleanup
-</span>SPECTRE.HANDLERS.ParachuteCleanup = EVENT:New()
 
+<span class="comment">---.
+</span><a id="39"></a><span class="comment">-- @field #HANDLERS.ParachuteCleanup
+</span>SPECTRE.HANDLERS.ParachuteCleanup = {}
+SPECTRE.HANDLERS.ParachuteCleanup = EVENT:New()
 <span class="comment">--- Init remove parachutes from map on landing.
 </span><span class="comment">-- @param #HANDLERS.ParachuteCleanup
-</span><a id="42"></a><span class="comment">-- @return #HANDLERS.ParachuteCleanup self
-</span><span class="keyword">function</span> SPECTRE.HANDLERS.ParachuteCleanup:Init()
-  self:HandleEvent(EVENTS.LandingAfterEjection, self.OnEventLandingAfterEjection)
+</span><a id="44"></a><span class="comment">-- @return #HANDLERS.ParachuteCleanup self
+</span><span class="keyword">function</span> SPECTRE.HANDLERS:ParachuteCleanupInit()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.HANDLERS.ParachuteCleanup | Init"</span>)
+  self:HandleEvent(EVENTS.LandingAfterEjection, self._ParachuteCleanup)
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
+<a id="50"></a><span class="comment">---.
+</span><span class="keyword">function</span> SPECTRE.HANDLERS:_ParachuteCleanup(ParachuteCleanupEvent)
+  <span class="keyword">if</span> SPECTRE.DebugEnabled == <span class="number">1</span> <span class="keyword">then</span>
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.HANDLERS.ParachuteCleanup | OnEventLandingAfterEjection"</span>)
+    <span class="keyword">local</span> force = <span class="keyword">true</span>
+    <span class="keyword">local</span> _Randname = <span class="global">os</span>.time()
+    <span class="keyword">local</span> _filename = SPECTRE._persistenceLocations.SPECTRE.path .. <span class="string">"DEBUG/ParachuteCleanup/"</span> .. _Randname .. <span class="string">".lua"</span>
+    SPECTRE.IO.PersistenceToFile(_filename, ParachuteCleanupEvent, force)
+  <span class="keyword">end</span>
 
-<span class="comment">--- Removes parachutes from map on landing.
-</span><span class="comment">-- @param #HANDLERS.ParachuteCleanup
-</span><span class="comment">-- @param parashooEvent
-</span><a id="51"></a><span class="comment">-- @return #HANDLERS.ParachuteCleanup self
-</span><span class="keyword">function</span> SPECTRE.HANDLERS.ParachuteCleanup.OnEventLandingAfterEjection(parashooEvent)
-  Unit.destroy(parashooEvent.initiator)
-  <span class="keyword">return</span> self
-<span class="keyword">end</span></pre>
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.HANDLERS.ParachuteCleanup | Event"</span>, ParachuteCleanupEvent)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.HANDLERS.ParachuteCleanup | initiator"</span>, ParachuteCleanupEvent.initiator)
+
+  <span class="comment">-- Ensure the initiator is the correct type and exists
+</span>  <span class="keyword">if</span> ParachuteCleanupEvent.initiator <span class="keyword">and</span> ParachuteCleanupEvent.initiator:isExist() <span class="keyword">then</span>
+    <span class="comment">-- Attempt to destroy the unit with error handling
+</span>    <span class="keyword">local</span> status, err = <span class="global">pcall</span>(<span class="keyword">function</span>()
+      Unit.destroy(ParachuteCleanupEvent.initiator)
+    <span class="keyword">end</span>)
+    <span class="keyword">if</span> <span class="keyword">not</span> status <span class="keyword">then</span>
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.HANDLERS.ParachuteCleanup | Error destroying unit:"</span>, err)
+    <span class="keyword">end</span>
+  <span class="keyword">else</span>
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.HANDLERS.ParachuteCleanup | Invalid initiator or does not exist"</span>)
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+
+
+
+
+<span class="comment">----- Removes parachutes from map on landing.
+</span>
+<span class="comment">---- @param parashooEvent
+</span><a id="84"></a>
+<span class="comment">--function SPECTRE.HANDLERS.ParachuteCleanup.OnEventLandingAfterEjection(ParachuteCleanupEvent)
+</span>
+<span class="comment">--
+</span>
+<span class="comment">--
+</span>
+<span class="comment">--  if SPECTRE.DebugEnabled == 1 then
+</span>
+<span class="comment">--    local force = true
+</span>
+<span class="comment">--    local _Randname = os.time()
+</span>
+<span class="comment">--    local _filename = SPECTRE._persistenceLocations.SPECTRE.path .. "DEBUG/ParachuteCleanup/" .. _Randname .. ".lua"
+</span>
+<span class="comment">--    SPECTRE.IO.PersistenceToFile(_filename, ParachuteCleanupEvent, force)
+</span>
+<span class="comment">--  end
+</span>
+<span class="comment">--
+</span>
+<span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.HANDLERS.ParachuteCleanup | Event     " , ParachuteCleanupEvent )
+</span>
+<span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.HANDLERS.ParachuteCleanup   | initiator " , ParachuteCleanupEvent.initiator )
+</span>
+<span class="comment">--  Unit.destroy(ParachuteCleanupEvent.initiator)
+</span>
+<span class="comment">--end</span></pre>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

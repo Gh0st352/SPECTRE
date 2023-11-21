@@ -642,8 +642,11 @@
 </span><span class="comment">-- @return #PLYRMGR self The player manager instance after handling the "End Mission" event.
 </span><a id="562"></a><span class="comment">-- @usage manager:EndMission_(eventData) -- Handle the "End Mission" event and perform end-of-mission tasks.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:EndMission_(eventData)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.PLYRMGR:EndMission_ | eventData"</span> , eventData)
   <span class="comment">-- Collate end-of-mission resources
 </span>  self:EndMizResourceCollate()
+
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.PLYRMGR:EndMission_ | self.RESOURCES.AIRDROP"</span> , self.RESOURCES.AIRDROP)
   <span class="comment">-- Store the ground resource data
 </span>  SPECTRE.IO.PersistenceToFile(SPECTRE._persistenceLocations.PLYRMGR.path .. <span class="string">"SupportResources/GroundResources.lua"</span>, self.RESOURCES.AIRDROP, <span class="keyword">true</span>)
   <span class="keyword">return</span> self
@@ -658,7 +661,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR self The player manager instance handling the "PlayerEnterAircraft" event.
 </span><span class="comment">-- @param eventData Data associated with the "PlayerEnterAircraft" event, including the player's details.
-</span><a id="580"></a><span class="comment">-- @return #PLYRMGR self The player manager instance after handling the "PlayerEnterAircraft" event.
+</span><a id="583"></a><span class="comment">-- @return #PLYRMGR self The player manager instance after handling the "PlayerEnterAircraft" event.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:PlayerEnterAircraft_(eventData)
   <span class="comment">-- Retrieve the player's information using their name from the event data
 </span>  <span class="keyword">local</span> PlayerInfo = SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName)
@@ -690,7 +693,7 @@
 </span><span class="comment">-- @param #PLYRMGR self The player manager instance handling the "PlayerLeaveUnit" event.
 </span><span class="comment">-- @param eventData Data associated with the "PlayerLeaveUnit" event, including the player's details.
 </span><span class="comment">-- @return #PLYRMGR self The player manager instance after handling the "PlayerLeaveUnit" event.
-</span><a id="612"></a><span class="comment">-- @usage manager:PlayerLeaveUnit_(eventData) -- Handle the "PlayerLeaveUnit" event and perform necessary actions.
+</span><a id="615"></a><span class="comment">-- @usage manager:PlayerLeaveUnit_(eventData) -- Handle the "PlayerLeaveUnit" event and perform necessary actions.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:PlayerLeaveUnit_(eventData)
   <span class="comment">-- If the event has a player initiator
 </span>  <span class="keyword">if</span> eventData.IniPlayerName ~= <span class="keyword">nil</span> <span class="keyword">then</span>
@@ -719,7 +722,7 @@
 </span><span class="comment">-- @param #PLYRMGR self The player manager instance handling the "Crash" event.
 </span><span class="comment">-- @param eventData Data associated with the "Crash" event, including the player's details if they initiated the crash.
 </span><span class="comment">-- @return #PLYRMGR self The player manager instance after processing the "Crash" event.
-</span><a id="641"></a><span class="comment">-- @usage manager:CrashEvent_(eventData) -- Handle the "Crash" event and store the player's data if necessary.
+</span><a id="644"></a><span class="comment">-- @usage manager:CrashEvent_(eventData) -- Handle the "Crash" event and store the player's data if necessary.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:CrashEvent_(eventData)
   <span class="comment">-- If the event has a player initiator
 </span>  <span class="keyword">if</span> eventData.IniPlayerName ~= <span class="keyword">nil</span> <span class="keyword">then</span>
@@ -754,18 +757,23 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR
 </span><span class="comment">-- @return #PLYRMGR self The player manager instance after updating resource counts.
-</span><a id="676"></a><span class="comment">-- @usage manager:EndMizResourceCollate() -- Update resource counts at the end of the mission.
+</span><a id="679"></a><span class="comment">-- @usage manager:EndMizResourceCollate() -- Update resource counts at the end of the mission.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:EndMizResourceCollate()
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.PLYRMGR:EndMizResourceCollate | ----------------"</span>, self )
   <span class="comment">-- Iterate over all support settings
 </span>  <span class="keyword">for</span> supportType, isEnabled <span class="keyword">in</span> <span class="global">pairs</span>(self.Settings.Support) <span class="keyword">do</span>
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.PLYRMGR:EndMizResourceCollate | supportType: "</span> .. supportType .. <span class="string">" | enabled: "</span> .. <span class="global">tostring</span>(isEnabled))
     <span class="keyword">if</span> isEnabled <span class="keyword">then</span>
       <span class="comment">-- If the support type is not AIRDROP, update the Red and Blue resources directly
 </span>      <span class="keyword">if</span> supportType ~= <span class="string">"AIRDROP"</span> <span class="keyword">then</span>
+
         self.RESOURCES[supportType].Red = self.RESOURCES[supportType].Red + self.COUNTERS.RESTOCK[supportType].Red
         self.RESOURCES[supportType].Blue = self.RESOURCES[supportType].Blue + self.COUNTERS.RESTOCK[supportType].Blue
       <span class="keyword">else</span>
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.PLYRMGR:EndMizResourceCollate | AIRDROP.Types: "</span> , self.MARKERS.Settings.AIRDROP.Types)
         <span class="comment">-- If the support type is AIRDROP, iterate over the airdrop types and update their counts
 </span>        <span class="keyword">for</span> airdropType, _ <span class="keyword">in</span> <span class="global">pairs</span>(self.MARKERS.Settings.AIRDROP.Types) <span class="keyword">do</span>
+          SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.PLYRMGR:EndMizResourceCollate | airdropType: "</span> .. airdropType)
           self.RESOURCES[supportType][airdropType].Blue = self.RESOURCES[supportType][airdropType].Blue + self.COUNTERS.RESTOCK[supportType][airdropType].Blue
           self.RESOURCES[supportType][airdropType].Red = self.RESOURCES[supportType][airdropType].Red + self.COUNTERS.RESTOCK[supportType][airdropType].Red
         <span class="keyword">end</span>
@@ -784,7 +792,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR
 </span><span class="comment">-- @return #PLYRMGR self The player manager instance after detecting and setting up event handlers for existing units.
-</span><a id="706"></a><span class="comment">-- @usage manager:DetectExistingUnits() -- Detect existing units and set up their event handlers.
+</span><a id="714"></a><span class="comment">-- @usage manager:DetectExistingUnits() -- Detect existing units and set up their event handlers.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:DetectExistingUnits()
   <span class="comment">-- Construct the list of filter prefixes based on the provided airdrop type settings
 </span>  <span class="keyword">local</span> filterprefixes = {}
@@ -839,7 +847,7 @@
 </span><span class="comment">-- @param eventData Data associated with the relevant event, used for updating player slot data.
 </span><span class="comment">-- @param PlayerInfo Attribute table containing the player's details, such as unique ID.
 </span><span class="comment">-- @return #PLYRMGR self The player manager instance after setting up the player table.
-</span><a id="761"></a><span class="comment">-- @usage manager:SetupPlayerTable(eventData, PlayerInfo) -- Initialize the player table using the provided player information and event data.
+</span><a id="769"></a><span class="comment">-- @usage manager:SetupPlayerTable(eventData, PlayerInfo) -- Initialize the player table using the provided player information and event data.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:SetupPlayerTable(eventData, PlayerInfo)
   <span class="comment">-- Retrieve the player's unique ID from the provided player information
 </span>  <span class="keyword">local</span> PlayerUCID = PlayerInfo[<span class="string">"ucid"</span>]
@@ -862,7 +870,7 @@
 </span><span class="comment">-- @param PlayerUCID The unique identifier for the player.
 </span><span class="comment">-- @param MarkerTable Table containing details about the marker, including its type and other relevant information.
 </span><span class="comment">-- @return #PLYRMGR self The player manager instance after adding the marker to the player's data.
-</span><a id="784"></a><span class="comment">-- @usage manager:AddMarkerToPlayer(PlayerUCID, MarkerTable) -- Assigns a marker to the appropriate table for the specified player.
+</span><a id="792"></a><span class="comment">-- @usage manager:AddMarkerToPlayer(PlayerUCID, MarkerTable) -- Assigns a marker to the appropriate table for the specified player.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR:AddMarkerToPlayer(PlayerUCID, MarkerTable)
   <span class="comment">-- Extract the type of the marker from the MarkerTable's Packet data
 </span>  <span class="keyword">local</span> <span class="global">type</span> = MarkerTable.Packet.MarkerType[<span class="number">1</span>]
@@ -897,7 +905,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player Player The player who is executing the CAP operation.
 </span><span class="comment">-- @param MarkerIndex The index of the player's marker, used to extract coordinates and relevant information for the CAP.
 </span><span class="comment">-- @return spawnGroup The spawned group of the CAP, fully configured and initiated.
-</span><a id="819"></a><span class="comment">-- @usage spawner:CAP(Player, MarkerIndex) -- Spawns a CAP based on the specified player's marker and index.
+</span><a id="827"></a><span class="comment">-- @usage spawner:CAP(Player, MarkerIndex) -- Spawns a CAP based on the specified player's marker and index.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.SPAWNER:CAP(Player, MarkerIndex)
   <span class="comment">-- Build the packet for the CAP using player information and marker index
 </span>  <span class="keyword">local</span> Packet = SPECTRE.AI.buildPacket.CAP(Player, MarkerIndex)
@@ -936,7 +944,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player Player The player who is executing the Tomahawk missile strike operation.
 </span><span class="comment">-- @param MarkerIndex The index of the player's marker, used to extract coordinates and relevant information for the missile strike.
 </span><span class="comment">-- @return The spawned group responsible for executing the Tomahawk missile strike.
-</span><a id="858"></a><span class="comment">-- @usage spawner:TOMAHAWK(Player, MarkerIndex) -- Spawns a Tomahawk missile strike based on the specified player's marker and index.
+</span><a id="866"></a><span class="comment">-- @usage spawner:TOMAHAWK(Player, MarkerIndex) -- Spawns a Tomahawk missile strike based on the specified player's marker and index.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.SPAWNER:TOMAHAWK(Player, MarkerIndex)
   <span class="comment">-- Build the packet for the Tomahawk strike using player information and marker index
 </span>  <span class="keyword">local</span> Packet = SPECTRE.AI.buildPacket.TOMAHAWK(Player, MarkerIndex)
@@ -970,7 +978,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player Player The player who is executing the bomber operation.
 </span><span class="comment">-- @param MarkerIndex The index of the player's marker, used to extract coordinates and relevant information for the bomber's mission.
 </span><span class="comment">-- @return Spawned group of the bomber aircraft, fully configured and initiated for the mission.
-</span><a id="892"></a><span class="comment">-- @usage spawner:BOMBER(Player, MarkerIndex) -- Spawns a bomber aircraft based on the specified player's marker and index.
+</span><a id="900"></a><span class="comment">-- @usage spawner:BOMBER(Player, MarkerIndex) -- Spawns a bomber aircraft based on the specified player's marker and index.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.SPAWNER:BOMBER(Player, MarkerIndex)
   <span class="comment">-- Build the packet for the bomber using player information and marker index
 </span>  <span class="keyword">local</span> Packet = SPECTRE.AI.buildPacket.BOMBER(Player, MarkerIndex)
@@ -1010,7 +1018,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player Player The player responsible for executing the strike operation.
 </span><span class="comment">-- @param MarkerIndex The index of the player's marker, used to determine coordinates and details for the strike mission.
 </span><span class="comment">-- @return Spawned group of the strike, fully prepared and configured for the operation.
-</span><a id="932"></a><span class="comment">-- @usage spawner:STRIKE(Player, MarkerIndex) -- Spawns a strike group based on the specified player's marker and index.
+</span><a id="940"></a><span class="comment">-- @usage spawner:STRIKE(Player, MarkerIndex) -- Spawns a strike group based on the specified player's marker and index.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.SPAWNER:STRIKE(Player, MarkerIndex)
   <span class="comment">-- Build the packet for the strike using player information and marker index
 </span>  <span class="keyword">local</span> Packet = SPECTRE.AI.buildPacket.STRIKE(Player, MarkerIndex)
@@ -1050,7 +1058,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player Player The player orchestrating the airdrop operation.
 </span><span class="comment">-- @param MarkerIndex The index of the player's marker, which provides coordinates and details for the airdrop.
 </span><span class="comment">-- @return spawnGroup The spawned group for the airdrop, fully equipped and ready for the mission.
-</span><a id="972"></a><span class="comment">-- @usage spawner:AIRDROP(Player, MarkerIndex) -- Spawns an airdrop group based on the specified player's marker and index.
+</span><a id="980"></a><span class="comment">-- @usage spawner:AIRDROP(Player, MarkerIndex) -- Spawns an airdrop group based on the specified player's marker and index.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.SPAWNER:AIRDROP(Player, MarkerIndex)
   <span class="comment">-- Build the packet for the airdrop using player information and marker index
 </span>  <span class="keyword">local</span> Packet = SPECTRE.AI.buildPacket.AIRDROP(Player, MarkerIndex)
@@ -1092,7 +1100,7 @@
 </span><span class="comment">-- @field #PLYRMGR.MARKERS.Settings
 </span>SPECTRE.PLYRMGR.MARKERS.Settings = {}
 
-<a id="1014"></a><span class="comment">--- Settings for Combat Air Patrol (CAP) markers.
+<a id="1022"></a><span class="comment">--- Settings for Combat Air Patrol (CAP) markers.
 </span>SPECTRE.PLYRMGR.MARKERS.Settings.CAP = {
   TagName = <span class="string">"/cap"</span>, <span class="comment">-- Tag used to identify CAP markers.
 </span>  KeyWords = {<span class="string">"%d%d%d* %d+"</span>}, <span class="comment">-- Keywords or patterns recognized in CAP markers.
@@ -1100,7 +1108,7 @@
 </span>  MarkerEnum = <span class="string">"CAP"</span> <span class="comment">-- Enumeration type for CAP markers.
 </span>}
 
-<a id="1022"></a><span class="comment">--- Settings for Tomahawk missile strike markers.
+<a id="1030"></a><span class="comment">--- Settings for Tomahawk missile strike markers.
 </span>SPECTRE.PLYRMGR.MARKERS.Settings.TOMAHAWK = {
   TagName = <span class="string">"/tomahawk"</span>, <span class="comment">-- Tag used to identify Tomahawk strike markers.
 </span>  KeyWords = {}, <span class="comment">-- Keywords or patterns recognized in Tomahawk markers.
@@ -1108,7 +1116,7 @@
 </span>  MarkerEnum = <span class="string">"TOMAHAWK"</span> <span class="comment">-- Enumeration type for Tomahawk markers.
 </span>}
 
-<a id="1030"></a><span class="comment">--- Settings for Bomber strike markers.
+<a id="1038"></a><span class="comment">--- Settings for Bomber strike markers.
 </span>SPECTRE.PLYRMGR.MARKERS.Settings.BOMBER = {
   TagName = <span class="string">"/bomber"</span>, <span class="comment">-- Tag used to identify Bomber strike markers.
 </span>  KeyWords = {}, <span class="comment">-- Keywords or patterns recognized in Bomber markers.
@@ -1116,7 +1124,7 @@
 </span>  MarkerEnum = <span class="string">"BOMBER"</span> <span class="comment">-- Enumeration type for Bomber markers.
 </span>}
 
-<a id="1038"></a><span class="comment">--- Settings for Airdrop operation markers.
+<a id="1046"></a><span class="comment">--- Settings for Airdrop operation markers.
 </span>SPECTRE.PLYRMGR.MARKERS.Settings.AIRDROP = {
   TagName = <span class="string">"/airdrop"</span>, <span class="comment">-- Tag used to identify Airdrop markers.
 </span>  KeyWords = {<span class="string">"%a"</span>}, <span class="comment">-- Keywords or patterns recognized in Airdrop markers.
@@ -1134,7 +1142,7 @@
   }
 }
 
-<a id="1056"></a><span class="comment">--- Settings for Strike operation markers.
+<a id="1064"></a><span class="comment">--- Settings for Strike operation markers.
 </span>SPECTRE.PLYRMGR.MARKERS.Settings.STRIKE = {
   TagName = <span class="string">"/strike"</span>, <span class="comment">-- Tag used to identify Strike operation markers.
 </span>  KeyWords = {}, <span class="comment">-- Keywords or patterns recognized in Strike markers.
@@ -1151,23 +1159,23 @@
 </span>SPECTRE.PLYRMGR.MARKERS.TRACKERS = {}
 
 <span class="comment">--- Tracker for player-made CAP markers.
-</span><a id="1073"></a><span class="comment">-- This tracker specifically handles CAP (Combat Air Patrol) markers created by players, managing their interpretation and response within the game.
+</span><a id="1081"></a><span class="comment">-- This tracker specifically handles CAP (Combat Air Patrol) markers created by players, managing their interpretation and response within the game.
 </span>SPECTRE.PLYRMGR.MARKERS.TRACKERS.CAP = {}
 
 <span class="comment">--- Tracker for player-made TOMAHAWK markers.
-</span><a id="1077"></a><span class="comment">-- This tracker is designated for managing and responding to TOMAHAWK strike markers that players place in the game.
+</span><a id="1085"></a><span class="comment">-- This tracker is designated for managing and responding to TOMAHAWK strike markers that players place in the game.
 </span>SPECTRE.PLYRMGR.MARKERS.TRACKERS.TOMAHAWK = {}
 
 <span class="comment">--- Tracker for player-made BOMBER markers.
-</span><a id="1081"></a><span class="comment">-- Responsible for handling markers related to bomber operations, this tracker interprets and responds to player directives for bomber strikes.
+</span><a id="1089"></a><span class="comment">-- Responsible for handling markers related to bomber operations, this tracker interprets and responds to player directives for bomber strikes.
 </span>SPECTRE.PLYRMGR.MARKERS.TRACKERS.BOMBER = {}
 
 <span class="comment">--- Tracker for player-made AIRDROP markers.
-</span><a id="1085"></a><span class="comment">-- This tracker oversees the handling of airdrop requests, ensuring that player-made airdrop markers are processed and acted upon correctly.
+</span><a id="1093"></a><span class="comment">-- This tracker oversees the handling of airdrop requests, ensuring that player-made airdrop markers are processed and acted upon correctly.
 </span>SPECTRE.PLYRMGR.MARKERS.TRACKERS.AIRDROP = {}
 
 <span class="comment">--- Tracker for player-made STRIKE markers.
-</span><a id="1089"></a><span class="comment">-- This tracker deals with strike operation requests from players, managing markers related to various strike missions within the game.
+</span><a id="1097"></a><span class="comment">-- This tracker deals with strike operation requests from players, managing markers related to various strike missions within the game.
 </span>SPECTRE.PLYRMGR.MARKERS.TRACKERS.STRIKE = {}
 
 <span class="comment">--- RESOURCES.
@@ -1179,7 +1187,7 @@
 
 <span class="comment">--- CAP support resource counters.
 </span><span class="comment">-- These counters indicate the number of resources available for CAP (Combat Air Patrol) support for each faction.
-</span><a id="1101"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.CAP
+</span><a id="1109"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.CAP
 </span>SPECTRE.PLYRMGR.RESOURCES.CAP = {
   Red = <span class="number">3</span>, <span class="comment">-- Resources for the Red faction.
 </span>  Blue = <span class="number">3</span> <span class="comment">-- Resources for the Blue faction.
@@ -1187,7 +1195,7 @@
 
 <span class="comment">--- TOMAHAWK support resource counters.
 </span><span class="comment">-- These counters indicate the number of resources available for TOMAHAWK support for each faction.
-</span><a id="1109"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.TOMAHAWK
+</span><a id="1117"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.TOMAHAWK
 </span>SPECTRE.PLYRMGR.RESOURCES.TOMAHAWK = {
   Red = <span class="number">3</span>,
   Blue = <span class="number">3</span>
@@ -1195,7 +1203,7 @@
 
 <span class="comment">--- BOMBER support resource counters.
 </span><span class="comment">-- These counters indicate the number of resources available for BOMBER support for each faction.
-</span><a id="1117"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.BOMBER
+</span><a id="1125"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.BOMBER
 </span>SPECTRE.PLYRMGR.RESOURCES.BOMBER = {
   Red = <span class="number">3</span>,
   Blue = <span class="number">3</span>
@@ -1203,7 +1211,7 @@
 
 <span class="comment">--- STRIKE support resource counters.
 </span><span class="comment">-- These counters indicate the number of resources available for STRIKE support for each faction.
-</span><a id="1125"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.STRIKE
+</span><a id="1133"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.STRIKE
 </span>SPECTRE.PLYRMGR.RESOURCES.STRIKE = {
   Red = <span class="number">3</span>,
   Blue = <span class="number">3</span>
@@ -1211,10 +1219,10 @@
 
 <span class="comment">--- AIRDROP support resource counters for various types.
 </span><span class="comment">-- These counters indicate the number of resources available for different types of AIRDROP support for each faction.
-</span><a id="1133"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.AIRDROP
+</span><a id="1141"></a><span class="comment">-- @field #PLYRMGR.RESOURCES.AIRDROP
 </span>SPECTRE.PLYRMGR.RESOURCES.AIRDROP = {
-  Red = <span class="number">3</span>, <span class="comment">-- General resources for the Red faction.
-</span>  Blue = <span class="number">3</span>, <span class="comment">-- General resources for the Blue faction.
+  <span class="comment">--  Red = 3, -- General resources for the Red faction.
+</span>  <span class="comment">--  Blue = 3, -- General resources for the Blue faction.
 </span>  ARTILLERY = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>}, <span class="comment">-- Artillery AIRDROP resources.
 </span>  IFV = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>}, <span class="comment">-- IFV AIRDROP resources.
 </span>  TANK = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>}, <span class="comment">-- Tank AIRDROP resources.
@@ -1233,7 +1241,7 @@
 </span><span class="comment">-- on available resources for airdrop operations.
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR.RESOURCES
-</span><a id="1155"></a><span class="comment">-- @return #PLYRMGR.RESOURCES self The updated instance of the <code>SPECTRE.PLYRMGR.RESOURCES</code> class with the imported airdrop data.
+</span><a id="1163"></a><span class="comment">-- @return #PLYRMGR.RESOURCES self The updated instance of the <code>SPECTRE.PLYRMGR.RESOURCES</code> class with the imported airdrop data.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.RESOURCES:Import()
   <span class="keyword">local</span> _filename = SPECTRE._persistenceLocations.PLYRMGR.path .. <span class="string">"SupportResources/GroundResources.lua"</span>
   self.AIRDROP = SPECTRE.BRAIN.checkAndPersist(
@@ -1241,7 +1249,9 @@
     <span class="keyword">false</span>,
     self.AIRDROP,
     <span class="keyword">true</span>,
-    <span class="keyword">function</span>() SPECTRE.UTILS.NULL() <span class="keyword">end</span>
+    <span class="keyword">function</span>(_Object)  <span class="comment">-- Update: Include _Object as a parameter
+</span>      <span class="keyword">return</span> _Object  <span class="comment">-- Update: Pass _Object to the new function
+</span>    <span class="keyword">end</span>
   )
   <span class="comment">--self.AIRDROP  = SPECTRE.IO.PersistenceFromFile(SPECTRE._persistenceLocations.PLYRMGR.path .. "SupportResources/GroundResources.lua")
 </span>  <span class="keyword">return</span> self
@@ -1267,9 +1277,9 @@
 </span>  BOMBER = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>}, <span class="comment">-- Counter for BOMBER resources with active restock timers.
 </span>  STRIKE = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>}, <span class="comment">-- Counter for STRIKE resources with active restock timers.
 </span>  AIRDROP = { <span class="comment">-- Counters for various AIRDROP resources with active restock timers.
-</span>    Red = <span class="number">3</span>,
-    Blue = <span class="number">3</span>,
-    ARTILLERY = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>},
+</span>    <span class="comment">--    Red = 3,
+</span>    <span class="comment">--    Blue = 3,
+</span>    ARTILLERY = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>},
     IFV = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>},
     TANK = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>},
     AAA = {Red = <span class="number">3</span>, Blue = <span class="number">3</span>},
@@ -1314,7 +1324,7 @@
 </span><span class="comment">-- @param PlayerInfo Table containing details about the player, such as id, name, side, slot, and ucid.
 </span><span class="comment">-- @param #PLYRMGR MANAGER Reference to the manager responsible for handling this player instance.
 </span><span class="comment">-- @return #PLYRMGR.Player self The newly created and initialized player instance.
-</span><a id="1236"></a><span class="comment">-- @usage local playerInstance = SPECTRE.PLYRMGR.Player:New(playerDetails, managerRef) -- Creates a new player instance.
+</span><a id="1246"></a><span class="comment">-- @usage local playerInstance = SPECTRE.PLYRMGR.Player:New(playerDetails, managerRef) -- Creates a new player instance.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:New(PlayerInfo, MANAGER)
   <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New()) <span class="comment">-- Inherit from the BASE class
 </span>  self.MANAGER = MANAGER <span class="comment">-- Assign the manager reference to the player
@@ -1338,7 +1348,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player self The player instance to be updated.
 </span><span class="comment">-- @param eventData Table containing event-related details, used to update the player's slot data.
 </span><span class="comment">-- @return #PLYRMGR.Player self The updated player instance with the latest slot data.
-</span><a id="1260"></a><span class="comment">-- @usage playerInstance:SlotDataUpdate(eventDetails) -- Updates the player's slot data based on event details.
+</span><a id="1270"></a><span class="comment">-- @usage playerInstance:SlotDataUpdate(eventDetails) -- Updates the player's slot data based on event details.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:SlotDataUpdate(eventData)
   <span class="comment">-- Update player attributes using the eventData
 </span>  self.GroupName  = eventData.IniGroupName
@@ -1360,26 +1370,40 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR.Player
 </span><span class="comment">-- @return #PLYRMGR.Player self The updated player instance with either imported data or default values.
-</span><a id="1282"></a><span class="comment">-- @usage playerInstance:ImportData() -- Imports data for the given player.
+</span><a id="1292"></a><span class="comment">-- @usage playerInstance:ImportData() -- Imports data for the given player.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:ImportData()
   <span class="comment">-- Define the path to the player database and the specific player's data file.
-</span>  <span class="keyword">local</span> PlayerDatabase_Path = SPECTRE._persistenceLocations.PLYRMGR.path .. <span class="string">"PlayerDB/"</span>
-  <span class="keyword">local</span> PlayerDatabase_File = PlayerDatabase_Path .. self.ucid .. <span class="string">".lua"</span>
-  <span class="keyword">local</span> LoadedDatabase
+</span>
+  <span class="keyword">local</span> force = force <span class="keyword">or</span> <span class="keyword">false</span>
+  <span class="keyword">local</span> _Randname = name_ <span class="keyword">or</span> <span class="global">os</span>.time()
+  <span class="keyword">local</span> _filename =  SPECTRE._persistenceLocations.PLYRMGR.path .. <span class="string">"PlayerDB/"</span> .. self.ucid .. <span class="string">".lua"</span>
+  self.Points = SPECTRE.BRAIN.checkAndPersist(
+    _filename,
+    force,
+    self.Points,
+    self._persistence,
+    <span class="keyword">function</span>(_Object)  <span class="comment">-- Update: Include _Object as a parameter
+</span>      _Object[<span class="number">1</span>] = <span class="number">100</span>
+      _Object[<span class="number">2</span>] = <span class="number">100</span>
+      <span class="keyword">return</span> _Object  <span class="comment">-- Update: Pass _Object to the new function
+</span>    <span class="keyword">end</span>
+  )
 
-  <span class="comment">-- Check if the player's data file exists.
-</span>  <span class="keyword">if</span> lfs.attributes(PlayerDatabase_File) <span class="keyword">then</span>
-    <span class="comment">-- Load the player's data from the file.
-</span>    LoadedDatabase = SPECTRE.IO.PersistenceFromFile(PlayerDatabase_File)
-    <span class="comment">-- If the database is loaded successfully, extract the player's point values.
-</span>    self.Points[<span class="number">1</span>] = LoadedDatabase[<span class="string">"pointsred"</span>] <span class="keyword">or</span> <span class="number">100</span>
-    self.Points[<span class="number">2</span>] = LoadedDatabase[<span class="string">"pointsblue"</span>] <span class="keyword">or</span> <span class="number">100</span>
-  <span class="keyword">else</span>
-    <span class="comment">-- If the player's data file doesn't exist, assign default values.
-</span>    self.Points[<span class="number">1</span>] = <span class="number">100</span>
-    self.Points[<span class="number">2</span>] = <span class="number">100</span>
-  <span class="keyword">end</span>
 
+
+  <span class="comment">--  -- Check if the player's data file exists.
+</span>  <span class="comment">--  if lfs.attributes(PlayerDatabase_File) then
+</span>  <span class="comment">--    -- Load the player's data from the file.
+</span>  <span class="comment">--    LoadedDatabase = SPECTRE.IO.PersistenceFromFile(PlayerDatabase_File)
+</span>  <span class="comment">--    -- If the database is loaded successfully, extract the player's point values.
+</span>  <span class="comment">--    self.Points[1] = LoadedDatabase["pointsred"] or 100
+</span>  <span class="comment">--    self.Points[2] = LoadedDatabase["pointsblue"] or 100
+</span>  <span class="comment">--  else
+</span>  <span class="comment">--    -- If the player's data file doesn't exist, assign default values.
+</span>  <span class="comment">--    self.Points[1] = 100
+</span>  <span class="comment">--    self.Points[2] = 100
+</span>  <span class="comment">--  end
+</span>
   <span class="keyword">return</span> self  <span class="comment">-- Return the updated player instance.
 </span><span class="keyword">end</span>
 
@@ -1392,23 +1416,20 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR.Player
 </span><span class="comment">-- @return #PLYRMGR.Player self The player instance after storing its data.
-</span><a id="1314"></a><span class="comment">-- @usage playerInstance:StoreData() -- Persists the player's data in the designated file.
+</span><a id="1338"></a><span class="comment">-- @usage playerInstance:StoreData() -- Persists the player's data in the designated file.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:StoreData()
   <span class="comment">-- Define the path to the player database and the specific player's data file.
 </span>  <span class="keyword">local</span> PlayerDatabase_Path = SPECTRE._persistenceLocations.PLYRMGR.path .. <span class="string">"PlayerDB/"</span><span class="comment">--lfs.writedir() .. "SPECTRE/PlayerDatabase/"
 </span>  <span class="keyword">local</span> PlayerDatabase_File = PlayerDatabase_Path .. self.ucid .. <span class="string">".lua"</span>
 
-  <span class="comment">-- Ensure the directory exists or create it if not.
-</span>  SPECTRE.IO.DirExists(PlayerDatabase_Path)
-
-  <span class="comment">-- Ensure the player's data file exists or create it if not.
-</span>  SPECTRE.IO.FileExists(PlayerDatabase_File)
-
-  <span class="comment">-- Construct the data structure to be saved.
-</span>  <span class="keyword">local</span> LoadedDatabase = { pointsred = self.Points[<span class="number">1</span>], pointsblue = self.Points[<span class="number">2</span>] }
-
+<span class="comment">--  -- Ensure the directory exists or create it if not.
+</span><span class="comment">--  SPECTRE.IO.DirExists(PlayerDatabase_Path)
+</span><span class="comment">--
+</span><span class="comment">--  -- Ensure the player's data file exists or create it if not.
+</span><span class="comment">--  SPECTRE.IO.FileExists(PlayerDatabase_File)
+</span>
   <span class="comment">-- Store the data structure in the player's data file.
-</span>  SPECTRE.IO.PersistenceToFile(PlayerDatabase_File, LoadedDatabase)
+</span>  SPECTRE.IO.PersistenceToFile(PlayerDatabase_File, self.Points)
 
   <span class="keyword">return</span> self <span class="comment">-- Return the player instance
 </span><span class="keyword">end</span>
@@ -1423,7 +1444,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player self The instance of the player object to be updated.
 </span><span class="comment">-- @param pointReward The amount of points to be added to the player's current points tally.
 </span><span class="comment">-- @return #PLYRMGR.Player self The player instance after updating the points.
-</span><a id="1345"></a><span class="comment">-- @usage playerInstance:UpdatePoints(10) -- Adds 10 points to the player's current points based on their side.
+</span><a id="1366"></a><span class="comment">-- @usage playerInstance:UpdatePoints(10) -- Adds 10 points to the player's current points based on their side.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:UpdatePoints(pointReward)
   <span class="comment">-- Update the player's points based on their side with the given reward.
 </span>  self.Points[self.side] = self.Points[self.side] + pointReward
@@ -1440,7 +1461,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR.Player
 </span><span class="comment">-- @return #PLYRMGR.Player self The player instance after the welcome message has been displayed.
-</span><a id="1362"></a><span class="comment">-- @usage playerInstance:WelcomeMessage() -- Displays the welcome message to the player.
+</span><a id="1383"></a><span class="comment">-- @usage playerInstance:WelcomeMessage() -- Displays the welcome message to the player.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:WelcomeMessage()
   <span class="keyword">local</span> report = SPECTRE.UTILS.ReportGenerator(SPECTRE.PLYRMGR.Settings.Reports.Welcome)
   report:Add(<span class="string">""</span>)
@@ -1459,7 +1480,7 @@
 </span><span class="comment">-- @param type The type of marker to limit (e.g., "CAP", "STRIKE").
 </span><span class="comment">-- @param limit The maximum number of markers allowed for the specified type.
 </span><span class="comment">-- @return #PLYRMGR.Player self The player instance after applying the marker limit.
-</span><a id="1381"></a><span class="comment">-- @usage playerInstance:LimitMaxMarkers("CAP", 5) -- Ensures that the player has no more than 5 CAP markers.
+</span><a id="1402"></a><span class="comment">-- @usage playerInstance:LimitMaxMarkers("CAP", 5) -- Ensures that the player has no more than 5 CAP markers.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:LimitMaxMarkers(<span class="global">type</span>, limit)
   <span class="comment">-- Get the current number of markers of the specified type for the player.
 </span>  <span class="keyword">local</span> CurrentAmountMarkers = #self.Markers[<span class="global">type</span>].MarkerArrays
@@ -1492,7 +1513,7 @@
 </span><span class="comment">-- @param #PLYRMGR.Player self The player instance for which the submenu is to be set up.
 </span><span class="comment">-- @param menuType The type of menu to set up (e.g., "CAP", "STRIKE").
 </span><span class="comment">-- @param #PLYRMGR MANAGER The player manager instance responsible for the overall menu system.
-</span><a id="1414"></a><span class="comment">-- @return #PLYRMGR.Player self The player instance after the submenu setup.
+</span><a id="1435"></a><span class="comment">-- @return #PLYRMGR.Player self The player instance after the submenu setup.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:setupSubMenu(menuType, MANAGER)
 
   <span class="comment">-- Extract relevant references for the menu type.
@@ -1505,10 +1526,10 @@
   marker.MenuArrays.PointBalance = MENU_GROUP_COMMAND:New(self.GROUP, SPECTRE.MENU.Text.Main.PrintPoints, marker.MenuArrays.Main, SPECTRE.MENU.Print.Balance, self)
   marker.MenuArrays.Instructions = MENU_GROUP_COMMAND:New(self.GROUP, SPECTRE.MENU.Text.Main.PrintInstructions, marker.MenuArrays.Main, printInstructions, menuType, self)
 
-<span class="comment">--  -- Special menu handling for Escort type.
-</span><span class="comment">--  if menuType == MANAGER.MARKERS.Settings.ESCORT.MarkerEnum then
-</span><span class="comment">--  --marker.MenuArrays.Request = MENU_GROUP_COMMAND:New(self.GROUP, menuText.Title, marker.MenuArrays.Main, SPECTRE.MENU.SPAWNER.Menu.Escort, self)
-</span><span class="comment">--  end
+  <span class="comment">--  -- Special menu handling for Escort type.
+</span>  <span class="comment">--  if menuType == MANAGER.MARKERS.Settings.ESCORT.MarkerEnum then
+</span>  <span class="comment">--  --marker.MenuArrays.Request = MENU_GROUP_COMMAND:New(self.GROUP, menuText.Title, marker.MenuArrays.Main, SPECTRE.MENU.SPAWNER.Menu.Escort, self)
+</span>  <span class="comment">--  end
 </span>
   <span class="comment">-- Special menu handling for Airdrop type.
 </span>  <span class="keyword">if</span> menuType == MANAGER.MARKERS.Settings.AIRDROP.MarkerEnum <span class="keyword">then</span>
@@ -1533,7 +1554,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR.Player self The player instance for which the main menu and submenus are to be set up.
 </span><span class="comment">-- @param #PLYRMGR MANAGER The player manager instance, used to reference support settings and functionalities.
-</span><a id="1455"></a><span class="comment">-- @return #PLYRMGR.Player self The player instance after setting up the main menu and submenus.
+</span><a id="1476"></a><span class="comment">-- @return #PLYRMGR.Player self The player instance after setting up the main menu and submenus.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:setupMenu(MANAGER)
 
   <span class="comment">-- Create the main menu for the player's group.
@@ -1562,7 +1583,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #PLYRMGR.Player self The player instance whose markers are to be cleared.
 </span><span class="comment">-- @param flag Numeric flag determining which types of markers to clear (0 for all, 1 for "CAP", etc.).
-</span><a id="1484"></a><span class="comment">-- @return #PLYRMGR.Player self The player instance after clearing the specified markers.
+</span><a id="1505"></a><span class="comment">-- @return #PLYRMGR.Player self The player instance after clearing the specified markers.
 </span><span class="keyword">function</span> SPECTRE.PLYRMGR.Player:ClearWorldMarkers(flag)
 
   <span class="comment">-- Mapping of flags to marker types.
@@ -1595,12 +1616,12 @@
 </span><span class="keyword">end</span>
 <span class="comment">--- SPECTRE.PLYRMGR.Player.Markers.
 </span><span class="comment">-- This table stores marker-related data for different types of operations within the SPECTRE.PLYRMGR.Player class.
-</span><a id="1517"></a><span class="comment">-- @field #PLYRMGR.Player.Markers
+</span><a id="1538"></a><span class="comment">-- @field #PLYRMGR.Player.Markers
 </span>SPECTRE.PLYRMGR.Player.Markers = {}
 
 <span class="comment">--- CAP Markers.
 </span><span class="comment">-- Stores arrays for CAP (Combat Air Patrol) markers and associated menus.
-</span><a id="1522"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.CAP
+</span><a id="1543"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.CAP
 </span>SPECTRE.PLYRMGR.Player.Markers.CAP = {
   MarkerArrays = {}, <span class="comment">-- Array to store marker data for CAP operations.
 </span>  MenuArrays = {} <span class="comment">-- Array to store menu data for CAP operations.
@@ -1608,7 +1629,7 @@
 
 <span class="comment">--- TOMAHAWK Markers.
 </span><span class="comment">-- Stores arrays for TOMAHAWK missile strike markers and associated menus.
-</span><a id="1530"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.TOMAHAWK
+</span><a id="1551"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.TOMAHAWK
 </span>SPECTRE.PLYRMGR.Player.Markers.TOMAHAWK = {
   MarkerArrays = {}, <span class="comment">-- Array to store marker data for TOMAHAWK strikes.
 </span>  MenuArrays = {} <span class="comment">-- Array to store menu data for TOMAHAWK strikes.
@@ -1616,7 +1637,7 @@
 
 <span class="comment">--- BOMBER Markers.
 </span><span class="comment">-- Stores arrays for bomber strike markers and associated menus.
-</span><a id="1538"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.BOMBER
+</span><a id="1559"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.BOMBER
 </span>SPECTRE.PLYRMGR.Player.Markers.BOMBER = {
   MarkerArrays = {}, <span class="comment">-- Array to store marker data for bomber strikes.
 </span>  MenuArrays = {} <span class="comment">-- Array to store menu data for bomber strikes.
@@ -1624,7 +1645,7 @@
 
 <span class="comment">--- AIRDROP Markers.
 </span><span class="comment">-- Stores arrays for airdrop operation markers and associated menus.
-</span><a id="1546"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.AIRDROP
+</span><a id="1567"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.AIRDROP
 </span>SPECTRE.PLYRMGR.Player.Markers.AIRDROP = {
   MarkerArrays = {}, <span class="comment">-- Array to store marker data for airdrop operations.
 </span>  MenuArrays = {} <span class="comment">-- Array to store menu data for airdrop operations.
@@ -1632,7 +1653,7 @@
 
 <span class="comment">--- STRIKE Markers.
 </span><span class="comment">-- Stores arrays for strike operation markers and associated menus.
-</span><a id="1554"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.STRIKE
+</span><a id="1575"></a><span class="comment">-- @field #PLYRMGR.Player.Markers.STRIKE
 </span>SPECTRE.PLYRMGR.Player.Markers.STRIKE = {
   MarkerArrays = {}, <span class="comment">-- Array to store marker data for strike operations.
 </span>  MenuArrays = {} <span class="comment">-- Array to store menu data for strike operations.
@@ -1643,7 +1664,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

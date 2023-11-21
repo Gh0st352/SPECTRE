@@ -159,8 +159,8 @@
 </span>SPECTRE.DebugEnabled = <span class="number">0</span>
 
 <a id="80"></a><span class="comment">--- Name of the map SPECTRE is operating on.
-</span>SPECTRE.MAPNAME = <span class="string">"Syria"</span> <span class="comment">--(DCS.getCurrentMission().mission.theatre)
-</span>
+</span>SPECTRE.MAPNAME = <span class="string">"Syria"</span>
+
 <a id="83"></a><span class="comment">--- Coalition definitions used by SPECTRE.
 </span>SPECTRE.Coalitions = {
   Red = coalition.side.RED,
@@ -221,6 +221,70 @@
 </span>  <span class="keyword">return</span> self
 <span class="keyword">end</span>
 
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainSyria()
+  self.MAPNAME = <span class="string">"Syria"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainPersianGulf()
+  self.MAPNAME = <span class="string">"Persia"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainCaucasus()
+  self.MAPNAME = <span class="string">"Caucasus"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainSinai()
+  self.MAPNAME = <span class="string">"Sinai"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainMarianaIslands()
+  self.MAPNAME = <span class="string">"MarianaIslands"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainNevada()
+  self.MAPNAME = <span class="string">"Nevada"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainNormandy()
+  self.MAPNAME = <span class="string">"Normandy"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainSouthAtlantic()
+  self.MAPNAME = <span class="string">"SouthAtlantic"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+<span class="comment">-- Sets SPECTRE to use the proper terrain info.
+</span><span class="comment">-- @param #SPECTRE
+</span><span class="comment">-- @return #SPECTRE self
+</span><span class="keyword">function</span> SPECTRE:setTerrainTheChannel()
+  self.MAPNAME = <span class="string">"TheChannel"</span>
+  <span class="keyword">return</span> self
+<span class="keyword">end</span>
+
 <span class="comment">--- Destroys a group object when it reaches a waypoint.
 </span><span class="comment">--
 </span><span class="comment">-- This function is designed to delete a specified group object upon reaching a waypoint.
@@ -228,7 +292,7 @@
 </span><span class="comment">-- to accommodate the specific operational requirement of group destruction in response to
 </span><span class="comment">-- waypoint attainment.
 </span><span class="comment">--
-</span><a id="150"></a><span class="comment">-- @param group The group object to be destroyed upon reaching a waypoint.
+</span><a id="214"></a><span class="comment">-- @param group The group object to be destroyed upon reaching a waypoint.
 </span><span class="keyword">function</span> SPECTREDeleteOnWP_(group)
   group:Destroy(<span class="keyword">true</span>)
 <span class="keyword">end</span>
@@ -241,9 +305,9 @@
 </span><span class="comment">-- for mission end to trigger necessary finalization processes. This persistence mechanism is crucial for
 </span><span class="comment">-- maintaining the state of the SPECTRE system across different missions, providing a seamless experience.
 </span><span class="comment">--
-</span><span class="comment">-- @param #SPAWNER self The instance of the SPECTRE class.
+</span><span class="comment">-- @param #SPECTRE self The instance of the SPECTRE class.
 </span><span class="comment">-- @param MissionName A unique name representing the mission, used for organizing persistence data.
-</span><a id="165"></a><span class="comment">-- @return #SPAWNER self The updated SPECTRE instance with persistence enabled and configured.
+</span><a id="229"></a><span class="comment">-- @return #SPECTRE self The updated SPECTRE instance with persistence enabled and configured.
 </span><span class="keyword">function</span> SPECTRE:Persistence(MissionName)
   <span class="comment">-- Activate persistence
 </span>  self._persistence = <span class="keyword">true</span>
@@ -304,7 +368,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPECTRE self The instance of the SPECTRE class.
 </span><span class="comment">-- @param eventData Data associated with the "End Mission" event.
-</span><a id="226"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, having processed the end of the mission.
+</span><a id="290"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, having processed the end of the mission.
 </span><span class="keyword">function</span> SPECTRE:_EndMission(eventData)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:_EndMission | PERSISTENCE | The mission has ended! Saving...."</span>)
   self:EndMissionSave()
@@ -319,7 +383,7 @@
 </span><span class="comment">-- effectively in the next mission.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPECTRE
-</span><a id="241"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, prepared for the next operation.
+</span><a id="305"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, prepared for the next operation.
 </span><span class="keyword">function</span> SPECTRE:EndMissionSave()
   <span class="keyword">if</span> self._firstRun == <span class="keyword">true</span> <span class="keyword">then</span> self._firstRun = <span class="keyword">false</span> <span class="keyword">end</span>
   <span class="keyword">if</span> self._missionInProgress == <span class="keyword">false</span> <span class="keyword">then</span> self._firstRun = <span class="keyword">true</span> <span class="keyword">end</span>
@@ -338,7 +402,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-15 18:48:28 </i>
+<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
