@@ -20,6 +20,7 @@ All features of SPECTRE automatically account for and work with multi-coalition 
 - Utilizes DBSCAN Clustering Algorithm to contribute to mission learning.
 - System is capable of using the determined clusters to decide course of action for mission zones based on cluster information.
 - Currently used in Hotspot, Intel, and ZONEMGR's intelligent wrapper for `SPAWNER`
+- Intelligent and automated CAP deployment for zones.
 
 
   - `SPAWNER` wrapper:
@@ -83,7 +84,7 @@ Simply add the following text to an in game marker:
 		bias = 1 for red, 2 for blue. Only works if smart is used
 	  	name = optional parameter to name the zone for use later. if ommitted, a temporary spawn zone name is generated	
   
-- Upcoming updates will add the ability to restrict this function to specific UCID's if you want this enabled in a prod server for tweaking what gets generated.
+- This function is restricted to specific UCID's you can define, just in case you want this enabled in a prod server for tweaking what gets generated.
 
 ---
 
