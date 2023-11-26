@@ -157,39 +157,41 @@
 
 <a id="77"></a><span class="comment">--- Debugging switch for SPECTRE (0 = off, 1 = on).
 </span>SPECTRE.DebugEnabled = <span class="number">0</span>
+<a id="79"></a><span class="comment">---.
+</span>SPECTRE.COUNTER = <span class="number">1</span>
 
-<a id="80"></a><span class="comment">--- Name of the map SPECTRE is operating on.
+<a id="82"></a><span class="comment">--- Name of the map SPECTRE is operating on.
 </span>SPECTRE.MAPNAME = <span class="string">"Syria"</span>
 
-<a id="83"></a><span class="comment">--- Coalition definitions used by SPECTRE.
+<a id="85"></a><span class="comment">--- Coalition definitions used by SPECTRE.
 </span>SPECTRE.Coalitions = {
   Red = coalition.side.RED,
   Blue = coalition.side.BLUE
 }
 
-<a id="89"></a><span class="comment">--- Country definitions used by SPECTRE.
+<a id="91"></a><span class="comment">--- Country definitions used by SPECTRE.
 </span>SPECTRE.Countries = {
   Red = country.id.CJTF_RED,
   Blue = country.id.CJTF_BLUE
 }
 
-<a id="95"></a><span class="comment">--- Flag to enable persistence in SPECTRE.
+<a id="97"></a><span class="comment">--- Flag to enable persistence in SPECTRE.
 </span>SPECTRE._persistence = <span class="keyword">false</span>
 
 
-<a id="99"></a><span class="comment">--- Flag indicating whether SPECTRE settings have been loaded.
+<a id="101"></a><span class="comment">--- Flag indicating whether SPECTRE settings have been loaded.
 </span>SPECTRE._loaded = <span class="keyword">false</span>
 
-<a id="102"></a><span class="comment">--- Flag to identify the first run of SPECTRE in a mission.
+<a id="104"></a><span class="comment">--- Flag to identify the first run of SPECTRE in a mission.
 </span>SPECTRE._firstRun = <span class="keyword">true</span>
 
-<a id="105"></a><span class="comment">--- Flag indicating if a mission is in progress.
+<a id="107"></a><span class="comment">--- Flag indicating if a mission is in progress.
 </span>SPECTRE._missionInProgress = <span class="keyword">false</span>
 
-<a id="108"></a><span class="comment">--- Event handler for mission end events.
+<a id="110"></a><span class="comment">--- Event handler for mission end events.
 </span>SPECTRE._endMizHandler = {}
 
-<a id="111"></a><span class="comment">--- Locations for persisting various components of SPECTRE.
+<a id="113"></a><span class="comment">--- Locations for persisting various components of SPECTRE.
 </span>SPECTRE._persistenceLocations = {
   SPECTRE       = {folder = <span class="string">"SPECTRE"</span>, path = <span class="string">""</span>},
   missionStatus = {folder = <span class="string">"missionStatus"</span>, path = <span class="string">""</span>},
@@ -200,10 +202,10 @@
 }
 
 
-<a id="122"></a><span class="comment">--- File name for the master profile file of SPECTRE.
+<a id="124"></a><span class="comment">--- File name for the master profile file of SPECTRE.
 </span>SPECTRE._masterProfileFile = <span class="string">"SPECTRE.lua"</span>
 
-<a id="125"></a><span class="comment">--- User-defined storage within SPECTRE.
+<a id="127"></a><span class="comment">--- User-defined storage within SPECTRE.
 </span>SPECTRE.USERSTORAGE = {}
 
 
@@ -214,7 +216,7 @@
 </span><span class="comment">-- serving as a central component for various operational functionalities.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPECTRE
-</span><a id="136"></a><span class="comment">-- @return #SPECTRE self The newly created SPECTRE instance.
+</span><a id="138"></a><span class="comment">-- @return #SPECTRE self The newly created SPECTRE instance.
 </span><span class="keyword">function</span> SPECTRE:New()
   <span class="keyword">local</span> self=BASE:Inherit(self, BASE:New())
   <span class="comment">--local self = UTILS.DeepCopy(self)
@@ -292,7 +294,7 @@
 </span><span class="comment">-- to accommodate the specific operational requirement of group destruction in response to
 </span><span class="comment">-- waypoint attainment.
 </span><span class="comment">--
-</span><a id="214"></a><span class="comment">-- @param group The group object to be destroyed upon reaching a waypoint.
+</span><a id="216"></a><span class="comment">-- @param group The group object to be destroyed upon reaching a waypoint.
 </span><span class="keyword">function</span> SPECTREDeleteOnWP_(group)
   group:Destroy(<span class="keyword">true</span>)
 <span class="keyword">end</span>
@@ -307,7 +309,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPECTRE self The instance of the SPECTRE class.
 </span><span class="comment">-- @param MissionName A unique name representing the mission, used for organizing persistence data.
-</span><a id="229"></a><span class="comment">-- @return #SPECTRE self The updated SPECTRE instance with persistence enabled and configured.
+</span><a id="231"></a><span class="comment">-- @return #SPECTRE self The updated SPECTRE instance with persistence enabled and configured.
 </span><span class="keyword">function</span> SPECTRE:Persistence(MissionName)
   <span class="comment">-- Activate persistence
 </span>  self._persistence = <span class="keyword">true</span>
@@ -368,7 +370,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPECTRE self The instance of the SPECTRE class.
 </span><span class="comment">-- @param eventData Data associated with the "End Mission" event.
-</span><a id="290"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, having processed the end of the mission.
+</span><a id="292"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, having processed the end of the mission.
 </span><span class="keyword">function</span> SPECTRE:_EndMission(eventData)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE:_EndMission | PERSISTENCE | The mission has ended! Saving...."</span>)
   self:EndMissionSave()
@@ -383,7 +385,7 @@
 </span><span class="comment">-- effectively in the next mission.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPECTRE
-</span><a id="305"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, prepared for the next operation.
+</span><a id="307"></a><span class="comment">-- @return #SPECTRE self The SPECTRE instance, prepared for the next operation.
 </span><span class="keyword">function</span> SPECTRE:EndMissionSave()
   <span class="keyword">if</span> self._firstRun == <span class="keyword">true</span> <span class="keyword">then</span> self._firstRun = <span class="keyword">false</span> <span class="keyword">end</span>
   <span class="keyword">if</span> self._missionInProgress == <span class="keyword">false</span> <span class="keyword">then</span> self._firstRun = <span class="keyword">true</span> <span class="keyword">end</span>
@@ -402,7 +404,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
+<i style="float:right;">Last updated 2023-11-26 07:35:37 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

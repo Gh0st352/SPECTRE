@@ -5,9 +5,9 @@
 -- ------------------------------------------------------------------------------------------
 -- 
 -- S. - Special         |
--- P. - Purpose         | CompileTime : Monday, November 20, 2023 11:04:23 AM
+-- P. - Purpose         | CompileTime : Sunday, November 26, 2023 7:35:35 AM
 -- E. - Extension for   |      Commit : 6adc313af566c4a566e5aefe11b85fc2bd03d026
--- C. - Creating        |	    Version : 0.9.5
+-- C. - Creating        |	    Version : 0.9.8
 -- T. - Truly           |      Github : https://github.com/Gh0st352
 -- R. - Reactive        |      Author : Gh0st
 -- E. - Environments    |     Discord : gh0st352
@@ -110,6 +110,8 @@ SPECTRE = {}
 
 --- Debugging switch for SPECTRE (0 = off, 1 = on).
 SPECTRE.DebugEnabled = 0
+---.
+SPECTRE.COUNTER = 1
 
 --- Name of the map SPECTRE is operating on.
 SPECTRE.MAPNAME = "Syria"
@@ -691,9 +693,10 @@ function SPECTRE.AI.configureGroup.BOMBER(MANAGER, spawnGroup_, route, Packet)
   -- Schedule a periodic check for bomber ammunition
   spawnGroup_.ammocheck_  = SCHEDULER:New({spawnGroup_}, function()
     SPECTRE.UTILS.debugInfo("spawnGroup_.ammocheck_")
+ if not spawnGroup_.InitTime then spawnGroup_.InitTime = os.time() end
     if spawnGroup_ then
       local BomberAmmo = spawnGroup_:GetAmmunition()
-      if BomberAmmo == 0 then
+      if BomberAmmo == 0 or (os.time - spawnGroup_.InitTime  > 600) then
         MESSAGE:New("Bomber is Winchester. RTB for rearm and refuel.", 20, "NOTICE"):ToCoalition(Packet.coal)
         spawnGroup_:Destroy(false)
         spawnGroup_.ammocheck_:Stop()
@@ -1514,11 +1517,11 @@ end
 -- @extends SPECTRE
 
 --- SPECTRE.BRAIN.
--- 
+--
 -- The brain of SPECTRE, allowing the game to interpret various units positioning and data with ML strategies.
 --
 -- Contains methods for easily interpreting and persisting data.
--- 
+--
 -- @field #BRAIN
 SPECTRE.BRAIN = {}
 
@@ -1545,7 +1548,7 @@ SPECTRE.BRAIN = {}
 -- @param ... Additional parameters to be passed to the _InputFunction.
 -- @return _Object The object after loading from a persistence file or processing through the _InputFunction.
 -- @usage  Example:
---          
+--
 --             self.FILLSPAWNERS[_Randname] = SPECTRE.BRAIN.checkAndPersist(
 --              _filename,
 --              force,
@@ -1556,13 +1559,13 @@ SPECTRE.BRAIN = {}
 --              end
 --            )
 --  where
---  
+--
 --            function SPECTRE.ZONEMGR._CreateSpawnerTemplate(_SPWNR, _Object)
 --              -- Update _Object with the new template and return it
 --              _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
 --              return _Object
 --            end
---            
+--
 function SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)
   SPECTRE.UTILS.debugInfo("SPECTRE.BRAIN.checkAndPersist | PERSISTENCE  | ----------------------")
   SPECTRE.UTILS.debugInfo("SPECTRE.BRAIN.checkAndPersist | PATH         | " .. tostring(_filename))
@@ -1590,7 +1593,7 @@ function SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, 
 
     if _InputFunction then
       -- Run the input function with parameters
-     _Object = _InputFunction(_Object, ...)
+      _Object = _InputFunction(_Object, ...)
     end
     -- Save the object if persistence is enabled and object was not loaded
     if _persistence and not loaded then
@@ -1603,256 +1606,183 @@ function SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, 
 end
 
 
+SPECTRE.BRAIN.DBSCANNER = {}
+SPECTRE.BRAIN.DBSCANNER.params = {}
+SPECTRE.BRAIN.DBSCANNER._DBScan = {}
+SPECTRE.BRAIN.DBSCANNER.Clusters = {}
+SPECTRE.BRAIN.DBSCANNER.Points = {}
+SPECTRE.BRAIN.DBSCANNER.numPoints = 1
+SPECTRE.BRAIN.DBSCANNER.f = 2
+SPECTRE.BRAIN.DBSCANNER.p = 0.1
+SPECTRE.BRAIN.DBSCANNER.epsilon = 0
+SPECTRE.BRAIN.DBSCANNER.min_samples = 0
+SPECTRE.BRAIN.DBSCANNER.Area = 0
+SPECTRE.BRAIN.DBSCANNER._RadiusExtension = 0
 
 
---
---
------ Form clusters with input data points.
-----
----- dataPoints must be in format:
-----
-----        datapoints = {
-----              [1] = DataPointInfo,
-----              [2] = DataPointInfo,
-----              ...
-----        }
---
-----        DataPointInfo = {
-----              uniqueID = Integer,
-----              vec2 = {x = Number, y = Number},
-----        }
-----
-----
-----
----- @param dataPoints
----- @return dataClusters
---function SPECTRE.BRAIN.formClusters(dataPoints)
---  local dataClusters = {}
---
---  if #dataPoints > 0 then
---    self:generateDBSCANparams(_coal)
---    self:DBSCAN(_coal)
---    --  SPECTRE.IO.PersistenceToFile("/TEST/ZONEMGR/getHotspotGroups/" .. self.ZoneName .. "_" .. _coal .. "_DBScan.lua", self._DBScan[_coal])
---    self:post_process_clusters(_coal)
---    --  SPECTRE.IO.PersistenceToFile("/TEST/ZONEMGR/getHotspotGroups/" .. self.ZoneName .. "_" .. _coal .. "_process.lua", self.HotspotClusters[_coal])
---  end
---
---  return dataClusters
---end
---
------ Apply DBSCAN clustering algorithm to units within the zone based on coalition.
-----
----- This function implements the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) algorithm to group units within the zone.
----- It is applied to units of a specific coalition (coal) and organizes them into clusters based on proximity. This clustering is crucial for identifying
----- significant gatherings or formations of units, allowing for a more nuanced understanding of the strategic situation within the zone. The function
----- marks units as part of a cluster or noise based on the parameters `epsilon` (radius) and `min_samples` (minimum number of units to form a cluster).
-----
----- @param #ZONEMGR.Zone self The Zone instance for which the DBSCAN algorithm is to be applied.
----- @param coal The coalition (0, 1, or 2) for which the clustering is to be performed.
----- @return #ZONEMGR.Zone self The Zone instance after applying the DBSCAN algorithm.
----- @usage local clusteredZone = someZone:DBSCAN(coalition) -- Applies DBSCAN to units of the specified coalition within the zone.
---function SPECTRE.ZONEMGR.Zone:DBSCAN(coal)
---  -- Debug information consolidated
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DBSCAN | --------------------------------------------\n" ..
---    "| epsilon     | " .. self.epsilon .. "\n" ..
---    "| min_samples | " .. self.min_samples .. "\n" ..
---    "| numUnits    | " .. #self._detectedUnits[coal] .. "\n" ..
---    "| coal        | " .. coal .. "\n" ..
---    "| Area        | " .. self.Area)
---
---  -- Initialization
---  local UNMARKED, NOISE = 0, -1
---  local cluster_id = 0
---  self._DBScan[coal] = {}
---
---  -- Mark all units as unmarked initially
---  for _, unit in ipairs(self._detectedUnits[coal]) do
---    self._DBScan[coal][unit.unit] = UNMARKED
---  end
---
---  -- Main clustering loop
---  for _, unit in ipairs(self._detectedUnits[coal]) do
---    if self._DBScan[coal][unit.unit] == UNMARKED then
---      local neighbors = self:region_query(coal, unit)
---
---      if #neighbors < self.min_samples then
---        self._DBScan[coal][unit.unit] = NOISE
---      else
---        cluster_id = cluster_id + 1
---        self:expand_cluster(coal, unit, neighbors, cluster_id)
---      end
---    end
---  end
---  return self
---end
---
------ Identify neighboring units within a specified radius for a given point.
-----
----- This function is a key component of the DBSCAN clustering algorithm. It identifies neighboring units within a defined radius (`epsilon`)
----- from a given point. The function is essential for determining the local density of units, helping to categorize units as either part of a
----- cluster or as noise. It scans through all detected units of a specific coalition and identifies those that are within the radius of the
----- provided point, effectively gathering a list of neighbors.
-----
----- @param #ZONEMGR.Zone The Zone instance in which the region query is performed.
----- @param coal The coalition (0, 1, or 2) of the units to consider.
----- @param point The reference point from which neighbors are to be identified.
----- @return neighbors A table containing units identified as neighbors within the specified radius.
----- @usage local neighbors = someZone:region_query(coalition, referencePoint) -- Identifies neighboring units within a radius from the reference point for the specified coalition.
---function SPECTRE.ZONEMGR.Zone:region_query(coal, point)
---  -- Debug information consolidated
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:region_query | --------------------------------------------\n" ..
---    "| coal        | " .. coal .. "\n" ..
---    "| point       | ", point)
---
---  local neighbors = {}
---  -- Iterate through detected units and find neighbors within the epsilon distance
---  for _, unit in ipairs(self._detectedUnits[coal]) do
---    if SPECTRE.POLY.distance(point.vec2, unit.vec2) < self.epsilon then
---      table.insert(neighbors, unit)
---    end
---  end
---  return neighbors
---end
---
------ Expand a cluster by adding neighboring units that meet the criteria.
-----
----- As part of the DBSCAN clustering algorithm, this function expands a given cluster by adding units that are neighbors and meet the
----- specified criteria. It examines each neighboring unit, determining if they should be part of the cluster based on their proximity and
----- the minimum samples threshold. This function is crucial in building clusters that accurately represent groups of units in the game,
----- allowing for a more detailed and strategic understanding of unit distribution within a zone.
-----
----- @param #ZONEMGR.Zone The Zone instance in which the cluster is being expanded.
----- @param coal The coalition (0, 1, or 2) of the units being considered.
----- @param point The starting point of the cluster.
----- @param neighbors A list of neighboring units to the starting point.
----- @param cluster_id The identifier of the cluster being expanded.
----- @return #ZONEMGR.Zone self The Zone instance after expanding the cluster.
----- @usage someZone:expand_cluster(coalition, startingPoint, neighbors, clusterId) -- Expands the cluster with additional units meeting the DBSCAN criteria.
---function SPECTRE.ZONEMGR.Zone:expand_cluster(coal, point, neighbors, cluster_id)
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | -------------------------------------------- ")
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | coal        | " .. coal)
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | cluster_id  | " .. cluster_id)
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | point       | ", point)
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | neighbors   | ", neighbors)
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | labels      | ", self._DBScan[coal])
---
---  local UNMARKED, NOISE = 0, -1
---  self._DBScan[coal][point.unit] = cluster_id
---
---  local i = 1
---  while i <= #neighbors do
---    local neighbor = neighbors[i]
---
---    if self._DBScan[coal][neighbor.unit] == NOISE or self._DBScan[coal][neighbor.unit] == UNMARKED then
---      self._DBScan[coal][neighbor.unit] = cluster_id
---      local new_neighbors = self:region_query(coal, neighbor)
---      if #new_neighbors >= self.min_samples then
---        for _, new_neighbor in ipairs(new_neighbors) do
---          table.insert(neighbors, new_neighbor)
---        end
---      end
---    end
---
---    i = i + 1
---  end
---  return self
---end
---
------ Process and refine clusters for hotspots based on coalition.
-----
----- Following the clustering of units using the DBSCAN algorithm, this function performs post-processing on the identified clusters.
----- It refines each cluster by calculating its geometric center and radius, effectively defining the hotspots more precisely.
----- This refinement is crucial for accurately representing the spatial characteristics of each hotspot, such as its central location
----- and the extent of its influence or area of coverage. The process aids in better understanding and visualization of strategic
----- groupings of units within the zone.
-----
----- @param #ZONEMGR.Zone self The Zone instance for which cluster post-processing is to be conducted.
----- @param coal The coalition (0, 1, or 2) for which clusters are being processed.
----- @return #ZONEMGR.Zone self The Zone instance after post-processing the clusters.
----- @usage local refinedZone = someZone:post_process_clusters(coalition) -- Post-processes the clusters for the specified coalition.
---function SPECTRE.ZONEMGR.Zone:post_process_clusters(coal)
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | -------------------------------------------- ")
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | coal        | " .. coal)
---
---  local clusters = {}
---  local cluster_centers = {}
---  local cluster_radii = {}
---  self.HotspotClusters[coal] = {}
---  -- Group units by cluster
---  for _, unit in ipairs(self._detectedUnits[coal]) do
---    local cluster = self._DBScan[coal][unit.unit]
---    if not clusters[cluster] then
---      clusters[cluster] = {}
---    end
---    table.insert(clusters[cluster], unit)
---  end
---
---  -- Compute center and radius for each cluster
---  for cluster, units in pairs(clusters) do
---    local sum_x = 0
---    local sum_y = 0
---    local max_radius = 0
---    for _, unit in ipairs(units) do
---      sum_x = sum_x + unit.vec2.x
---      sum_y = sum_y + unit.vec2.y
---    end
---    local center = {x = sum_x / #units, y = sum_y / #units}
---    cluster_centers[cluster] = center
---
---    for _, unit in ipairs(units) do
---      local distance = SPECTRE.POLY.distance(center, unit.vec2)
---      if distance > max_radius then
---        max_radius = distance
---      end
---    end
---    cluster_radii[cluster] = max_radius
---  end
---
---  local sorted_groups = {}
---  for cluster, units in pairs(clusters) do
---    if cluster > 0 then
---      table.insert(sorted_groups, {
---        Units = units,
---        Center = cluster_centers[cluster],
---        CenterVec3 = mist.utils.makeVec3(cluster_centers[cluster]),
---        Radius = cluster_radii[cluster] + self._hotspotDrawExtension,
---      })
---    end
---  end
---  self.HotspotClusters[coal] = sorted_groups
---  return self
---end
---
------ Generate parameters for the DBSCAN clustering algorithm based on the zone's characteristics and unit count.
-----
----- This function dynamically calculates the key parameters for the DBSCAN clustering algorithm: `epsilon` (the search radius)
----- and `min_samples` (the minimum number of units to form a cluster). The calculations are based on the total number of units
----- within the coalition and the area of the zone. These parameters are critical for adapting the DBSCAN algorithm to varying
----- densities and distributions of units, ensuring effective clustering that reflects the actual strategic layout within the zone.
-----
----- @param #ZONEMGR.Zone self The Zone instance for which the DBSCAN parameters are to be generated.
----- @param coal The coalition (0, 1, or 2) for which the DBSCAN parameters are being calculated.
----- @return #ZONEMGR.Zone self The Zone instance after generating the DBSCAN parameters.
----- @usage local zoneWithParams = someZone:generateDBSCANparams(coalition) -- Generates DBSCAN parameters for the specified coalition.
---function SPECTRE.ZONEMGR.Zone:generateDBSCANparams(coal)
---  -- Initial calculations
---  local n = #self._detectedUnits[coal]
---  self.epsilon = self.f * math.sqrt(self.Area / n)
---  self.min_samples = math.ceil(self.p * n)
---
---  -- Debug information consolidated
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:generateDBSCANparams | ------------------------\n" ..
---    "| NumUnits    | " .. n .. "\n" ..
---    "| ZoneArea    | " .. self.Area .. "\n" ..
---    "| f           | " .. self.f .. "\n" ..
---    "| p           | " .. self.p .. "\n" ..
---    "| epsilon     | " .. self.epsilon .. "\n" ..
---    "| min_samples | " .. self.min_samples)
---
---  return self
---end
+function SPECTRE.BRAIN.DBSCANNER:New(Points, Area, RadiusExtension)
+  local self=BASE:Inherit(self, SPECTRE:New())
+  self.Points = Points
+  self.numPoints = #Points
+  self.Area = Area
+  self._RadiusExtension = RadiusExtension
+  self:generateDBSCANparams()
+  return self
+end
 
-local dddd = ""
+function SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams()
+  -- Initial calculations
+  local n = self.numPoints
+  self.epsilon = self.f * math.sqrt(self.Area / n)
+  self.min_samples = math.ceil(self.p * n)
+
+  -- Debug information consolidated
+  SPECTRE.UTILS.debugInfo("SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams | ------------------------\n" ..
+    "| NumUnits    | " .. n .. "\n" ..
+    "| ZoneArea    | " .. self.Area .. "\n" ..
+    "| f           | " .. self.f .. "\n" ..
+    "| p           | " .. self.p .. "\n" ..
+    "| epsilon     | " .. self.epsilon .. "\n" ..
+    "| min_samples | " .. self.min_samples)
+
+  return self
+end
+function SPECTRE.BRAIN.DBSCANNER:Scan()
+  self:_DBScan()
+  self:post_process_clusters()
+  return self
+end
+function SPECTRE.BRAIN.DBSCANNER:_DBScan()
+  -- Initialization
+  local UNMARKED, NOISE = 0, -1
+  local cluster_id = 0
+  self._DBScan = {}
+  -- Mark all units as unmarked initially
+  for _, unit in ipairs(self.Points) do
+    self._DBScan[unit.unit] = UNMARKED
+  end
+  -- Main clustering loop
+  for _, unit in ipairs(self.Points) do
+    if self._DBScan[unit.unit] == UNMARKED then
+      local neighbors = self:region_query(unit)
+      if #neighbors < self.min_samples then
+        self._DBScan[unit.unit] = NOISE
+      else
+        cluster_id = cluster_id + 1
+        self:expand_cluster(unit, neighbors, cluster_id)
+      end
+    end
+  end
+  return self
+end
+
+function SPECTRE.BRAIN.DBSCANNER:region_query(point)
+  local function _distance(point1, point2)
+    -- Calculate the differences in x and y coordinates between the two points
+    local dx = point1.x - point2.x
+    local dy = point1.y - point2.y
+
+    -- Use the Pythagorean theorem to compute the distance
+    return math.sqrt(dx^2 + dy^2)
+  end
+  -- Debug information consolidated
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:region_query | --------------------------------------------\n" ..
+    "| point       | ", point)
+
+  local neighbors = {}
+  -- Iterate through detected units and find neighbors within the epsilon distance
+  for _, unit in ipairs(self.Points) do
+    if _distance(point.vec2, unit.vec2) < self.epsilon then
+      table.insert(neighbors, unit)
+    end
+  end
+  return neighbors
+end
+
+function SPECTRE.BRAIN.DBSCANNER:expand_cluster(point, neighbors, cluster_id)
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | -------------------------------------------- ")
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | cluster_id  | " .. cluster_id)
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | point       | ", point)
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | neighbors   | ", neighbors)
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | labels      | ", self._DBScan)
+  local UNMARKED, NOISE = 0, -1
+  self._DBScan[point.unit] = cluster_id
+  local i = 1
+  while i <= #neighbors do
+    local neighbor = neighbors[i]
+    if self._DBScan[neighbor.unit] == NOISE or self._DBScan[neighbor.unit] == UNMARKED then
+      self._DBScan[neighbor.unit] = cluster_id
+      local new_neighbors = self:region_query(neighbor)
+      if #new_neighbors >= self.min_samples then
+        for _, new_neighbor in ipairs(new_neighbors) do
+          table.insert(neighbors, new_neighbor)
+        end
+      end
+    end
+    i = i + 1
+  end
+  return self
+end
+
+function SPECTRE.BRAIN.DBSCANNER:post_process_clusters()
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | -------------------------------------------- ")
+  local function _distance(point1, point2)
+    -- Calculate the differences in x and y coordinates between the two points
+    local dx = point1.x - point2.x
+    local dy = point1.y - point2.y
+
+    -- Use the Pythagorean theorem to compute the distance
+    return math.sqrt(dx^2 + dy^2)
+  end
+  local clusters = {}
+  local cluster_centers = {}
+  local cluster_radii = {}
+  self.Clusters = {}
+  -- Group units by cluster
+  for _, unit in ipairs(self.Points) do
+    local cluster = self._DBScan[unit.unit]
+    if not clusters[cluster] then
+      clusters[cluster] = {}
+    end
+    table.insert(clusters[cluster], unit)
+  end
+
+  -- Compute center and radius for each cluster
+  for cluster, units in pairs(clusters) do
+    local sum_x = 0
+    local sum_y = 0
+    local max_radius = 0
+    for _, unit in ipairs(units) do
+      sum_x = sum_x + unit.vec2.x
+      sum_y = sum_y + unit.vec2.y
+    end
+    local center = {x = sum_x / #units, y = sum_y / #units}
+    cluster_centers[cluster] = center
+
+    for _, unit in ipairs(units) do
+      local distance = _distance(center, unit.vec2)
+      if distance > max_radius then
+        max_radius = distance
+      end
+    end
+    cluster_radii[cluster] = max_radius
+  end
+
+  local sorted_groups = {}
+  for cluster, units in pairs(clusters) do
+    if cluster > 0 then
+      table.insert(sorted_groups, {
+        Units = units,
+        Center = cluster_centers[cluster],
+        CenterVec3 = mist.utils.makeVec3(cluster_centers[cluster]),
+        Radius = cluster_radii[cluster] + self._RadiusExtension,
+      })
+    end
+  end
+  self.Clusters = sorted_groups
+  return self
+end
+
 
 -- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ --
 
@@ -2098,6 +2028,7 @@ function SPECTRE.IADS:New(coal,ZONEMGR_)
   return self
 end
 
+
 --- Create Skynet Object.
 -- Initializes a new Skynet IADS object with the given name.
 -- @param #IADS self The IADS instance.
@@ -2195,7 +2126,7 @@ function SPECTRE.IADS:UpdateSchedInit()
         self:Update()
         self.UpdatingIADS = false
       end)
-      _timer:Start(2)
+      _timer:Start(math.random(1,3))
 
     end
     return self
@@ -4444,10 +4375,10 @@ end
 -- @usage manager:_EventMarker(packetData) -- Process the marker event based on the provided packet data.
 function SPECTRE.PLYRMGR:_EventMarker(Packet)
   local _,_,heading, distance, code,MarkInfo,NewMarkerCoord,PlayerUCID,descriptor,newMarkerText,newMarkerID
-
-  code = self.COUNTERS.CodeMarker -- Incrementing CodeMarker counter
-  self.COUNTERS.CodeMarker = self.COUNTERS.CodeMarker + 5
-
+  local _tCode = SPECTRE.COUNTERS
+  code = _tCode--self.COUNTERS.CodeMarker -- Incrementing CodeMarker counter
+  --self.COUNTERS.CodeMarker = self.COUNTERS.CodeMarker + 5
+  SPECTRE.COUNTERS = code + 1
   MarkInfo = SPECTRE.MARKERS.World.FindByText(Packet.origText) -- Finding mark info using Text
   NewMarkerCoord = COORDINATE:New(MarkInfo.pos.x,MarkInfo.pos.y,MarkInfo.pos.z) -- Creating a new coordinate object
   PlayerUCID = SPECTRE.UTILS.GetPlayerInfo(MarkInfo.author, "ucid") -- Fetching the unique ID of the player who changed the mark
@@ -5332,11 +5263,11 @@ function SPECTRE.PLYRMGR.Player:StoreData()
   local PlayerDatabase_Path = SPECTRE._persistenceLocations.PLYRMGR.path .. "PlayerDB/"--lfs.writedir() .. "SPECTRE/PlayerDatabase/"
   local PlayerDatabase_File = PlayerDatabase_Path .. self.ucid .. ".lua"
 
---  -- Ensure the directory exists or create it if not.
---  SPECTRE.IO.DirExists(PlayerDatabase_Path)
---
---  -- Ensure the player's data file exists or create it if not.
---  SPECTRE.IO.FileExists(PlayerDatabase_File)
+  --  -- Ensure the directory exists or create it if not.
+  --  SPECTRE.IO.DirExists(PlayerDatabase_Path)
+  --
+  --  -- Ensure the player's data file exists or create it if not.
+  --  SPECTRE.IO.FileExists(PlayerDatabase_File)
 
   -- Store the data structure in the player's data file.
   SPECTRE.IO.PersistenceToFile(PlayerDatabase_File, self.Points)
@@ -6493,7 +6424,7 @@ function SPECTRE.REWARDS.DispersePoints(EventData)
       mist.DBs.deadObjects[EventData.TgtDCSUnit.id_] = nil
     end
   end
-
+if TargetType then 
   local TargetDesc = Unit.getDescByName(TargetType)
   local TargetAttributes = TargetDesc.attributes
   local PointReward = getMatchingValue(TargetAttributes)
@@ -6505,6 +6436,9 @@ function SPECTRE.REWARDS.DispersePoints(EventData)
   end
 
   return PointReward
+  else 
+  return 0
+  end
 end
 
 --- Config.
@@ -7729,6 +7663,8 @@ function SPECTRE.SPAWNER:Generate()
   self:SetupSpawnGroups()
   self:Spawn()
 
+  --SPECTRE.IO.PersistenceToFile("TEST/SPAWNER/" .. os.time() .. "_spawner.lua",self,true)
+  
   if self.Benchmark == true then
     self.BenchmarkLog.Generate.Time.stop = os.clock()
   end
@@ -7831,14 +7767,18 @@ function SPECTRE.SPAWNER.FindObjectsInZone(_zone)
     -- Units
     if scanData.Units then
       for _, unit in pairs(scanData.Units) do
-        ObjectCoords.units[#ObjectCoords.units + 1] = {x = UNIT:FindByName(unit:getName()):GetPosition().p.x, y = UNIT:FindByName(unit:getName()):GetPosition().p.z}
+        if unit then
+          ObjectCoords.units[#ObjectCoords.units + 1] = {x = UNIT:FindByName(unit:getName()):GetPosition().p.x, y = UNIT:FindByName(unit:getName()):GetPosition().p.z}
+        end
       end
     end
 
     -- Scenery Table
     if scanData.SceneryTable then
       for _, scenery in ipairs(scanData.SceneryTable) do
-        ObjectCoords.others[#ObjectCoords.others + 1] = {x = scenery.SceneryObject:getPosition().p.x, y = scenery.SceneryObject:getPosition().p.z}
+        if scenery then
+          ObjectCoords.others[#ObjectCoords.others + 1] = {x = scenery.SceneryObject:getPosition().p.x, y = scenery.SceneryObject:getPosition().p.z}
+        end
       end
     end
   end
@@ -8378,6 +8318,9 @@ SPECTRE.SPAWNER.Zone_.SpacingSettings = {
 -- @param _numTYPE The number of entities or quantity of the specified type to add.
 -- @return #SPAWNER self
 function SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A(_TYPE, _numTYPE)
+  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A | -------------------")
+  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A | _TYPE: " .. tostring(_TYPE))
+  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A | _numTYPE: " .. tostring(_numTYPE))
   self._queueExtraTypeToGroupsZONE_A[_TYPE] = _numTYPE
   return self
 end
@@ -8393,6 +8336,9 @@ end
 function SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B()
   SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  ---------------- |")
   for _TYPE, _numTYPE in pairs(self._queueExtraTypeToGroupsZONE_A) do
+
+    SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  MAIN ZONE")
+
     local setting = self.Zones.Main.SpawnAmountSettings
     if not setting.ExtraTypesToGroups[_TYPE] then setting.ExtraTypesToGroups[_TYPE] = 0 end
     setting.ExtraTypesToGroups[_TYPE] = setting.ExtraTypesToGroups[_TYPE] + _numTYPE
@@ -8402,14 +8348,22 @@ function SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B()
       setting.numExtraUnits = setting.numExtraUnits + _tv
     end
     --  setting.numExtraUnits = setting.numExtraUnits + _numTYPE
+    SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  SUB ZONES")
     for _zoneName, _zoneObject in pairs (self.Zones.Sub) do
       local settingSub = _zoneObject.SpawnAmountSettings
       if not settingSub.ExtraTypesToGroups[_TYPE] then settingSub.ExtraTypesToGroups[_TYPE] = 0 end
       settingSub.ExtraTypesToGroups[_TYPE] = setting.ExtraTypesToGroups[_TYPE]
       settingSub.numExtraTypes = setting.numExtraTypes
       settingSub.numExtraUnits = setting.numExtraUnits
+
+      SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  Zone         : " .. _zoneName)
+      SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  numExtraTypes: " .. settingSub.numExtraTypes)
+      SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  numExtraUnits: " .. settingSub.numExtraUnits)
+      SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  _TYPE        : " .. _TYPE)
+      SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B | Extra of Types: " .. settingSub.ExtraTypesToGroups[_TYPE])
     end
   end
+
   return self
 end
 
@@ -8771,8 +8725,8 @@ function SPECTRE.SPAWNER:DynamicGenerationZONE(vec2, name, benchmark, summary)
   self:RollSpawnGroupSizes()
   self:Generate()
   if self.Benchmark then
-  if benchmark then self:_SaveBenchmark() end
-  if summary then self:Summary() end
+    if benchmark then self:_SaveBenchmark() end
+    if summary then self:Summary() end
   end
   return self
 end
@@ -9013,7 +8967,7 @@ function SPECTRE.SPAWNER:_Spawn(_zoneObject)
             SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:_Spawn | _vec2.x       : " .. _vec2.x .. " | _vec2.y :" .._vec2.y)
 
         end, capturedSpawnGroup, _vec2)
-        _Timer:Start(math.random(1,5))
+        _Timer:Start(math.random(2,10))
       end
     end
   end
@@ -9690,7 +9644,7 @@ function SPECTRE.SPAWNER:_SetupSpawnGroups(_zoneObject)
     self.BenchmarkLog._SetupSpawnGroups[_zoneObject.name] = {Time = {},}
     self.BenchmarkLog._SetupSpawnGroups[_zoneObject.name].Time.start = os.clock()
   end
-  local typeCounter = self.COUNTER
+  local typeCounter = SPECTRE.COUNTER--self.COUNTER
   -- Loop through each group setting.
   for _groupSettingIndex, setting in ipairs(_zoneObject.GroupSettings) do
     local _groupTypes = {}
@@ -9747,7 +9701,7 @@ function SPECTRE.SPAWNER:_SetupSpawnGroups(_zoneObject)
     -- Add the group types list to the main group list for this iteration.
     setting.SpawnedGROUPS = _groupTypes
   end
-  self.COUNTER = typeCounter
+  SPECTRE.COUNTER = typeCounter
   if self.Benchmark == true then
     self.BenchmarkLog._SetupSpawnGroups[_zoneObject.name].Time.stop = os.clock()
   end
@@ -10139,6 +10093,41 @@ function SPECTRE.UTILS.removeMatchingEntries(A, B)
   return A
 end
 
+---.
+-- Example Usage
+-- subListA_ = {1, 2, 3}, subListB_ = {4, 5, 6}, Master_ = {1, 2, 3, 4, 5, 6, 7, 8}
+-- result = findUnusedElements(subListA_, subListB_, Master_)
+-- result will contain {7, 8}
+function SPECTRE.UTILS.findUnusedElements(subListA_, subListB_, Master_)
+  local result = {}
+  local foundInAorB
+
+  -- Function to check if an element is in a given list
+  local function isInList(element, list)
+    for _, value in ipairs(list) do
+      if value == element then
+        return true
+      end
+    end
+    return false
+  end
+
+  -- Iterate through each element in Master_
+  for _, element in ipairs(Master_) do
+    -- Check if the element is in subListA_ or subListB_
+    foundInAorB = isInList(element, subListA_) or isInList(element, subListB_)
+
+    -- If the element is not found in subListA_ or B, add it to the result
+    if not foundInAorB then
+      table.insert(result, element)
+    end
+  end
+
+  return result
+end
+
+
+
 --- Check if a table contains a specific key.
 --
 -- Determines if a given key exists within the specified table.
@@ -10371,7 +10360,7 @@ end
 -- @param PlayerName The name of the player.
 -- @param attribute Optional attribute to retrieve specific data about the player.
 -- @return information The requested information or nil if the player is not found.
--- @usage local playerScore = SPECTRE.UTILS.GetPlayerInfo("JohnDoe", "score") -- Retrieves the score for the player "JohnDoe".
+-- @usage local playerScore = SPECTRE.UTILS.GetPlayerInfo("JohnDoe", "ucid") -- Retrieves the ucid for the player "JohnDoe".
 function SPECTRE.UTILS.GetPlayerInfo(PlayerName, attribute)
   if not PlayerName then return nil end
 
@@ -10379,8 +10368,12 @@ function SPECTRE.UTILS.GetPlayerInfo(PlayerName, attribute)
 
   for i=1, #playerList do
     local playerInfo = net.get_player_info(i)
-    if playerInfo.name == PlayerName then
-      return attribute and playerInfo[attribute] or playerInfo
+    if playerInfo then
+      if playerInfo.name then
+        if playerInfo.name == PlayerName then
+          return attribute and playerInfo[attribute] or playerInfo
+        end
+      end
     end
   end
 
@@ -11348,6 +11341,34 @@ function SPECTRE.ZONEMGR.getZoneCoalition(self, zoneName)
   return ownedBy
 end
 
+--- Retrieves the owned airfield and zones for red and blue.
+--
+-- @param #ZONEMGR self The instance of the zone manager.
+-- @return redZones
+-- @return blueZones
+-- @return redAirfields
+-- @return blueAirfields
+function SPECTRE.ZONEMGR.getOwnedProperty(self)
+  local redZones, blueZones, redAirfields, blueAirfields = {}, {}, {}, {}
+  for _k, _v in pairs(self.Zones) do
+    local zoneOwnedBy = self:getZoneCoalition(_k)
+    if zoneOwnedBy == 1 then
+      table.insert(redZones, _k)
+    elseif zoneOwnedBy == 2 then
+      table.insert(blueZones, _k)
+    end
+    for _ab, _abV in pairs(_v.Airbases) do
+      local airfieldOwnedBy = _abV.ownedBy
+      if airfieldOwnedBy == 1 then
+        table.insert(redAirfields, _ab)
+      elseif airfieldOwnedBy == 2 then
+        table.insert(blueAirfields, _ab)
+      end
+    end
+  end
+  return redZones, blueZones, redAirfields, blueAirfields
+end
+
 --- Calculates a strategically positioned vector point within a zone.
 --
 -- This function computes a vector point within specified boundaries that adheres to certain strategic constraints such as
@@ -11517,9 +11538,13 @@ function SPECTRE.ZONEMGR.FindUnitsInZone(self, t_ZOBJ)
       for _, unit in pairs(scanData.Units) do
         local _unitCoal = unit:getCoalition()
         local _unitName = unit:getName()
+        local _life = unit:getLife()
         SPECTRE.UTILS.debugInfo("SPECTRE.FLAG:FindUnitsInZone | FOUND UNIT  | _unitCoal | " .. _unitCoal .. " | _unitName | " .. _unitName)
         temp_detectedUnits[_unitCoal][#temp_detectedUnits[_unitCoal] + 1] = {
           name = _unitName,
+          unitObj = unit,
+          coal = _unitCoal,
+          life = _life,
         }
       end
     end
@@ -11544,10 +11569,16 @@ function SPECTRE.ZONEMGR.buildGroupsFromUnits(self, _detectedUnits, coal)
     for _, _Unit in ipairs(_detectedUnits[coal]) do
       local unitName  = _Unit.name
       local _unit     = Unit.getByName(unitName)
-      local _Group    =  Unit.getGroup(_unit )
-      local groupName = Group.getName(_Group)
-      SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | group in Zone |" .. groupName)
-      SPECTRE.UTILS.safeInsert(_GroupNames,groupName)
+      if _unit then
+        local _Group    =  Unit.getGroup(_unit )
+        if _Group then
+          local groupName = Group.getName(_Group)
+          if groupName then
+            SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | group in Zone |" .. groupName)
+            SPECTRE.UTILS.safeInsert(_GroupNames,groupName)
+          end
+        end
+      end
     end
   end
   return _GroupNames
@@ -11598,17 +11629,23 @@ end
 -- @param _country The country to which the airbase belongs.
 -- @param _zoneNameT (optional) Specific zone name to process, or all zones if not provided.
 -- @param SPWNR_ (optional) Spawner to use for airbase generation.
+-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 -- @return #ZONEMGR self The zone manager instance after spawning the airbase elements.
 -- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
 -- @usage newZoneManager:spawnAirbase("Airbase1", 2, "USA", "Zone1") -- Spawns "Airbase1" in "Zone1" for the Blue coalition and USA.
-function SPECTRE.ZONEMGR:spawnAirbase(_airbaseName, coalition, country, _zoneNameT, SPWNR_ )
+function SPECTRE.ZONEMGR:spawnAirbase(_airbaseName, coalition, country, _zoneNameT, SPWNR_, SPWNRTemplate)
+  _zoneNameT = _zoneNameT or nil
+  SPWNR_ = SPWNR_ or nil
+  SPWNRTemplate = SPWNRTemplate or nil
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbase | ------- ", _airbaseName)
   local zonesToProcess = _zoneNameT and {[_zoneNameT] = self.Zones[_zoneNameT]} or self.Zones
   for _zoneName, _zoneObject in pairs(zonesToProcess) do
     SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbase | Zone Name | ", _zoneName)
     local _airbaseObject = _zoneObject.Airbases[_airbaseName]
     if _airbaseObject then
+      if SPWNRTemplate ~= nil then SPWNR_ = SPECTRE.SPAWNER:New():ImportTemplate(SPWNRTemplate) end
       local _spawner = SPWNR_ or SPECTRE.SPAWNER:New():ImportTemplate(self.AIRFIELDSPAWNERS[SPECTRE.UTILS.PickRandomFromKVTable(self.AIRFIELDSPAWNERS)])
+
       SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbase | Airbase Object | ", _airbaseObject)
       local _vec2 = _airbaseObject.Object:GetVec2()
       local _airbaseSize = (_airbaseObject.Object.AirbaseZone.Radius * 1.5) * 2
@@ -11637,16 +11674,18 @@ end
 -- @param _zoneName The name of the zone where airbases are to be spawned.
 -- @param _coalition The coalition to which the airbases will belong.
 -- @param _country The country to which the airbases will belong.
+-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 -- @return #ZONEMGR self The zone manager instance after spawning the airbases in the specified zone.
 -- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
 -- @usage newZoneManager:spawnAirbasesInZone("Zone1", 2, "USA") -- Spawns all airbases in "Zone1" for the Blue coalition and USA.
-function SPECTRE.ZONEMGR:spawnAirbasesInZone(_zoneName, _coalition, _country)
+function SPECTRE.ZONEMGR:spawnAirbasesInZone(_zoneName, _coalition, _country, SPWNRTemplate)
+  SPWNRTemplate = SPWNRTemplate or nil
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbasesInZone | _zoneName | " ..  _zoneName)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbasesInZone | coalition | " ,  _coalition)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbasesInZone | country   | " ,  _country)
   local _zoneObject = self.Zones[_zoneName]
   for _airbaseName, _airbaseObject in pairs (_zoneObject.Airbases) do
-    self:spawnAirbase(_airbaseName, _coalition, _country, _zoneName)
+    self:spawnAirbase(_airbaseName, _coalition, _country, _zoneName, nil, SPWNRTemplate)
   end
   return self
 end
@@ -11666,10 +11705,14 @@ end
 -- @param country The country to which the fill elements will belong.
 -- @param _zoneName The name of the zone where the elements are to be spawned.
 -- @param SPWNR_ (optional) The spawner to use for fill generation.
+-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 -- @return #ZONEMGR self The zone manager instance after spawning the fill elements.
 -- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
 -- @usage newZoneManager:spawnFillAtVec2({x = 1000, y = 2000}, 5000, 2, "USA", "Zone1") -- Spawns fill elements at the specified location in "Zone1".
-function SPECTRE.ZONEMGR:spawnFillAtVec2(vec2_SpawnCenter, diameter_SpawnZone, coalition, country, _zoneName, SPWNR_ )
+function SPECTRE.ZONEMGR:spawnFillAtVec2(vec2_SpawnCenter, diameter_SpawnZone, coalition, country, _zoneName, SPWNR_ , SPWNRTemplate)
+  SPWNR_ = SPWNR_ or nil
+  SPWNRTemplate = SPWNRTemplate or nil
+  if SPWNRTemplate ~= nil then SPWNR_ = SPECTRE.SPAWNER:New():ImportTemplate(SPWNRTemplate) end
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnFillAtVec2 | ------- ")
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnFillAtVec2 | _zoneName : " .. _zoneName)
   local _spawner = SPWNR_ or SPECTRE.SPAWNER:New():ImportTemplate(self.FILLSPAWNERS[SPECTRE.UTILS.PickRandomFromKVTable(self.FILLSPAWNERS)])
@@ -11698,10 +11741,14 @@ end
 -- @param coalition The coalition to which the fill elements will belong.
 -- @param country The country to which the fill elements will belong.
 -- @param SPWNR_ (optional) The spawner to use for fill generation.
+-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 -- @return #ZONEMGR self The zone manager instance after spawning the fill elements in the specified zone.
 -- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
 -- @usage newZoneManager:spawnFillInZone("Zone1", 2, "USA") -- Spawns fill elements in "Zone1" for the Blue coalition and USA.
-function SPECTRE.ZONEMGR:spawnFillInZone(_zoneName, coalition, country, SPWNR_)
+function SPECTRE.ZONEMGR:spawnFillInZone(_zoneName, coalition, country, SPWNR_, SPWNRTemplate)
+  SPWNR_ = SPWNR_ or nil
+  SPWNRTemplate = SPWNRTemplate or nil
+  if SPWNRTemplate ~= nil then SPWNR_ = SPECTRE.SPAWNER:New():ImportTemplate(SPWNRTemplate) end
   local _bias = 0
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnFillInZone | ---- | " .. _zoneName .. " | --------")
   local _spawner = SPWNR_ or SPECTRE.SPAWNER:New():ImportTemplate(self.FILLSPAWNERS[SPECTRE.UTILS.PickRandomFromKVTable(self.FILLSPAWNERS)])
@@ -11714,7 +11761,7 @@ function SPECTRE.ZONEMGR:spawnFillInZone(_zoneName, coalition, country, SPWNR_)
   local vec2_SpawnCenter
   local flag_goodcoord = true
   local glassBreak = 0
-  _zoneObject:getHotspotGroups()
+  --_zoneObject:getHotspotGroups()
   repeat
     flag_goodcoord = true
     vec2_SpawnCenter = _zoneObject.ZONEPOLYOBJ:GetRandomVec2()
@@ -11753,7 +11800,10 @@ end
 -- @return #ZONEMGR self The zone manager instance after strategically spawning the fill elements in the specified zone.
 -- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
 -- @usage newZoneManager:spawnFillInZoneSmart("Zone1", 2, "USA", nil, 0) -- Strategically spawns fill elements in "Zone1" for the Blue coalition and USA.
-function SPECTRE.ZONEMGR:spawnFillInZoneSmart(_zoneName, coalition, country,  SPWNR_, _bias)
+function SPECTRE.ZONEMGR:spawnFillInZoneSmart(_zoneName, coalition, country,  SPWNR_, _bias, SPWNRTemplate)
+  SPWNR_ = SPWNR_ or nil
+  SPWNRTemplate = SPWNRTemplate or nil
+   if SPWNRTemplate ~= nil then SPWNR_ = SPECTRE.SPAWNER:New():ImportTemplate(SPWNRTemplate) end
   _bias = _bias or 0
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnFillInZone | ---- | " .. _zoneName .. " | --------")
   local _spawner = SPWNR_ or SPECTRE.SPAWNER:New():ImportTemplate(self.FILLSPAWNERS[SPECTRE.UTILS.PickRandomFromKVTable(self.FILLSPAWNERS)])
@@ -11797,6 +11847,13 @@ end
 -- ===
 -- @section SPECTRE.ZONEMGR
 
+--- .
+-- @param #ZONEMGR
+-- @return #ZONEMGR self The zone manager instance after adding or updating the spawner template.
+function SPECTRE.ZONEMGR:clearFillSpawnerTemplates()
+  self.FILLSPAWNERS = {}
+  return self
+end
 
 --- Adds a fill spawner template to the zone manager.
 --
@@ -11826,6 +11883,14 @@ function SPECTRE.ZONEMGR:AddFillSpawnerTemplate(_SPWNR, name_, force)
       return self._CreateSpawnerTemplate(_SPWNR, _Object)  -- Update: Pass _Object to the new function
     end
   )
+  return self
+end
+
+--- .
+-- @param #ZONEMGR
+-- @return #ZONEMGR self The zone manager instance after adding or updating the spawner template.
+function SPECTRE.ZONEMGR:clearAirfieldSpawnerTemplates()
+  self.AIRFIELDSPAWNERS = {}
   return self
 end
 
@@ -11905,7 +11970,7 @@ function SPECTRE.ZONEMGR:Init()
     zoneObject:DrawZone()
     zoneObject:DrawArrows()
   end
-
+  self:InitSSB()
   -- Initialize event handlers for each zone.
   for zoneName, zoneObject in pairs(self.Zones) do
     zoneObject:InitHandlers()
@@ -11971,6 +12036,7 @@ function SPECTRE.ZONEMGR:UpdateSchedInit()
         for zoneName, zoneObject in pairs(self.Zones) do
           if zoneObject.UpdateQueue > 0 then
             zoneObject.UpdateQueue = zoneObject.UpdateQueue - 1
+            if zoneObject.UpdateQueue > 2 then zoneObject.UpdateQueue = 2 end
             SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:self.UpdateSched | END UPDATE RUN: " .. zoneName .. " | Q: " .. zoneObject.UpdateQueue )
           end
         end
@@ -12092,25 +12158,38 @@ end
 --  return self
 --end
 
---- Activates the SSB (Side-Specific Behaviors) property within the ZoneManager.
+--- Activates the SSB  property within the ZoneManager.
 --
 -- This function enables the SSB property for the ZoneManager.
--- It also sets a user flag to indicate the SSB status, ensuring that SSB-related functionalities are properly handled within the game environment.
 -- The function allows for an optional parameter to enable or disable the SSB property, defaulting to true (enabled) if not specified.
 --
 -- @param #ZONEMGR self The instance of the zone manager.
 -- @param enabled (optional) Boolean value to enable (true) or disable (false) the SSB property. Defaults to true if not specified.
 -- @return #ZONEMGR self The zone manager instance with the SSB property initialized.
--- @usage local zoneManagerWithSSB = SPECTRE.ZONEMGR:InitSSB() -- Initializes the SSB property in the ZoneManager.
-function SPECTRE.ZONEMGR:InitSSB(enabled)
+-- @usage local zoneManagerWithSSB = SPECTRE.ZONEMGR:enableSSB() -- Initializes the SSB property in the ZoneManager.
+function SPECTRE.ZONEMGR:enableSSB(enabled)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:InitSSB | ---------------------")
   enabled = enabled or true
   -- Enable the SSB property.
   self.SSB = enabled
 
-  -- Set the user flag "SSB" to the SSBoff value.
-  trigger.action.setUserFlag("SSB", self.SSBoff)
+  return self
+end
 
+--- Activates the SSB property within the ZoneManager.
+--
+-- This function inits  SSB  for the ZoneManager.
+--
+-- @param #ZONEMGR self The instance of the zone manager.
+-- @return #ZONEMGR self The zone manager instance with the SSB property initialized.
+-- @usage local zoneManagerWithSSB = SPECTRE.ZONEMGR:InitSSB() -- Initializes the SSB property in the ZoneManager.
+function SPECTRE.ZONEMGR:InitSSB()
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:InitSSB | ---------------------")
+  if self.SSB == true then
+    -- Enable the SSB property.
+    -- Set the user flag "SSB" to the SSBoff value.
+    trigger.action.setUserFlag("SSB", self.SSBoff)
+  end
   return self
 end
 --- Initializes the scheduler for managing hotspots within zones.
@@ -12194,7 +12273,7 @@ function SPECTRE.ZONEMGR:CAPschedInit()
 
             if _selectedAirbase then
 
-              local typeCounter = self.COUNTER
+              local typeCounter = SPECTRE.COUNTER--self.COUNTER
               local tempCode = typeCounter
               local FoundGroup
 
@@ -13036,6 +13115,8 @@ SPECTRE.ZONEMGR.Zone._detectedUnits = {}
 --- Density-based clustering for ground units in zone.
 -- @field #ZONEMGR.Zone._DBScan
 SPECTRE.ZONEMGR.Zone._DBScan = {}
+---.
+SPECTRE.ZONEMGR.Zone._DBScanInProg = false
 --- Processed DB clusters for ground units in zone.
 -- @field #ZONEMGR.Zone.HotspotClusters
 SPECTRE.ZONEMGR.Zone.HotspotClusters = {}
@@ -13233,9 +13314,8 @@ function SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_(eventData)
 
   if capturedAirbase then
     capturedAirbase.oldOwnedBy = capturedAirbase.ownedBy
-    capturedAirbase.ownedBy = eventData.initiator.getCoalition(eventData.initiator)
+    capturedAirbase.ownedBy = capturedAirbase.Object:GetCoalition()--eventData.initiator.getCoalition(eventData.initiator)
   end
-
 
   if capturedAirbase and self.ZoneManager.SSB then
     self:UpdateSSBAirfield(eventData.PlaceName)
@@ -13259,10 +13339,61 @@ function SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_(eventData)
   if capturedAirbase and
     self._AirfieldCaptureClean
   then
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | ---------------------")
 
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | removeJunk")
+    local _vec2Clean = self.Airbases[eventData.PlaceName].vec2
+    local _height = land.getHeight(_vec2Clean)
+    local volS = {
+      id = world.VolumeType.SPHERE,
+      params = {
+        point = {x = _vec2Clean.x, y = _height, z = _vec2Clean.y},
+        radius = 5000
+      }
+    }
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | _vec2Clean", _vec2Clean)
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | _height", _height)
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | volS", volS)
+    world.removeJunk(volS)
+
+    --    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | removeDeadUnits")
+    --    local t_ZOBJ = ZONE_RADIUS:New(tostring(os.time()) .. "_TEMP",_vec2Clean,volS.params.radius)
+    --    local foundUnits = self.ZoneManager:FindUnitsInZone(t_ZOBJ)
+    --
+    --    SPECTRE.IO.PersistenceToFile("TEST/MISTDBs/deadObjects.lua", mist.DBs.deadObjects)
+    --
+    --    --Clean dead units
+    --
+    --    for _indexID, _Object in pairs (mist.DBs.deadObjects) do
+    --
+    --      if _Object.objectData then
+    --        local _vec2 = {x = _Object.objectData.pos.x, y = _Object.objectData.pos.z}
+    --
+    --        if SPECTRE.POLY.distance(_vec2Clean, _vec2) < 5000 then
+    --          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | Determined at airfield : " ..  _Object.objectData.unitName)
+    --          trigger.action.explosion(_Object.objectData.pos , 1000 )
+    --          --        local _unit = Unit.getByName(_Object.objectData.unitName)
+    --          --        _unit:destroy()
+    --        end
+    --      end
+    --
+    --    end
+    --
+    --
+    --    for _i = 0, 2, 1 do
+    --      if foundUnits[_i] and #foundUnits[_i] > 0 then
+    --        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | removeDeadUnits - Found Units to remove for: " .. _i)
+    --        for _index, unit in ipairs (foundUnits[_i]) do
+    --          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | Unit Name: ".. tostring( unit.name))
+    --          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | Unit Life: ".. tostring( unit.life))
+    --          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:_AirfieldCaptureClean | Unit: ", unit)
+    --          if unit.life <= 2 then
+    --            unit.unitObj:destroy(false)
+    --          end
+    --        end
+    --      end
+    --    end
   end
-
-
 
   return self
 end
@@ -14013,7 +14144,8 @@ function SPECTRE.ZONEMGR.Zone:_HotspotSchedInit()
       SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSchedInit | UPDATES ALREADY IN PROG")
     end
     return self
-  end, {self}, math.random(1,5), math.random(20,30), 0.25)
+  end, {self}, math.random(1,20), self.UpdateInterval, self.UpdateIntervalNudge)
+
   return self
 end
 --- Enable or disable hotspot intelligence for the zone.
@@ -14083,38 +14215,23 @@ end
 -- @usage local zoneWithHotspots = someZone:getHotspotGroups() -- Retrieves and organizes groups of units as hotspots within the zone.
 function SPECTRE.ZONEMGR.Zone:getHotspotGroups()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotGroups | ------------------------ ")
-
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotGroups | FindUnitsInZone: " .. self.ZoneName)
   self:FindUnitsInZone()
-
-  if SPECTRE.DebugEnabled == 1 then
-    local force = true
-    local _Randname = "Hotspot_DetectedUnits"
-    local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
-    SPECTRE.IO.PersistenceToFile(_filename, self._detectedUnits, force)
-  end
-
-
   self.HotspotClusters = {}
   self._DBScan = {}
 
   for _coal = 0, 2 , 1 do
     if self._detectedUnits[_coal] and #self._detectedUnits[_coal] > 0 then
-      self:generateDBSCANparams(_coal)
-      self:DBSCAN(_coal)
+      local _DBscanner = SPECTRE.BRAIN.DBSCANNER:New(self._detectedUnits[_coal],self.Area, self._hotspotDrawExtension):Scan()
+      self.HotspotClusters[_coal] = _DBscanner.Clusters
 
       if SPECTRE.DebugEnabled == 1 then
         local force = true
-        local _Randname = "Hotspot_DBscan"
+        local _Randname = "Hotspot_DetectedUnits_" .. _coal
         local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
-        SPECTRE.IO.PersistenceToFile(_filename, self._DBScan[_coal], force)
-      end
-
-      self:post_process_clusters(_coal)
-
-      if SPECTRE.DebugEnabled == 1 then
-        local force = true
-        local _Randname = "Hotspot_processed"
-        local _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
+        SPECTRE.IO.PersistenceToFile(_filename, self._detectedUnits[_coal], force)
+        _Randname = "Hotspot_Clusters_" .. _coal
+        _filename = SPECTRE._persistenceLocations.ZONEMGR.path .. "DEBUG/"  .. self.ZoneName .. "/" .. _Randname .. ".lua"
         SPECTRE.IO.PersistenceToFile(_filename, self.HotspotClusters[_coal], force)
       end
 
@@ -14123,217 +14240,6 @@ function SPECTRE.ZONEMGR.Zone:getHotspotGroups()
   return self
 end
 
---- Apply DBSCAN clustering algorithm to units within the zone based on coalition.
---
--- This function implements the Density-Based Spatial Clustering of Applications with Noise (DBSCAN) algorithm to group units within the zone.
--- It is applied to units of a specific coalition (coal) and organizes them into clusters based on proximity. This clustering is crucial for identifying
--- significant gatherings or formations of units, allowing for a more nuanced understanding of the strategic situation within the zone. The function
--- marks units as part of a cluster or noise based on the parameters `epsilon` (radius) and `min_samples` (minimum number of units to form a cluster).
---
--- @param #ZONEMGR.Zone self The Zone instance for which the DBSCAN algorithm is to be applied.
--- @param coal The coalition (0, 1, or 2) for which the clustering is to be performed.
--- @return #ZONEMGR.Zone self The Zone instance after applying the DBSCAN algorithm.
--- @usage local clusteredZone = someZone:DBSCAN(coalition) -- Applies DBSCAN to units of the specified coalition within the zone.
-function SPECTRE.ZONEMGR.Zone:DBSCAN(coal)
-  -- Debug information consolidated
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DBSCAN | --------------------------------------------\n" ..
-    "| epsilon     | " .. self.epsilon .. "\n" ..
-    "| min_samples | " .. self.min_samples .. "\n" ..
-    "| numUnits    | " .. #self._detectedUnits[coal] .. "\n" ..
-    "| coal        | " .. coal .. "\n" ..
-    "| Area        | " .. self.Area)
-
-  -- Initialization
-  local UNMARKED, NOISE = 0, -1
-  local cluster_id = 0
-  self._DBScan[coal] = {}
-
-  -- Mark all units as unmarked initially
-  for _, unit in ipairs(self._detectedUnits[coal]) do
-    self._DBScan[coal][unit.unit] = UNMARKED
-  end
-
-  -- Main clustering loop
-  for _, unit in ipairs(self._detectedUnits[coal]) do
-    if self._DBScan[coal][unit.unit] == UNMARKED then
-      local neighbors = self:region_query(coal, unit)
-
-      if #neighbors < self.min_samples then
-        self._DBScan[coal][unit.unit] = NOISE
-      else
-        cluster_id = cluster_id + 1
-        self:expand_cluster(coal, unit, neighbors, cluster_id)
-      end
-    end
-  end
-  return self
-end
-
---- Identify neighboring units within a specified radius for a given point.
---
--- This function is a key component of the DBSCAN clustering algorithm. It identifies neighboring units within a defined radius (`epsilon`)
--- from a given point. The function is essential for determining the local density of units, helping to categorize units as either part of a
--- cluster or as noise. It scans through all detected units of a specific coalition and identifies those that are within the radius of the
--- provided point, effectively gathering a list of neighbors.
---
--- @param #ZONEMGR.Zone The Zone instance in which the region query is performed.
--- @param coal The coalition (0, 1, or 2) of the units to consider.
--- @param point The reference point from which neighbors are to be identified.
--- @return neighbors A table containing units identified as neighbors within the specified radius.
--- @usage local neighbors = someZone:region_query(coalition, referencePoint) -- Identifies neighboring units within a radius from the reference point for the specified coalition.
-function SPECTRE.ZONEMGR.Zone:region_query(coal, point)
-  -- Debug information consolidated
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:region_query | --------------------------------------------\n" ..
-    "| coal        | " .. coal .. "\n" ..
-    "| point       | ", point)
-
-  local neighbors = {}
-  -- Iterate through detected units and find neighbors within the epsilon distance
-  for _, unit in ipairs(self._detectedUnits[coal]) do
-    if SPECTRE.POLY.distance(point.vec2, unit.vec2) < self.epsilon then
-      table.insert(neighbors, unit)
-    end
-  end
-  return neighbors
-end
-
---- Expand a cluster by adding neighboring units that meet the criteria.
---
--- As part of the DBSCAN clustering algorithm, this function expands a given cluster by adding units that are neighbors and meet the
--- specified criteria. It examines each neighboring unit, determining if they should be part of the cluster based on their proximity and
--- the minimum samples threshold. This function is crucial in building clusters that accurately represent groups of units in the game,
--- allowing for a more detailed and strategic understanding of unit distribution within a zone.
---
--- @param #ZONEMGR.Zone The Zone instance in which the cluster is being expanded.
--- @param coal The coalition (0, 1, or 2) of the units being considered.
--- @param point The starting point of the cluster.
--- @param neighbors A list of neighboring units to the starting point.
--- @param cluster_id The identifier of the cluster being expanded.
--- @return #ZONEMGR.Zone self The Zone instance after expanding the cluster.
--- @usage someZone:expand_cluster(coalition, startingPoint, neighbors, clusterId) -- Expands the cluster with additional units meeting the DBSCAN criteria.
-function SPECTRE.ZONEMGR.Zone:expand_cluster(coal, point, neighbors, cluster_id)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | -------------------------------------------- ")
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | coal        | " .. coal)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | cluster_id  | " .. cluster_id)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | point       | ", point)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | neighbors   | ", neighbors)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | labels      | ", self._DBScan[coal])
-
-  local UNMARKED, NOISE = 0, -1
-  self._DBScan[coal][point.unit] = cluster_id
-
-  local i = 1
-  while i <= #neighbors do
-    local neighbor = neighbors[i]
-
-    if self._DBScan[coal][neighbor.unit] == NOISE or self._DBScan[coal][neighbor.unit] == UNMARKED then
-      self._DBScan[coal][neighbor.unit] = cluster_id
-      local new_neighbors = self:region_query(coal, neighbor)
-      if #new_neighbors >= self.min_samples then
-        for _, new_neighbor in ipairs(new_neighbors) do
-          table.insert(neighbors, new_neighbor)
-        end
-      end
-    end
-
-    i = i + 1
-  end
-  return self
-end
-
---- Process and refine clusters for hotspots based on coalition.
---
--- Following the clustering of units using the DBSCAN algorithm, this function performs post-processing on the identified clusters.
--- It refines each cluster by calculating its geometric center and radius, effectively defining the hotspots more precisely.
--- This refinement is crucial for accurately representing the spatial characteristics of each hotspot, such as its central location
--- and the extent of its influence or area of coverage. The process aids in better understanding and visualization of strategic
--- groupings of units within the zone.
---
--- @param #ZONEMGR.Zone self The Zone instance for which cluster post-processing is to be conducted.
--- @param coal The coalition (0, 1, or 2) for which clusters are being processed.
--- @return #ZONEMGR.Zone self The Zone instance after post-processing the clusters.
--- @usage local refinedZone = someZone:post_process_clusters(coalition) -- Post-processes the clusters for the specified coalition.
-function SPECTRE.ZONEMGR.Zone:post_process_clusters(coal)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | -------------------------------------------- ")
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | coal        | " .. coal)
-
-  local clusters = {}
-  local cluster_centers = {}
-  local cluster_radii = {}
-  self.HotspotClusters[coal] = {}
-  -- Group units by cluster
-  for _, unit in ipairs(self._detectedUnits[coal]) do
-    local cluster = self._DBScan[coal][unit.unit]
-    if not clusters[cluster] then
-      clusters[cluster] = {}
-    end
-    table.insert(clusters[cluster], unit)
-  end
-
-  -- Compute center and radius for each cluster
-  for cluster, units in pairs(clusters) do
-    local sum_x = 0
-    local sum_y = 0
-    local max_radius = 0
-    for _, unit in ipairs(units) do
-      sum_x = sum_x + unit.vec2.x
-      sum_y = sum_y + unit.vec2.y
-    end
-    local center = {x = sum_x / #units, y = sum_y / #units}
-    cluster_centers[cluster] = center
-
-    for _, unit in ipairs(units) do
-      local distance = SPECTRE.POLY.distance(center, unit.vec2)
-      if distance > max_radius then
-        max_radius = distance
-      end
-    end
-    cluster_radii[cluster] = max_radius
-  end
-
-  local sorted_groups = {}
-  for cluster, units in pairs(clusters) do
-    if cluster > 0 then
-      table.insert(sorted_groups, {
-        Units = units,
-        Center = cluster_centers[cluster],
-        CenterVec3 = mist.utils.makeVec3(cluster_centers[cluster]),
-        Radius = cluster_radii[cluster] + self._hotspotDrawExtension,
-      })
-    end
-  end
-  self.HotspotClusters[coal] = sorted_groups
-  return self
-end
-
---- Generate parameters for the DBSCAN clustering algorithm based on the zone's characteristics and unit count.
---
--- This function dynamically calculates the key parameters for the DBSCAN clustering algorithm: `epsilon` (the search radius)
--- and `min_samples` (the minimum number of units to form a cluster). The calculations are based on the total number of units
--- within the coalition and the area of the zone. These parameters are critical for adapting the DBSCAN algorithm to varying
--- densities and distributions of units, ensuring effective clustering that reflects the actual strategic layout within the zone.
---
--- @param #ZONEMGR.Zone self The Zone instance for which the DBSCAN parameters are to be generated.
--- @param coal The coalition (0, 1, or 2) for which the DBSCAN parameters are being calculated.
--- @return #ZONEMGR.Zone self The Zone instance after generating the DBSCAN parameters.
--- @usage local zoneWithParams = someZone:generateDBSCANparams(coalition) -- Generates DBSCAN parameters for the specified coalition.
-function SPECTRE.ZONEMGR.Zone:generateDBSCANparams(coal)
-  -- Initial calculations
-  local n = #self._detectedUnits[coal]
-  self.epsilon = self.f * math.sqrt(self.Area / n)
-  self.min_samples = math.ceil(self.p * n)
-
-  -- Debug information consolidated
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:generateDBSCANparams | ------------------------\n" ..
-    "| NumUnits    | " .. n .. "\n" ..
-    "| ZoneArea    | " .. self.Area .. "\n" ..
-    "| f           | " .. self.f .. "\n" ..
-    "| p           | " .. self.p .. "\n" ..
-    "| epsilon     | " .. self.epsilon .. "\n" ..
-    "| min_samples | " .. self.min_samples)
-
-  return self
-end
 
 --- Draw hotspot circles on the map for each coalition.
 --
@@ -14349,8 +14255,8 @@ function SPECTRE.ZONEMGR.Zone:DrawHotspots()
   -- Define constants
   -- local _coal = 1
   local oppcoalt_ = {[0] = -1, [1] = 2, [2] = 1,} --2
-  local color = {0.36, 0.36, 0.36, 0.50}--0.6}
-  local fillColor = {0.99, 0.847, 1,0.15}-- 0.25}
+  local color = {0.36, 0.36, 0.36, 0.60}--0.6}
+  local fillColor = {0.99, 0.847, 1,0.25}-- 0.25}
   for _coal = 0, 2 , 1 do
     local oppcoal = oppcoalt_[_coal]
     -- Check if there are hotspots to draw
@@ -14411,80 +14317,76 @@ function SPECTRE.ZONEMGR.Zone:ClearHotspots()
       for _hotspotIndex, _Hotspot in ipairs(self.HotspotMarkers[_coal]) do
         if _Hotspot.MarkerID ~= 0 then
           SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:ClearHotspots | Removing Marker | " .. _Hotspot.MarkerID)
-
-
           local markerTable_ = {
             MarkerID = _Hotspot.MarkerID,
           }
           table.insert(self.ZoneManager._removeMarkerQueue, markerTable_)
-
           -- trigger.action.removeMark(_Hotspot.MarkerID)
         end
       end
     end
-
     self.HotspotMarkers[_coal] = {}
   end
   return self
 end
 
---- Gather and display intelligence information for hotspots in the zone.
---
+--- Gathers and displays intelligence information for hotspots in the zone.
 -- This function compiles intelligence data for each hotspot in the zone, summarizing the types of units present within each hotspot.
 -- It then visually represents this intelligence on the map, providing insights into the composition of forces or resources at strategic locations.
 -- This information is valuable for tactical decision-making and understanding the nature of the opposition within different hotspots.
---
 -- @param #ZONEMGR.Zone
 -- @return #ZONEMGR.Zone self The Zone instance after gathering and displaying intelligence information for its hotspots.
 -- @usage local zoneWithIntel = someZone:getHotspotsIntel() -- Gathers and displays intelligence data for hotspots in the zone.
 function SPECTRE.ZONEMGR.Zone:getHotspotsIntel()
-  local _coalt = {[0] = -1, [1] = 2, [2] = 1,}
-
+  local _coalitionMap = {[0] = -1, [1] = 2, [2] = 1}
 
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | START ------------------------")
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | Zone: " .. self.ZoneName )
-  for _coal = 1, 2 , 1 do
-    local oppcoal = _coalt[_coal]
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel |          Coal: " .. _coal )
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | Opposing Coal: " .. oppcoal )
-    if self.HotspotClusters[_coal] and #self.HotspotClusters[_coal] > 0 then
-      for _hotspotIndex, _Hotspot in ipairs(self.HotspotClusters[_coal]) do
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | Zone: " .. self.ZoneName)
+  for _coalition = 1, 2 do
+    local opposingCoalition = _coalitionMap[_coalition]
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | Coal: " .. _coalition)
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | Opposing Coal: " .. opposingCoalition)
+
+    if self.HotspotClusters[_coalition] and #self.HotspotClusters[_coalition] > 0 then
+      for _hotspotIndex, _Hotspot in ipairs(self.HotspotClusters[_coalition]) do
         local _hotspotAttributes = {}
-        for _, _unitDetails in ipairs (_Hotspot.Units) do
+        for _, _unitDetails in ipairs(_Hotspot.Units) do
           if _unitDetails.matchedType then
             table.insert(_hotspotAttributes, _unitDetails.matchedType)
           end
         end
         local _countedAttributes = SPECTRE.UTILS.CountValues(_hotspotAttributes)
         local totalTypes = 0
-        for _, _numTypes in pairs (_countedAttributes) do
+        for _, _numTypes in pairs(_countedAttributes) do
           totalTypes = totalTypes + _numTypes
         end
 
         local intelString = "Intel: "
-        for _Type, _numTypes in pairs (_countedAttributes) do
+        for _Type, _numTypes in pairs(_countedAttributes) do
           intelString = intelString .. _Type .. ", "
         end
+        intelString = intelString:sub(1, -3) -- Remove trailing comma and space.
 
         -- Assign a new mark ID and increment the global marker counter.
-        if not self.IntelMarkers[_coal] then self.IntelMarkers[_coal] = {} end
-        local _tLength = #self.IntelMarkers[_coal] + 1
-        self.IntelMarkers[_coal][_tLength] = {}
-        self.IntelMarkers[_coal][_tLength].MarkerID = self.ZoneManager.codeMarker_
-        self.IntelMarkers[_coal][_tLength].intelString = intelString
+        self.IntelMarkers[_coalition] = self.IntelMarkers[_coalition] or {}
+        local _tLength = #self.IntelMarkers[_coalition] + 1
+        self.IntelMarkers[_coalition][_tLength] = {
+          MarkerID = self.ZoneManager.codeMarker_,
+          intelString = intelString
+        }
         self.ZoneManager.codeMarker_ = self.ZoneManager.codeMarker_ + 1
-        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | intelString: " .. intelString )
-        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | MarkerID: " .. tostring(self.IntelMarkers[_coal][_tLength].MarkerID ))
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | intelString: " .. intelString)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:getHotspotsIntel | MarkerID: " .. tostring(self.IntelMarkers[_coalition][_tLength].MarkerID))
 
         local markerTable_ = {
-          MarkerID = self.IntelMarkers[_coal][_tLength].MarkerID,
+          MarkerID = self.IntelMarkers[_coalition][_tLength].MarkerID,
           intelString = intelString,
           Vec3 = _Hotspot.CenterVec3,
-          coal = oppcoal,
-          ReadOnly = self.ReadOnly,
+          coal = opposingCoalition,
+          ReadOnly = self.ReadOnly
         }
         table.insert(self.ZoneManager._markerQueue, markerTable_)
-        --trigger.action.markToCoalition(self.IntelMarkers[_coal][_tLength].MarkerID, intelString, _Hotspot.CenterVec3, oppcoal, self.ReadOnly)
+        --trigger.action.markToCoalition(self.IntelMarkers[_coalition][_tLength].MarkerID, intelString, _Hotspot.CenterVec3, opposingCoalition, self.ReadOnly)
       end
     end
   end
@@ -14519,14 +14421,12 @@ function SPECTRE.ZONEMGR.Zone:ClearIntel()
             MarkerID = _Hotspot.MarkerID,
           }
           table.insert(self.ZoneManager._removeMarkerQueue, markerTable_)
-
           -- trigger.action.removeMark(_Hotspot.MarkerID)
         end
       end
     end
     self.IntelMarkers[_coal] = {}
   end
-
   SPECTRE.UTILS.debugInfo(debugInfo)
   return self
 end

@@ -1098,6 +1098,8 @@
   self:SetupSpawnGroups()
   self:Spawn()
 
+  <span class="comment">--SPECTRE.IO.PersistenceToFile("TEST/SPAWNER/" .. os.time() .. "_spawner.lua",self,true)
+</span>
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
     self.BenchmarkLog.Generate.Time.stop = <span class="global">os</span>.clock()
   <span class="keyword">end</span>
@@ -1125,7 +1127,7 @@
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param possibleVec2 The vector position to be checked.
 </span><span class="comment">-- @param restrictedZones A list of restricted zones to check against.
-</span><a id="1047"></a><span class="comment">-- @return flag_goodcoord A boolean flag indicating if the position is outside no-go areas (true if suitable, false otherwise).
+</span><a id="1049"></a><span class="comment">-- @return flag_goodcoord A boolean flag indicating if the position is outside no-go areas (true if suitable, false otherwise).
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.checkNOGO(self, possibleVec2, restrictedZones)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:checkNOGO | -------------------------------------------------------------------------"</span>)
   <span class="keyword">local</span> flag_goodcoord = <span class="keyword">true</span>
@@ -1170,7 +1172,7 @@
 </span><span class="comment">--                       }
 </span><span class="comment">--
 </span><span class="comment">-- @param _zone ZONE_RADIUS object to be scanned for objects.
-</span><a id="1092"></a><span class="comment">-- @return ObjectCoords A table containing the coordinates of all objects detected in the zone, categorized by type.
+</span><a id="1094"></a><span class="comment">-- @return ObjectCoords A table containing the coordinates of all objects detected in the zone, categorized by type.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.FindObjectsInZone(_zone)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER.FindObjectsInZone | -------------------------------------------------------------------------"</span>)
   <span class="keyword">local</span> ObjectCoords = {
@@ -1200,14 +1202,18 @@
     <span class="comment">-- Units
 </span>    <span class="keyword">if</span> scanData.Units <span class="keyword">then</span>
       <span class="keyword">for</span> _, unit <span class="keyword">in</span> <span class="global">pairs</span>(scanData.Units) <span class="keyword">do</span>
-        ObjectCoords.units[#ObjectCoords.units + <span class="number">1</span>] = {x = UNIT:FindByName(unit:getName()):GetPosition().p.x, y = UNIT:FindByName(unit:getName()):GetPosition().p.z}
+        <span class="keyword">if</span> unit <span class="keyword">then</span>
+          ObjectCoords.units[#ObjectCoords.units + <span class="number">1</span>] = {x = UNIT:FindByName(unit:getName()):GetPosition().p.x, y = UNIT:FindByName(unit:getName()):GetPosition().p.z}
+        <span class="keyword">end</span>
       <span class="keyword">end</span>
     <span class="keyword">end</span>
 
     <span class="comment">-- Scenery Table
 </span>    <span class="keyword">if</span> scanData.SceneryTable <span class="keyword">then</span>
       <span class="keyword">for</span> _, scenery <span class="keyword">in</span> <span class="global">ipairs</span>(scanData.SceneryTable) <span class="keyword">do</span>
-        ObjectCoords.others[#ObjectCoords.others + <span class="number">1</span>] = {x = scenery.SceneryObject:getPosition().p.x, y = scenery.SceneryObject:getPosition().p.z}
+        <span class="keyword">if</span> scenery <span class="keyword">then</span>
+          ObjectCoords.others[#ObjectCoords.others + <span class="number">1</span>] = {x = scenery.SceneryObject:getPosition().p.x, y = scenery.SceneryObject:getPosition().p.z}
+        <span class="keyword">end</span>
       <span class="keyword">end</span>
     <span class="keyword">end</span>
   <span class="keyword">end</span>
@@ -1225,7 +1231,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self The instance of the SPAWNER class.
 </span><span class="comment">-- @param vec2 The vector position to be checked.
-</span><a id="1147"></a><span class="comment">-- @return boolean true if the vector position is on a no-go surface, false otherwise.
+</span><a id="1153"></a><span class="comment">-- @return boolean true if the vector position is on a no-go surface, false otherwise.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:vec2AtNoGoSurface(vec2)
   <span class="comment">-- local DEBUG = false or SPECTRE.DebugEnabled
 </span>  <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:vec2AtNoGoSurface | -------------------------------------------------------------------------")
@@ -1260,7 +1266,7 @@
 </span><span class="comment">-- @param #SPAWNER self The instance of the SPAWNER class.
 </span><span class="comment">-- @param vec2 The vector position to be checked, in the format <code>{x = , y = }</code>.
 </span><span class="comment">-- @param zoneList A list of zone names to check against, e.g., <code>{&quot;name1&quot;, &quot;name2&quot;, ..., &quot;nameN&quot;}</code>.
-</span><a id="1182"></a><span class="comment">-- @return boolean true if the vector position is within any of the specified zones, false otherwise.
+</span><a id="1188"></a><span class="comment">-- @return boolean true if the vector position is within any of the specified zones, false otherwise.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:Vec2inZones(vec2,zoneList)
   <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:Vec2inZones | -------------------------------------------------------------------------")
 </span>  <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:Vec2inZones | vec2.x : " .. vec2.x .. " | vec2.y : " .. vec2.y)
@@ -1286,7 +1292,7 @@
 </span><span class="comment">-- @param #SPAWNER self The instance of the SPAWNER class.
 </span><span class="comment">-- @param vec2 The vector position to be checked, in the format <code>{x = , y = }</code>.
 </span><span class="comment">-- @param zoneName The name of the quadpoint zone as defined in the Mission Editor.
-</span><a id="1208"></a><span class="comment">-- @return result Boolean value indicating whether the vector position is within the zone (true) or not (false).
+</span><a id="1214"></a><span class="comment">-- @return result Boolean value indicating whether the vector position is within the zone (true) or not (false).
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:PointInZone(vec2, zoneName)
   <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:PointInZone | -------------------------------------------------------------------------")
 </span>  <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:PointInZone | vec2.x : " .. vec2.x .. " | vec2.y : " .. vec2.y)
@@ -1317,7 +1323,7 @@
 </span><span class="comment">-- @param #SPAWNER self The instance of the SPAWNER class.
 </span><span class="comment">-- @param point The vector position to test, in the format <code>{x = #, y = #}</code>.
 </span><span class="comment">-- @param polygon The polygon against which the point is being tested. It is a table of vector positions defining the polygon's vertices.
-</span><a id="1239"></a><span class="comment">-- @return oddNodes True if the point is inside the polygon, false otherwise.
+</span><a id="1245"></a><span class="comment">-- @return oddNodes True if the point is inside the polygon, false otherwise.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:PointWithinShape(point, polygon)
   <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:PointWithinShape | -------------------------------------------------------------------------")
 </span>  <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.SPAWNER:PointWithinShape | vec2.x : " .. point.x .. " | vec2.y : " .. point.y)
@@ -1350,7 +1356,7 @@
 <span class="comment">--- Defines properties and attributes associated with a zone in the <code>SPECTRE.SPAWNER</code> system.
 </span><span class="comment">-- This table specifies various parameters related to the zone's configuration and settings.
 </span><span class="comment">-- It includes information on zone dimensions, weighting, and group settings.
-</span><a id="1272"></a><span class="comment">-- @field #SPAWNER.Zone_
+</span><a id="1278"></a><span class="comment">-- @field #SPAWNER.Zone_
 </span>SPECTRE.SPAWNER.Zone_ = {
   <span class="comment">-- Name of the zone.
 </span>  name = <span class="string">""</span>,
@@ -1397,7 +1403,7 @@
 </span><span class="comment">-- @param #SPAWNER.Zone_ self The instance of the Zone_ object being created.
 </span><span class="comment">-- @param zoneName The name of the zone to be initialized.
 </span><span class="comment">-- @return #SPAWNER.Zone_ self The newly created Zone_ instance with the specified configurations.
-</span><a id="1319"></a><span class="comment">-- @usage local zoneInstance = SPECTRE.SPAWNER.Zone_:New("MyZone") -- Initializes and returns a new zone named "MyZone".
+</span><a id="1325"></a><span class="comment">-- @usage local zoneInstance = SPECTRE.SPAWNER.Zone_:New("MyZone") -- Initializes and returns a new zone named "MyZone".
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.Zone_:New(zoneName)
   <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
 
@@ -1432,7 +1438,7 @@
 </span><span class="comment">-- @param max The maximum spawn count.
 </span><span class="comment">-- @param nudgeFactor The nudge factor for adjusting spawn counts.
 </span><span class="comment">-- @return #SPAWNER.Zone_ self The zone object with updated spawn amount settings.
-</span><a id="1354"></a><span class="comment">-- @usage local modifiedZone = myZone:setSpawnAmounts(50, 40, 60, 0.2) -- Configures and returns spawn settings for 'myZone'.
+</span><a id="1360"></a><span class="comment">-- @usage local modifiedZone = myZone:setSpawnAmounts(50, 40, 60, 0.2) -- Configures and returns spawn settings for 'myZone'.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.Zone_:setSpawnAmounts(nominal, min, max, nudgeFactor)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER.Zone_:setSpawnAmounts |  ---------------- |"</span>)
 
@@ -1480,7 +1486,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER.Zone_
 </span><span class="comment">-- @return #SPAWNER.Zone_ self
-</span><a id="1402"></a><span class="comment">-- @usage local modifiedZone = myZone:RollSpawnAmounts() -- Recalculates and returns adjusted spawn settings for 'myZone'.
+</span><a id="1408"></a><span class="comment">-- @usage local modifiedZone = myZone:RollSpawnAmounts() -- Recalculates and returns adjusted spawn settings for 'myZone'.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.Zone_:RollSpawnAmounts()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER.Zone_:RollSpawnAmounts |  ---------------- |"</span>)
   <span class="keyword">local</span> GEN = self.SpawnAmountSettings.Generated  <span class="comment">-- Reference to generated spawn settings
@@ -1530,7 +1536,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER.Zone_
 </span><span class="comment">-- @return #SPAWNER.Zone_ self The zone object with updated threshold values.
-</span><a id="1452"></a><span class="comment">-- @usage local modifiedZone = myZone:_UpdateGenThresholds() -- Updates and returns recalculated threshold values for 'myZone'.
+</span><a id="1458"></a><span class="comment">-- @usage local modifiedZone = myZone:_UpdateGenThresholds() -- Updates and returns recalculated threshold values for 'myZone'.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.Zone_:_UpdateGenThresholds()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER.Zone_:_UpdateGenThresholds |  ---------------- |"</span>)
   <span class="keyword">local</span> GEN = self.SpawnAmountSettings.Generated  <span class="comment">-- Reference to generated spawn settings
@@ -1570,7 +1576,7 @@
 </span><span class="comment">-- @param unitMaxSep (Optional) The maximum separation distance between units within a group.
 </span><span class="comment">-- @param distFromBuildings (Optional) The minimum distance from nearby buildings.
 </span><span class="comment">-- @return #SPAWNER.Zone_ self The zone object with updated group spacing settings.
-</span><a id="1492"></a><span class="comment">-- @usage modifiedZone = myZone:setGroupSpacing(3, 10, 20, 2, 4) -- Configures spacing settings for groups of size 3 in 'myZone'.
+</span><a id="1498"></a><span class="comment">-- @usage modifiedZone = myZone:setGroupSpacing(3, 10, 20, 2, 4) -- Configures spacing settings for groups of size 3 in 'myZone'.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.Zone_:setGroupSpacing(groupSize, groupMinSep, groupMaxSep, unitMinSep, unitMaxSep , distFromBuildings)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER.Zone_:setGroupSpacing |  ---------------- |"</span>)
   <span class="comment">-- Default spacing values from SPECTRE.SPAWNER.SpacingSettings_ if not provided
@@ -1599,7 +1605,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- This template defines various settings related to the spawning of units or objects within a zone.
 </span><span class="comment">-- It includes factors affecting spawn quantities, such as nudge factors, ratios, and thresholds.
-</span><a id="1521"></a><span class="comment">-- @field #SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate
+</span><a id="1527"></a><span class="comment">-- @field #SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate
 </span>SPECTRE.SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate = {
   <span class="comment">-- Extra types to be added to groups.
 </span>  ExtraTypesToGroups = {},
@@ -1657,7 +1663,7 @@
 </span><span class="comment">-- to create an object with the properties and behaviors specific to spawn amount configurations.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate
-</span><a id="1579"></a><span class="comment">-- @return #SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate self The newly created SpawnAmountSettingsConfigTemplate instance.
+</span><a id="1585"></a><span class="comment">-- @return #SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate self The newly created SpawnAmountSettingsConfigTemplate instance.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.Zone_.SpawnAmountSettingsConfigTemplate:New()
   <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
   <span class="keyword">return</span> self
@@ -1666,7 +1672,7 @@
 <span class="comment">--- Defines properties and attributes for spacing settings in the <code>SPECTRE.SPAWNER</code> system.
 </span><span class="comment">-- This table specifies parameters related to the separation distances between groups and units,
 </span><span class="comment">-- and their distance from buildings.
-</span><a id="1588"></a><span class="comment">-- @field #SPAWNER.SpacingSettings_
+</span><a id="1594"></a><span class="comment">-- @field #SPAWNER.SpacingSettings_
 </span>SPECTRE.SPAWNER.SpacingSettings_ = {
   Groups = {
     <span class="comment">-- Minimum separation between groups in meters.
@@ -1692,7 +1698,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER.SpacingSettings_
 </span><span class="comment">-- @return #SPAWNER.SpacingSettings_ self
-</span><a id="1614"></a><span class="comment">-- @usage local spacingSettingsInstance = SPECTRE.SPAWNER.SpacingSettings_:New() -- Instantiates a new SpacingSettings object.
+</span><a id="1620"></a><span class="comment">-- @usage local spacingSettingsInstance = SPECTRE.SPAWNER.SpacingSettings_:New() -- Instantiates a new SpacingSettings object.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.SpacingSettings_:New()
   <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
   <span class="keyword">return</span> self
@@ -1702,7 +1708,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- This structure defines both the configured and dynamically generated settings related to the number of entities to be spawned within a zone.
 </span><span class="comment">-- It includes extra types and units settings, as well as specific configurations for spawn amounts.
-</span><a id="1624"></a><span class="comment">-- @field #SPAWNER.Zone_.SpawnAmountSettings
+</span><a id="1630"></a><span class="comment">-- @field #SPAWNER.Zone_.SpawnAmountSettings
 </span>SPECTRE.SPAWNER.Zone_.SpawnAmountSettings = {
   <span class="comment">-- Extra types to be added to groups within the zone.
 </span>  ExtraTypesToGroups = {},
@@ -1720,7 +1726,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- This structure defines the general spacing configurations for groups and units within a zone.
 </span><span class="comment">-- It includes settings for minimum and maximum separations between groups and units, and the distance from buildings.
-</span><a id="1642"></a><span class="comment">-- @field #SPAWNER.Zone_.SpacingSettings
+</span><a id="1648"></a><span class="comment">-- @field #SPAWNER.Zone_.SpacingSettings
 </span>SPECTRE.SPAWNER.Zone_.SpacingSettings = {
   <span class="comment">-- General spacing settings for the zone.
 </span>  General = SPECTRE.SPAWNER.SpacingSettings_:New()
@@ -1745,8 +1751,11 @@
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param _TYPE The type of entity or characteristic to be added to the queue.
 </span><span class="comment">-- @param _numTYPE The number of entities or quantity of the specified type to add.
-</span><a id="1667"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1673"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A(_TYPE, _numTYPE)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A | -------------------"</span>)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A | _TYPE: "</span> .. <span class="global">tostring</span>(_TYPE))
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_A | _numTYPE: "</span> .. <span class="global">tostring</span>(_numTYPE))
   self._queueExtraTypeToGroupsZONE_A[_TYPE] = _numTYPE
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
@@ -1758,10 +1767,13 @@
 </span><span class="comment">-- This ensures consistency and synchronization of extra types across different zones, facilitating coherent and balanced game dynamics.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="1680"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1689"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  ---------------- |"</span>)
   <span class="keyword">for</span> _TYPE, _numTYPE <span class="keyword">in</span> <span class="global">pairs</span>(self._queueExtraTypeToGroupsZONE_A) <span class="keyword">do</span>
+
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  MAIN ZONE"</span>)
+
     <span class="keyword">local</span> setting = self.Zones.Main.SpawnAmountSettings
     <span class="keyword">if</span> <span class="keyword">not</span> setting.ExtraTypesToGroups[_TYPE] <span class="keyword">then</span> setting.ExtraTypesToGroups[_TYPE] = <span class="number">0</span> <span class="keyword">end</span>
     setting.ExtraTypesToGroups[_TYPE] = setting.ExtraTypesToGroups[_TYPE] + _numTYPE
@@ -1771,14 +1783,22 @@
       setting.numExtraUnits = setting.numExtraUnits + _tv
     <span class="keyword">end</span>
     <span class="comment">--  setting.numExtraUnits = setting.numExtraUnits + _numTYPE
-</span>    <span class="keyword">for</span> _zoneName, _zoneObject <span class="keyword">in</span> <span class="global">pairs</span> (self.Zones.Sub) <span class="keyword">do</span>
+</span>    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  SUB ZONES"</span>)
+    <span class="keyword">for</span> _zoneName, _zoneObject <span class="keyword">in</span> <span class="global">pairs</span> (self.Zones.Sub) <span class="keyword">do</span>
       <span class="keyword">local</span> settingSub = _zoneObject.SpawnAmountSettings
       <span class="keyword">if</span> <span class="keyword">not</span> settingSub.ExtraTypesToGroups[_TYPE] <span class="keyword">then</span> settingSub.ExtraTypesToGroups[_TYPE] = <span class="number">0</span> <span class="keyword">end</span>
       settingSub.ExtraTypesToGroups[_TYPE] = setting.ExtraTypesToGroups[_TYPE]
       settingSub.numExtraTypes = setting.numExtraTypes
       settingSub.numExtraUnits = setting.numExtraUnits
+
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  Zone         : "</span> .. _zoneName)
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  numExtraTypes: "</span> .. settingSub.numExtraTypes)
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  numExtraUnits: "</span> .. settingSub.numExtraUnits)
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B |  _TYPE        : "</span> .. _TYPE)
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:AddExtraTypeToGroupsZONE_B | Extra of Types: "</span> .. settingSub.ExtraTypesToGroups[_TYPE])
     <span class="keyword">end</span>
   <span class="keyword">end</span>
+
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
 
@@ -1795,7 +1815,7 @@
 </span><span class="comment">-- @param min The minimum spawn amount, defaults to 0 if not provided.
 </span><span class="comment">-- @param max The maximum spawn amount, defaults to the value of <code>nominal</code> if not provided.
 </span><span class="comment">-- @param nudgeFactor The factor used to introduce randomness in spawn amounts, defaults to 0.5 if not provided.
-</span><a id="1717"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1737"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:setSpawnAmountsZONE_A(nominal, min, max, nudgeFactor)
   <span class="comment">-- Set default values for arguments if not provided
 </span>  self.nominal = nominal
@@ -1818,7 +1838,7 @@
 </span><span class="comment">-- @param min The minimum size of the main zone in meters, defaults to 0 if not provided.
 </span><span class="comment">-- @param max The maximum size of the main zone in meters, defaults to the value of <code>nominal</code> if not provided.
 </span><span class="comment">-- @param nudgeFactor The factor used to introduce randomness in the size of the main zone, defaults to 0.5 if not provided.
-</span><a id="1740"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1760"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:setZoneSizeMain(nominal, min, max, nudgeFactor)
   <span class="comment">-- Set default values for arguments if not provided
 </span>  self.ZoneSize.Main.nominal = nominal
@@ -1841,7 +1861,7 @@
 </span><span class="comment">-- @param min The minimum number of subzones, defaults to 0 if not provided.
 </span><span class="comment">-- @param max The maximum number of subzones, defaults to the value of <code>nominal</code> if not provided.
 </span><span class="comment">-- @param nudgeFactor The factor used to introduce randomness in the number of subzones, defaults to 0.5 if not provided.
-</span><a id="1763"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1783"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:setNumSubZones(nominal, min, max, nudgeFactor)
   <span class="comment">-- Set default values for arguments if not provided
 </span>  self.ZoneSize.Sub.nominal = nominal
@@ -1860,7 +1880,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self The instance of the SPAWNER class.
 </span><span class="comment">-- @param restrictedZones A table of restricted zones. Defaults to an empty table if not provided.
-</span><a id="1782"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1802"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:setZoneRestricted(restrictedZones)
   self.ZonesRestricted = restrictedZones <span class="keyword">or</span> {}
   <span class="keyword">return</span> self
@@ -1876,7 +1896,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param MainZoneName The name of the main zone to which subzones are related.
-</span><a id="1798"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1818"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:parseSubCirclesToZoneNames( MainZoneName)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:parseSubCirclesToZoneNames | ---------------"</span>)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:parseSubCirclesToZoneNames | MainZoneName: "</span> .. MainZoneName)
@@ -1907,7 +1927,7 @@
 </span><span class="comment">-- is recorded if enabled, tracking the performance of the zone setup process.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="1829"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1849"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:SetZonesGenerated()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:SetZonesGenerated | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -1960,7 +1980,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param vec2 The vector position of the main zone.
-</span><a id="1882"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="1902"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:generateSubZoneCircles(vec2)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:generateSubZoneCircles | -------------------------------------------------------------------------"</span>)
   self.generatedSubCircles = {}
@@ -2068,7 +2088,7 @@
 </span><span class="comment">-- on the configuration and generation of spawn amounts. Benchmark timing is recorded if enabled.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="1990"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2010"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:setSpawnAmountsZONE_B()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:setSpawnAmountsZONE_B | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -2127,7 +2147,7 @@
 </span><span class="comment">-- @param name The name to be used for the generated zone.
 </span><span class="comment">-- @param benchmark (optional) A boolean flag to enable benchmarking.
 </span><span class="comment">-- @param summary (optional) A boolean flag to enable summary generation.
-</span><a id="2049"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2069"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:DynamicGenerationZONE(vec2, name, benchmark, summary)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:DynamicGenerationZONE | -------------------------------------------------------------------------"</span>)
   benchmark = benchmark <span class="keyword">or</span> <span class="keyword">false</span>
@@ -2140,8 +2160,8 @@
   self:RollSpawnGroupSizes()
   self:Generate()
   <span class="keyword">if</span> self.Benchmark <span class="keyword">then</span>
-  <span class="keyword">if</span> benchmark <span class="keyword">then</span> self:_SaveBenchmark() <span class="keyword">end</span>
-  <span class="keyword">if</span> summary <span class="keyword">then</span> self:Summary() <span class="keyword">end</span>
+    <span class="keyword">if</span> benchmark <span class="keyword">then</span> self:_SaveBenchmark() <span class="keyword">end</span>
+    <span class="keyword">if</span> summary <span class="keyword">then</span> self:Summary() <span class="keyword">end</span>
   <span class="keyword">end</span>
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
@@ -2161,7 +2181,7 @@
 </span><span class="comment">-- This function is critical for performance evaluation, helping to identify potential bottlenecks or areas for optimization within the SPAWNER's operations.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2083"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2103"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_SaveBenchmark()
   <span class="keyword">local</span> _trun = <span class="number">6</span>
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:BENCHMARK INFO   |"</span>)
@@ -2192,7 +2212,7 @@
 </span><span class="comment">-- times for different SPAWNER operations, offering insights into performance. The summary is saved to a file and detailed logs are produced for analysis.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2114"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2134"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:Summary()
   SPECTRE.IO.PersistenceToFile(SPECTRE._persistenceLocations.SPAWNER.path .. <span class="string">"Summary/"</span> .. self.Zones.Main.name .. <span class="string">".lua"</span>, self, <span class="keyword">true</span>)
   <span class="keyword">local</span> curDEBUG = SPECTRE.DebugEnabled
@@ -2350,7 +2370,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param _zoneObject The zone object for which groups are being spawned.
-</span><a id="2272"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2292"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_Spawn(_zoneObject)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_Spawn | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -2382,7 +2402,7 @@
             SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_Spawn | _vec2.x       : "</span> .. _vec2.x .. <span class="string">" | _vec2.y :"</span> .._vec2.y)
 
         <span class="keyword">end</span>, capturedSpawnGroup, _vec2)
-        _Timer:Start(<span class="global">math</span>.random(<span class="number">1</span>,<span class="number">5</span>))
+        _Timer:Start(<span class="global">math</span>.random(<span class="number">2</span>,<span class="number">10</span>))
       <span class="keyword">end</span>
     <span class="keyword">end</span>
   <span class="keyword">end</span>
@@ -2392,7 +2412,7 @@
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
 
-<a id="2314"></a><span class="comment">--- Called by DetectTypeTemplates.
+<a id="2334"></a><span class="comment">--- Called by DetectTypeTemplates.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_detectHighestAttributes(TemplatePrefix, _Object)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:DetectTypeTemplates | DETECT HIGHEST PRIORITY ATTRIBUTE ---------------------------------"</span>)
 
@@ -2434,7 +2454,7 @@
 </span><span class="comment">-- of spawns across the subzones. This step ensures that spawn logic accommodates both the pre-configured settings and dynamic elements in gameplay.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2356"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2376"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_seedRollUpdates()
   <span class="comment">-- Debugging header
 </span>  <span class="keyword">if</span> SPECTRE.DebugEnabled == <span class="number">1</span> <span class="keyword">then</span>
@@ -2476,7 +2496,7 @@
 </span><span class="comment">-- offering insights into the randomized adjustments made during the spawn distribution process.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2398"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2418"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_introduceRandomness()
 
 
@@ -2527,7 +2547,7 @@
 </span><span class="comment">-- can be printed if <a href="../modules/SPECTRE.html#DebugEnabled">SPECTRE.DebugEnabled</a> is set to 1.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2449"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2469"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_distributeDifference()
 
 
@@ -2578,7 +2598,7 @@
 </span><span class="comment">-- If enabled, benchmark timing for this process is recorded for performance analysis.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2500"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2520"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_RollUpdates()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_RollUpdates | ---------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -2605,7 +2625,7 @@
 </span><span class="comment">-- detailing the operations performed on each subzone, including updates to spawn totals and threshold adjustments.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2527"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2547"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_assignAndUpdateSubZones()
   <span class="comment">-- Debug: Print header
 </span>  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_assignAndUpdateSubZones | ASSIGN UPDATES"</span>)
@@ -2649,7 +2669,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param zoneName The name of the subzone being checked for threshold violations.
-</span><a id="2571"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2591"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_thresholdClamp(zoneName)
 
 
@@ -2699,7 +2719,7 @@
 </span><span class="comment">-- and verification of spawn distribution.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2621"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2641"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_confirmTotals()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_confirmTotals | ---------------"</span>)
   <span class="keyword">local</span> confirmedTotal = <span class="number">0</span>
@@ -2741,7 +2761,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param _zoneObject The zone object for which group types are being generated.
-</span><a id="2663"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2683"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_generateGroupTypes(_zoneObject)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_generateGroupTypes | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -2823,7 +2843,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param _zoneObject The zone object for which group templates are being generated.
-</span><a id="2745"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2765"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_generateGroupTemplates(_zoneObject)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_generateGroupTemplates | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -2872,7 +2892,7 @@
 </span><span class="comment">-- is recorded if enabled, to track the performance of the seeding process.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
-</span><a id="2794"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2814"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_seedTypes()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_seedTypes | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -2939,7 +2959,7 @@
 </span><span class="comment">-- @param size The size of the group.
 </span><span class="comment">-- @param numGroupSize The number of groups of the specified size.
 </span><span class="comment">-- @param SpacingSettings_ The spacing settings for groups.
-</span><a id="2861"></a><span class="comment">-- @return #GroupSettings_ A new group settings object with the specified configurations.
+</span><a id="2881"></a><span class="comment">-- @return #GroupSettings_ A new group settings object with the specified configurations.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_createGroupSettings(size, numGroupSize, SpacingSettings_)
   <span class="keyword">local</span> groupsMinSeperation   = SpacingSettings_[size].Groups.minSeperation <span class="keyword">or</span> SpacingSettings_.General.Groups.minSeperation
   <span class="keyword">local</span> groupsMaxSeperation   = SpacingSettings_[size].Groups.maxSeperation <span class="keyword">or</span> SpacingSettings_.General.Groups.maxSeperation
@@ -2963,7 +2983,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param _zoneObject The zone object for which unit template positions are being set.
-</span><a id="2885"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2905"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:Set_Vec2_UnitTemplates(_zoneObject)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:Set_Vec2_UnitTemplates | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -3051,7 +3071,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER
 </span><span class="comment">-- @param _zoneObject The zone object for which spawn groups are being set up.
-</span><a id="2973"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="2993"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:_SetupSpawnGroups(_zoneObject)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:_SetupSpawnGroups | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -3059,8 +3079,8 @@
     self.BenchmarkLog._SetupSpawnGroups[_zoneObject.name] = {Time = {},}
     self.BenchmarkLog._SetupSpawnGroups[_zoneObject.name].Time.start = <span class="global">os</span>.clock()
   <span class="keyword">end</span>
-  <span class="keyword">local</span> typeCounter = self.COUNTER
-  <span class="comment">-- Loop through each group setting.
+  <span class="keyword">local</span> typeCounter = SPECTRE.COUNTER<span class="comment">--self.COUNTER
+</span>  <span class="comment">-- Loop through each group setting.
 </span>  <span class="keyword">for</span> _groupSettingIndex, setting <span class="keyword">in</span> <span class="global">ipairs</span>(_zoneObject.GroupSettings) <span class="keyword">do</span>
     <span class="keyword">local</span> _groupTypes = {}
     <span class="comment">-- Loop for the number of groups specified in the current setting.
@@ -3116,7 +3136,7 @@
     <span class="comment">-- Add the group types list to the main group list for this iteration.
 </span>    setting.SpawnedGROUPS = _groupTypes
   <span class="keyword">end</span>
-  self.COUNTER = typeCounter
+  SPECTRE.COUNTER = typeCounter
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
     self.BenchmarkLog._SetupSpawnGroups[_zoneObject.name].Time.stop = <span class="global">os</span>.clock()
   <span class="keyword">end</span>
@@ -3135,7 +3155,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER self
 </span><span class="comment">-- @param _zoneObject The zone object for which group centers are being set.
-</span><a id="3057"></a><span class="comment">-- @return #SPAWNER self
+</span><a id="3077"></a><span class="comment">-- @return #SPAWNER self
 </span><span class="keyword">function</span> SPECTRE.SPAWNER:Set_Vec2_GroupCenters(_zoneObject)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:Set_Vec2_GroupCenters | -------------------------------------------------------------------------"</span>)
   <span class="keyword">if</span> self.Benchmark == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -3199,7 +3219,7 @@
 
 <span class="comment">--- Blueprint for template type objects in the <code>SPECTRE.SPAWNER</code> system.
 </span><span class="comment">-- This table outlines the basic structure and attributes that a template type object should possess.
-</span><a id="3121"></a><span class="comment">-- @field #SPAWNER.templateTypesObject
+</span><a id="3141"></a><span class="comment">-- @field #SPAWNER.templateTypesObject
 </span>SPECTRE.SPAWNER.templateTypesObject = {
   <span class="comment">-- The priority value for the template type. Determines precedence in certain operations.
 </span>  _Priority = <span class="number">0</span>,
@@ -3233,7 +3253,7 @@
 </span><span class="comment">-- @param #SPAWNER.templateTypesObject self The instance of the templateTypesObject being created.
 </span><span class="comment">-- @param Priority The priority level assigned to the template type object, with a default value of 0 if not specified.
 </span><span class="comment">-- @return #SPAWNER.templateTypesObject self The newly created instance of templateTypesObject with the specified priority.
-</span><a id="3155"></a><span class="comment">-- @usage local newObj = SPECTRE.SPAWNER.templateTypesObject:New(1) -- Creates a new templateTypesObject with priority 1.
+</span><a id="3175"></a><span class="comment">-- @usage local newObj = SPECTRE.SPAWNER.templateTypesObject:New(1) -- Creates a new templateTypesObject with priority 1.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.templateTypesObject:New(Priority)
   <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
 
@@ -3253,7 +3273,7 @@
 <span class="comment">--- Group settings for the SPECTRE spawner system.
 </span><span class="comment">-- This structure defines the configuration settings for groups in the dynamic spawning mechanism.
 </span><span class="comment">-- It controls aspects such as group size, number of groups, separation between entities, and distances from landmarks like buildings.
-</span><a id="3175"></a><span class="comment">-- @field #SPAWNER.GroupSettings_
+</span><a id="3195"></a><span class="comment">-- @field #SPAWNER.GroupSettings_
 </span>SPECTRE.SPAWNER.GroupSettings_ = {
   <span class="comment">-- The size of the group.
 </span>  size = <span class="number">0</span>,
@@ -3301,7 +3321,7 @@
 </span><span class="comment">-- for spawn operations, which is essential for controlling the characteristics and behavior of spawned groups.
 </span><span class="comment">--
 </span><span class="comment">-- @param #SPAWNER.GroupSettings_
-</span><a id="3223"></a><span class="comment">-- @return #SPAWNER.GroupSettings_ self The newly initialized GroupSettings instance.
+</span><a id="3243"></a><span class="comment">-- @return #SPAWNER.GroupSettings_ self The newly initialized GroupSettings instance.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.GroupSettings_:New()
   <span class="keyword">local</span> self = BASE:Inherit(self, SPECTRE:New())
   <span class="keyword">return</span> self
@@ -3324,7 +3344,7 @@
 </span><span class="comment">-- @param unitsMaxSeperation The maximum separation distance between units within a group.
 </span><span class="comment">-- @param distanceFromBuildings The minimum distance from nearby buildings.
 </span><span class="comment">-- @return #SPAWNER.GroupSettings_ self The updated GroupSettings object.
-</span><a id="3246"></a><span class="comment">-- @usage local groupSettings = SPECTRE.SPAWNER.GroupSettings_:setGroupSettings(size, numGroups, groupsMinSeperation, groupsMaxSeperation, unitsMinSeperation, unitsMaxSeperation, distanceFromBuildings) -- Configures and returns group settings.
+</span><a id="3266"></a><span class="comment">-- @usage local groupSettings = SPECTRE.SPAWNER.GroupSettings_:setGroupSettings(size, numGroups, groupsMinSeperation, groupsMaxSeperation, unitsMinSeperation, unitsMaxSeperation, distanceFromBuildings) -- Configures and returns group settings.
 </span><span class="keyword">function</span> SPECTRE.SPAWNER.GroupSettings_:setGroupSettings(size, numGroups, groupsMinSeperation, groupsMaxSeperation, unitsMinSeperation, unitsMaxSeperation, distanceFromBuildings)
   self.size = size
   self.numGroups = numGroups
@@ -3349,7 +3369,7 @@
 </span><span class="comment">-- This table defines the properties and attributes associated with template types in the <code>SPECTRE.SPAWNER</code> system.
 </span><span class="comment">-- It provides a mapping of different unit and vehicle types to their associated template objects.
 </span><span class="comment">--
-</span><a id="3271"></a><span class="comment">-- @field #SPAWNER.TEMPLATETYPES_
+</span><a id="3291"></a><span class="comment">-- @field #SPAWNER.TEMPLATETYPES_
 </span>SPECTRE.SPAWNER.TEMPLATETYPES_ = {}
 <span class="comment">---.
 </span>SPECTRE.SPAWNER.TEMPLATETYPES_[SPECTRE.SPAWNER.typeENUMS.Ships]               = SPECTRE.SPAWNER.templateTypesObject:New(<span class="number">91</span>)
@@ -3435,7 +3455,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
+<i style="float:right;">Last updated 2023-11-26 07:35:37 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

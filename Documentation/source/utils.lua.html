@@ -156,6 +156,41 @@
   <span class="keyword">return</span> A
 <span class="keyword">end</span>
 
+<span class="comment">---.
+</span><span class="comment">-- Example Usage
+</span><span class="comment">-- subListA_ = {1, 2, 3}, subListB_ = {4, 5, 6}, Master_ = {1, 2, 3, 4, 5, 6, 7, 8}
+</span><span class="comment">-- result = findUnusedElements(subListA_, subListB_, Master_)
+</span><a id="82"></a><span class="comment">-- result will contain {7, 8}
+</span><span class="keyword">function</span> SPECTRE.UTILS.findUnusedElements(subListA_, subListB_, Master_)
+  <span class="keyword">local</span> result = {}
+  <span class="keyword">local</span> foundInAorB
+
+  <span class="comment">-- Function to check if an element is in a given list
+</span>  <span class="keyword">local</span> <span class="keyword">function</span> isInList(element, list)
+    <span class="keyword">for</span> _, value <span class="keyword">in</span> <span class="global">ipairs</span>(list) <span class="keyword">do</span>
+      <span class="keyword">if</span> value == element <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">true</span>
+      <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> <span class="keyword">false</span>
+  <span class="keyword">end</span>
+
+  <span class="comment">-- Iterate through each element in Master_
+</span>  <span class="keyword">for</span> _, element <span class="keyword">in</span> <span class="global">ipairs</span>(Master_) <span class="keyword">do</span>
+    <span class="comment">-- Check if the element is in subListA_ or subListB_
+</span>    foundInAorB = isInList(element, subListA_) <span class="keyword">or</span> isInList(element, subListB_)
+
+    <span class="comment">-- If the element is not found in subListA_ or B, add it to the result
+</span>    <span class="keyword">if</span> <span class="keyword">not</span> foundInAorB <span class="keyword">then</span>
+      <span class="global">table</span>.insert(result, element)
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+
+  <span class="keyword">return</span> result
+<span class="keyword">end</span>
+
+
+
 <span class="comment">--- Check if a table contains a specific key.
 </span><span class="comment">--
 </span><span class="comment">-- Determines if a given key exists within the specified table.
@@ -163,7 +198,7 @@
 </span><span class="comment">-- @param tbl The table to check.
 </span><span class="comment">-- @param targetKey The key to search for.
 </span><span class="comment">-- @return boolean True if the key exists, false otherwise.
-</span><a id="85"></a><span class="comment">-- @usage local exists = SPECTRE.UTILS.table_contains(someTable, "someKey") -- Checks if "someKey" exists in someTable.
+</span><a id="120"></a><span class="comment">-- @usage local exists = SPECTRE.UTILS.table_contains(someTable, "someKey") -- Checks if "someKey" exists in someTable.
 </span><span class="keyword">function</span> SPECTRE.UTILS.table_contains(tbl, targetKey)
   <span class="keyword">return</span> tbl[targetKey] ~= <span class="keyword">nil</span>
 <span class="keyword">end</span>
@@ -174,7 +209,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param tbl The table to check.
 </span><span class="comment">-- @param val The key to search for.
-</span><a id="96"></a><span class="comment">-- @return boolean True if the key exists, false otherwise.
+</span><a id="131"></a><span class="comment">-- @return boolean True if the key exists, false otherwise.
 </span><span class="keyword">function</span> SPECTRE.UTILS.table_hasValue(tbl, val)
   <span class="keyword">for</span> index, value <span class="keyword">in</span> <span class="global">ipairs</span>(tbl) <span class="keyword">do</span>
     <span class="keyword">if</span> value == val <span class="keyword">then</span>
@@ -189,7 +224,7 @@
 </span><span class="comment">-- Used for non numerically indexed tables
 </span><span class="comment">--
 </span><span class="comment">-- @param t The table to check.
-</span><a id="111"></a><span class="comment">-- @return sum Number of keys in the table.
+</span><a id="146"></a><span class="comment">-- @return sum Number of keys in the table.
 </span><span class="keyword">function</span> SPECTRE.UTILS.sumTable(t)
   <span class="keyword">local</span> sum = <span class="number">0</span>
   <span class="keyword">for</span> k, v <span class="keyword">in</span> <span class="global">pairs</span>(t) <span class="keyword">do</span>
@@ -205,7 +240,7 @@
 </span><span class="comment">-- @param t1 The first table.
 </span><span class="comment">-- @param t2 The second table from which values will be copied/overwritten to the first table.
 </span><span class="comment">-- @return t1 The merged table.
-</span><a id="127"></a><span class="comment">-- @usage local mergedTable = SPECTRE.UTILS.merge(baseTable, updateTable) -- Merges baseTable with updateTable.
+</span><a id="162"></a><span class="comment">-- @usage local mergedTable = SPECTRE.UTILS.merge(baseTable, updateTable) -- Merges baseTable with updateTable.
 </span><span class="keyword">function</span> SPECTRE.UTILS.merge(t1, t2)
   <span class="keyword">for</span> k, v <span class="keyword">in</span> <span class="global">pairs</span>(t2) <span class="keyword">do</span>
     <span class="keyword">if</span> <span class="global">type</span>(v) == <span class="string">"table"</span> <span class="keyword">and</span> <span class="global">type</span>(t1[k]) == <span class="string">"table"</span> <span class="keyword">then</span>
@@ -223,7 +258,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param t The table containing values to be counted.
 </span><span class="comment">-- @return counts A table with keys as the unique values from t and values as their respective counts.
-</span><a id="145"></a><span class="comment">-- @usage local counts = SPECTRE.UTILS.CountValues({1, 2, 2, 3, 3, 3}) -- Returns {1=1, 2=2, 3=3}.
+</span><a id="180"></a><span class="comment">-- @usage local counts = SPECTRE.UTILS.CountValues({1, 2, 2, 3, 3, 3}) -- Returns {1=1, 2=2, 3=3}.
 </span><span class="keyword">function</span> SPECTRE.UTILS.CountValues(t)
   <span class="keyword">local</span> counts = {}
   <span class="keyword">for</span> _, v <span class="keyword">in</span> <span class="global">ipairs</span>(t) <span class="keyword">do</span>
@@ -238,7 +273,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param t The table to be shuffled.
 </span><span class="comment">-- @return s A shuffled copy of the input table.
-</span><a id="160"></a><span class="comment">-- @usage local shuffled = SPECTRE.UTILS.Shuffle({1, 2, 3, 4, 5}) -- Returns a shuffled version of the input list.
+</span><a id="195"></a><span class="comment">-- @usage local shuffled = SPECTRE.UTILS.Shuffle({1, 2, 3, 4, 5}) -- Returns a shuffled version of the input list.
 </span><span class="keyword">function</span> SPECTRE.UTILS.Shuffle(t)
   <span class="global">math</span>.random()
   <span class="global">math</span>.random()
@@ -259,7 +294,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param t The table from which to pick a random element.
 </span><span class="comment">-- @return element The randomly selected element from the table.
-</span><a id="181"></a><span class="comment">-- @usage local randomElement = SPECTRE.UTILS.PickRandomFromTable({1, 2, 3, 4, 5}) -- Returns a random number from the input list.
+</span><a id="216"></a><span class="comment">-- @usage local randomElement = SPECTRE.UTILS.PickRandomFromTable({1, 2, 3, 4, 5}) -- Returns a random number from the input list.
 </span><span class="keyword">function</span> SPECTRE.UTILS.PickRandomFromTable(t)
   <span class="global">math</span>.random()
   <span class="global">math</span>.random()
@@ -272,7 +307,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param t The table from which to pick a random element.
 </span><span class="comment">-- @return key The randomly selected element from the table.
-</span><a id="194"></a><span class="comment">-- @usage local randomElement = SPECTRE.UTILS.PickRandomFromTable({1, 2, 3, 4, 5}) -- Returns a random number from the input list.
+</span><a id="229"></a><span class="comment">-- @usage local randomElement = SPECTRE.UTILS.PickRandomFromTable({1, 2, 3, 4, 5}) -- Returns a random number from the input list.
 </span><span class="keyword">function</span> SPECTRE.UTILS.PickRandomFromKVTable(t)
   <span class="global">math</span>.random()
   <span class="global">math</span>.random()
@@ -291,7 +326,7 @@
 </span><span class="comment">-- @param tab The table to search.
 </span><span class="comment">-- @param val The value to search for.
 </span><span class="comment">-- @return i The index of the value in the table, or nil if not found.
-</span><a id="213"></a><span class="comment">-- @usage local index = SPECTRE.UTILS.getIndex({10, 20, 30, 40}, 30) -- Returns 3.
+</span><a id="248"></a><span class="comment">-- @usage local index = SPECTRE.UTILS.getIndex({10, 20, 30, 40}, 30) -- Returns 3.
 </span><span class="keyword">function</span> SPECTRE.UTILS.getIndex(tab, val)
   <span class="keyword">for</span> i, v <span class="keyword">in</span> <span class="global">ipairs</span>(tab) <span class="keyword">do</span>
     <span class="keyword">if</span> v == val <span class="keyword">then</span>
@@ -312,7 +347,7 @@
 </span>
 <span class="comment">---Get all type attributes related to all units in a group.
 </span><span class="comment">-- @param GroupName_ String name of group
-</span><a id="234"></a><span class="comment">-- @return _groupAttributes
+</span><a id="269"></a><span class="comment">-- @return _groupAttributes
 </span><span class="keyword">function</span> SPECTRE.UTILS.GetGroupAttributes(GroupName_)
   <span class="keyword">local</span> _groupAttributes = {}
   <span class="keyword">local</span> _GROUPunits = GROUP:FindByName(GroupName_):GetUnits()
@@ -330,7 +365,7 @@
 
 <span class="comment">---Get all type attributes related to all units in a group.
 </span><span class="comment">-- @param UnitName_ String name of group
-</span><a id="252"></a><span class="comment">-- @return _UNITAttributes
+</span><a id="287"></a><span class="comment">-- @return _UNITAttributes
 </span><span class="keyword">function</span> SPECTRE.UTILS.GetUnitAttributes(UnitName_)
   <span class="keyword">local</span> _UNIT = Unit.getByName(UnitName_)
   <span class="keyword">local</span> _UNITtype = _UNIT:getTypeName()
@@ -347,7 +382,7 @@
 </span><span class="comment">-- @param zoneName The name of the zone where units will be deleted.
 </span><span class="comment">-- @param coalition The coalition of the units to be deleted.
 </span><span class="comment">-- @param eventFlag Optional parameter to raise event flag when a unit is destroyed. Default is true.
-</span><a id="269"></a><span class="comment">-- @usage SPECTRE.UTILS.DeleteUnitsInZone("TargetZone", "blue") -- Deletes blue coalition units in the "TargetZone".
+</span><a id="304"></a><span class="comment">-- @usage SPECTRE.UTILS.DeleteUnitsInZone("TargetZone", "blue") -- Deletes blue coalition units in the "TargetZone".
 </span><span class="keyword">function</span> SPECTRE.UTILS.DeleteUnitsInZone(zoneName, coalition, eventFlag)
   eventFlag = eventFlag <span class="keyword">or</span> <span class="keyword">true</span>
 
@@ -372,7 +407,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param PlaceName The original place name to be converted.
 </span><span class="comment">-- @return PlaceName The converted place name.
-</span><a id="294"></a><span class="comment">-- @usage local convertedName = SPECTRE.UTILS.AirfieldNameConvert("Air-Field 'Test'") -- Returns "Air_Field_Test".
+</span><a id="329"></a><span class="comment">-- @usage local convertedName = SPECTRE.UTILS.AirfieldNameConvert("Air-Field 'Test'") -- Returns "Air_Field_Test".
 </span><span class="keyword">function</span> SPECTRE.UTILS.AirfieldNameConvert(PlaceName)
   PlaceName = <span class="global">string</span>.gsub(PlaceName, <span class="string">'-'</span>, <span class="string">'_'</span>)      <span class="comment">-- Replace "-" with "_"
 </span>  PlaceName = <span class="global">string</span>.gsub(PlaceName, <span class="string">' '</span>, <span class="string">'_'</span>)     <span class="comment">-- Replace " " with "_"
@@ -388,7 +423,7 @@
 </span><span class="comment">-- @param PlayerName The name of the player.
 </span><span class="comment">-- @param attribute Optional attribute to retrieve specific data about the player.
 </span><span class="comment">-- @return information The requested information or nil if the player is not found.
-</span><a id="310"></a><span class="comment">-- @usage local playerScore = SPECTRE.UTILS.GetPlayerInfo("JohnDoe", "score") -- Retrieves the score for the player "JohnDoe".
+</span><a id="345"></a><span class="comment">-- @usage local playerScore = SPECTRE.UTILS.GetPlayerInfo("JohnDoe", "ucid") -- Retrieves the ucid for the player "JohnDoe".
 </span><span class="keyword">function</span> SPECTRE.UTILS.GetPlayerInfo(PlayerName, attribute)
   <span class="keyword">if</span> <span class="keyword">not</span> PlayerName <span class="keyword">then</span> <span class="keyword">return</span> <span class="keyword">nil</span> <span class="keyword">end</span>
 
@@ -396,8 +431,12 @@
 
   <span class="keyword">for</span> i=<span class="number">1</span>, #playerList <span class="keyword">do</span>
     <span class="keyword">local</span> playerInfo = net.get_player_info(i)
-    <span class="keyword">if</span> playerInfo.name == PlayerName <span class="keyword">then</span>
-      <span class="keyword">return</span> attribute <span class="keyword">and</span> playerInfo[attribute] <span class="keyword">or</span> playerInfo
+    <span class="keyword">if</span> playerInfo <span class="keyword">then</span>
+      <span class="keyword">if</span> playerInfo.name <span class="keyword">then</span>
+        <span class="keyword">if</span> playerInfo.name == PlayerName <span class="keyword">then</span>
+          <span class="keyword">return</span> attribute <span class="keyword">and</span> playerInfo[attribute] <span class="keyword">or</span> playerInfo
+        <span class="keyword">end</span>
+      <span class="keyword">end</span>
     <span class="keyword">end</span>
   <span class="keyword">end</span>
 
@@ -410,7 +449,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param ReportTable The table containing report entries.
 </span><span class="comment">-- @return report The constructed REPORT object.
-</span><a id="332"></a><span class="comment">-- @usage local myReport = SPECTRE.UTILS.ReportGenerator({"Header", "Line1", "Line2"}) -- Generates a report with the provided lines.
+</span><a id="371"></a><span class="comment">-- @usage local myReport = SPECTRE.UTILS.ReportGenerator({"Header", "Line1", "Line2"}) -- Generates a report with the provided lines.
 </span><span class="keyword">function</span> SPECTRE.UTILS.ReportGenerator(ReportTable)
   <span class="keyword">local</span> report = REPORT:New(ReportTable[<span class="number">1</span>])
   <span class="keyword">for</span> _i = <span class="number">2</span>, #ReportTable <span class="keyword">do</span>
@@ -420,7 +459,7 @@
 <span class="keyword">end</span>
 
 <span class="comment">--- .
-</span><a id="342"></a><span class="comment">-- @param _GroupNames ipair table group names
+</span><a id="381"></a><span class="comment">-- @param _GroupNames ipair table group names
 </span><span class="keyword">function</span> SPECTRE.UTILS.deleteGroupsByName(_GroupNames)
   <span class="keyword">for</span> _,_gName <span class="keyword">in</span> <span class="global">ipairs</span>(_GroupNames) <span class="keyword">do</span>
     GROUP:FindByName(_gName):Destroy(<span class="keyword">true</span>)
@@ -429,7 +468,7 @@
 
 <span class="comment">--- .
 </span><span class="comment">-- @param string string that the group name contains.
-</span><a id="351"></a><span class="comment">-- @return _groupNames ipair strings
+</span><a id="390"></a><span class="comment">-- @return _groupNames ipair strings
 </span><span class="keyword">function</span> SPECTRE.UTILS.getGroupNamesbyStringMatch(<span class="global">string</span>)
   <span class="keyword">local</span> _groupNames = {}
   <span class="keyword">local</span> allGroups = mist.DBs.groupsByName
@@ -452,7 +491,7 @@
 
 <span class="comment">--- .
 </span><span class="comment">-- @param NudgeFactor
-</span><a id="374"></a><span class="comment">-- @return returnValue
+</span><a id="413"></a><span class="comment">-- @return returnValue
 </span><span class="keyword">function</span> SPECTRE.UTILS.generateNudge(NudgeFactor)
   <span class="comment">--SPECTRE.UTILS.debugInfo("SPECTRE.UTILS.generateNudge : " .. NudgeFactor )
 </span>  <span class="comment">-- Check if NudgeFactor is 1 or 0
@@ -473,7 +512,7 @@
 <span class="comment">--- .
 </span><span class="comment">-- @param a
 </span><span class="comment">-- @param b
-</span><a id="395"></a><span class="comment">-- @return randomDecimal
+</span><a id="434"></a><span class="comment">-- @return randomDecimal
 </span><span class="keyword">function</span> SPECTRE.UTILS.randomDecimalBetween(a, b)
   <span class="global">math</span>.random()
   <span class="global">math</span>.random()
@@ -488,7 +527,7 @@
 </span><span class="comment">-- @param Min
 </span><span class="comment">-- @param Max
 </span><span class="comment">-- @param NudgeFactor
-</span><a id="410"></a><span class="comment">-- @return returnNominal
+</span><a id="449"></a><span class="comment">-- @return returnNominal
 </span><span class="keyword">function</span> SPECTRE.UTILS.generateNominal(Nominal, Min, Max, NudgeFactor)
   <span class="global">math</span>.random()
   <span class="global">math</span>.random()
@@ -522,7 +561,7 @@
 </span><span class="comment">-- @param num The number to be truncated.
 </span><span class="comment">-- @param digits The number of decimal places to which the number should be truncated. Defaults to 0 if not provided.
 </span><span class="comment">-- @return number The truncated number.
-</span><a id="444"></a><span class="comment">-- @usage local truncatedNum = SPECTRE.UTILS.trunc(3.14159, 2) -- Returns 3.14.
+</span><a id="483"></a><span class="comment">-- @usage local truncatedNum = SPECTRE.UTILS.trunc(3.14159, 2) -- Returns 3.14.
 </span><span class="keyword">function</span> SPECTRE.UTILS.trunc(num, digits)
   <span class="keyword">local</span> mult = <span class="number">10</span>^(digits <span class="keyword">or</span> <span class="number">0</span>)  <span class="comment">-- default to 0 if digits is nil
 </span>  <span class="keyword">return</span> <span class="global">math</span>.modf(num * mult) / mult
@@ -535,7 +574,7 @@
 </span><span class="comment">-- @param A The first number.
 </span><span class="comment">-- @param B The second number.
 </span><span class="comment">-- @return number The computed ratio.
-</span><a id="457"></a><span class="comment">-- @usage local ratio = SPECTRE.UTILS.computeRatio(4, 2) -- Returns 0.5.
+</span><a id="496"></a><span class="comment">-- @usage local ratio = SPECTRE.UTILS.computeRatio(4, 2) -- Returns 0.5.
 </span><span class="keyword">function</span> SPECTRE.UTILS.computeRatio(A, B)
   <span class="keyword">if</span> A == <span class="number">0</span> <span class="keyword">or</span> B == <span class="number">0</span> <span class="keyword">then</span>
     <span class="keyword">return</span> <span class="number">0.00</span>
@@ -553,7 +592,7 @@
 </span>
 <span class="comment">--- .
 </span><span class="comment">-- @param OBJECT_
-</span><a id="475"></a><span class="comment">-- @return _template
+</span><a id="514"></a><span class="comment">-- @return _template
 </span><span class="keyword">function</span> SPECTRE.UTILS.templateFromObject(OBJECT_)
   <span class="keyword">local</span> serialString_ = SPECTRE.IO.persistence.serializeNoFunc(OBJECT_)
   <span class="keyword">local</span> _template = SPECTRE.IO.persistence.deSerialize(serialString_)
@@ -563,7 +602,7 @@
 </span><span class="comment">--  Skips overwriting functions and __index.
 </span><span class="comment">-- @param template_
 </span><span class="comment">-- @param output_
-</span><a id="485"></a><span class="comment">-- @return output_
+</span><a id="524"></a><span class="comment">-- @return output_
 </span><span class="keyword">function</span> SPECTRE.UTILS.setTableValues(template_, output_)
   <span class="keyword">for</span> key, value <span class="keyword">in</span> <span class="global">pairs</span>(template_) <span class="keyword">do</span>
     <span class="comment">-- Skip if the key is __index or if the value in output_ is a function
@@ -594,7 +633,7 @@
 </span><span class="comment">--
 </span><span class="comment">-- @param message The debug message to be logged.
 </span><span class="comment">-- @param data Optional data to be logged.
-</span><a id="516"></a><span class="comment">-- @usage SPECTRE.UTILS.debugInfo("Debug Message", {key="value"}) -- Logs the message and data if debugging is enabled.
+</span><a id="555"></a><span class="comment">-- @usage SPECTRE.UTILS.debugInfo("Debug Message", {key="value"}) -- Logs the message and data if debugging is enabled.
 </span><span class="keyword">function</span> SPECTRE.UTILS.debugInfo(message, data)
   <span class="keyword">if</span> SPECTRE.DebugEnabled == <span class="number">1</span> <span class="keyword">then</span>
     env.info(message)
@@ -602,7 +641,7 @@
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-<a id="524"></a><span class="comment">---.
+<a id="563"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUG_PRINT(self_)
   <span class="keyword">if</span> self.DebugEnabled == <span class="number">1</span> <span class="keyword">then</span>
     BASE:E(<span class="string">"SPECTRE|SPAWNER - DEBUG_PRINT_self()"</span>)
@@ -610,7 +649,7 @@
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-<a id="532"></a><span class="comment">---.
+<a id="571"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.PrintTable(tbl, level, maxLevel)
   <span class="keyword">if</span> level &gt; maxLevel <span class="keyword">then</span>
     <span class="keyword">return</span>
@@ -625,7 +664,7 @@
   <span class="keyword">end</span>
 <span class="keyword">end</span>
 
-<a id="547"></a><span class="comment">---.
+<a id="586"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.ToggleDebugMessages()
   <span class="keyword">if</span> SPECTRE.DebugEnabled == <span class="number">0</span> <span class="keyword">then</span>
     SPECTRE.DebugEnabled = <span class="number">1</span>
@@ -641,10 +680,10 @@
 
 
 <span class="comment">--- UTILS.DEBUGoutput.
-</span><a id="563"></a><span class="comment">-- @field #DEBUGoutput
+</span><a id="602"></a><span class="comment">-- @field #DEBUGoutput
 </span>SPECTRE.UTILS.DEBUGoutput = {}
 
-<a id="566"></a><span class="comment">---.
+<a id="605"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoZoneWeights(mainZone, subZones)
   SPECTRE.UTILS.debugInfo(<span class="global">string</span>.format(<span class="string">"SPECTRE.SPAWNER:infoZoneWeights | ZONE: %s | WEIGHT: %f"</span>, mainZone.name, mainZone.weight))
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneWeights | ---------------------------"</span>)
@@ -653,7 +692,7 @@
   <span class="keyword">end</span>
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneWeights | -------------------------------------------------------------------------"</span>)
 <span class="keyword">end</span>
-<a id="575"></a><span class="comment">---.
+<a id="614"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoZoneCFG(zone_)
   <span class="keyword">local</span> CFGSpawnAmountSettings_ = zone_.SpawnAmountSettings.Config
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneCFG              | -------------------------------------------------------------------------"</span>)
@@ -674,7 +713,7 @@
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneCFG              | CHECK      | MAX        |  OVER | "</span> .. CFGSpawnAmountSettings_.Thresholds.overMax)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneCFG              | CHECK      | MIN        | UNDER | "</span> .. CFGSpawnAmountSettings_.Thresholds.underMin)
 <span class="keyword">end</span>
-<a id="596"></a><span class="comment">---.
+<a id="635"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoZoneGEN(zone_)
   <span class="keyword">local</span> GENSpawnAmountSettings_ = zone_.SpawnAmountSettings.Generated
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneGEN              | -------------------------------------------------------------------------"</span>)
@@ -696,7 +735,7 @@
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.SPAWNER:infoZoneGEN              | CHECK      | MIN        | UNDER | "</span> .. GENSpawnAmountSettings_.Thresholds.underMin)
 <span class="keyword">end</span>
 
-<a id="618"></a><span class="comment">---.
+<a id="657"></a><span class="comment">---.
 </span><span class="keyword">function</span> SPECTRE.UTILS.DEBUGoutput.infoGroupSettings(zone_)
   SPECTRE.UTILS.DEBUGoutput.infoZoneGEN(zone_)
   <span class="keyword">for</span> _i = <span class="number">1</span>, #zone_.GroupSettings <span class="keyword">do</span>
@@ -718,7 +757,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-20 11:04:26 </i>
+<i style="float:right;">Last updated 2023-11-26 07:35:37 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
