@@ -108,7 +108,7 @@
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.findUnusedElements">SPECTRE.UTILS.findUnusedElements(subListA_, subListB_, Master_)</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Finds elements in a master list that are not present in two given sublists.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.getIndex">SPECTRE.UTILS.getIndex(tab, val)</a></td>
@@ -121,6 +121,10 @@
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.removeMatchingEntries">SPECTRE.UTILS.removeMatchingEntries(A, B)</a></td>
 	<td class="summary">Remove matching entries from table A based on table B.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.UTILS.removeSubstring">SPECTRE.UTILS.removeSubstring(str, substr)</a></td>
+	<td class="summary">Removes a specified substring from a given string.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.safeInsert">SPECTRE.UTILS.safeInsert(tbl, value)</a></td>
@@ -167,11 +171,11 @@
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.deleteGroupsByName">SPECTRE.UTILS.deleteGroupsByName(_GroupNames)</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Deletes groups by their names.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.getGroupNamesbyStringMatch">SPECTRE.UTILS.getGroupNamesbyStringMatch(string)</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Retrieves group names that contain a specified string.</td>
 	</tr>
 </table>
 <h2><a href="#Maths">Maths </a></h2>
@@ -182,15 +186,15 @@
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.generateNominal">SPECTRE.UTILS.generateNominal(Nominal, Min, Max, NudgeFactor)</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Generates a nominal value based on a given range, nudged by a specified factor.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.generateNudge">SPECTRE.UTILS.generateNudge(NudgeFactor)</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Generates a nudge value based on a provided factor.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.randomDecimalBetween">SPECTRE.UTILS.randomDecimalBetween(a, b)</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Generates a random decimal number between two values.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.trunc">SPECTRE.UTILS.trunc(num, digits)</a></td>
@@ -201,19 +205,15 @@
 <table class="function_list">
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.setTableValues">SPECTRE.UTILS.setTableValues(template_, output_)</a></td>
-	<td class="summary">Sets all values in output_ to those in template_.</td>
+	<td class="summary">Sets values in one table based on a template table.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.templateFromObject">SPECTRE.UTILS.templateFromObject(OBJECT_)</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Creates a template from a given object.</td>
 	</tr>
 </table>
 <h2><a href="#DEBUG">DEBUG </a></h2>
 <table class="function_list">
-	<tr>
-	<td class="name" ><a href="#SPECTRE.UTILS.DEBUG_PRINT">SPECTRE.UTILS.DEBUG_PRINT(self_)</a></td>
-	<td class="summary">.</td>
-	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.DEBUGoutput">SPECTRE.UTILS.DEBUGoutput</a></td>
 	<td class="summary">UTILS.DEBUGoutput.</td>
@@ -236,11 +236,7 @@
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.PrintTable">SPECTRE.UTILS.PrintTable(tbl, level, maxLevel)</a></td>
-	<td class="summary">.</td>
-	</tr>
-	<tr>
-	<td class="name" ><a href="#SPECTRE.UTILS.ToggleDebugMessages">SPECTRE.UTILS.ToggleDebugMessages()</a></td>
-	<td class="summary">.</td>
+	<td class="summary">Recursively prints a table's contents up to a specified depth.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.UTILS.debugInfo">SPECTRE.UTILS.debugInfo(message, data)</a></td>
@@ -294,7 +290,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.CountValues"></a>
     <strong>SPECTRE.UTILS.CountValues(t)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#180">line 180</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#183">line 183</a>
     </dt>
     <dd>
     Count occurrences of each value in a table. </p>
@@ -326,7 +322,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.PickRandomFromKVTable"></a>
     <strong>SPECTRE.UTILS.PickRandomFromKVTable(t)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#229">line 229</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#232">line 232</a>
     </dt>
     <dd>
     Pick a random key from a KV table. </p>
@@ -358,7 +354,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.PickRandomFromTable"></a>
     <strong>SPECTRE.UTILS.PickRandomFromTable(t)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#216">line 216</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#219">line 219</a>
     </dt>
     <dd>
     Pick a random element from a table. </p>
@@ -390,7 +386,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.Shuffle"></a>
     <strong>SPECTRE.UTILS.Shuffle(t)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#195">line 195</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#198">line 198</a>
     </dt>
     <dd>
     Shuffle the elements of a table. </p>
@@ -422,44 +418,46 @@
     <dt>
     <a name = "SPECTRE.UTILS.findUnusedElements"></a>
     <strong>SPECTRE.UTILS.findUnusedElements(subListA_, subListB_, Master_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#82">line 82</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#87">line 87</a>
     </dt>
     <dd>
-    .
- Example Usage
- subListA_ = {1, 2, 3}, subListB_ = {4, 5, 6}, Master_ = {1, 2, 3, 4, 5, 6, 7, 8}
- result = findUnusedElements(subListA<em>, subListB</em>, Master_)
- result will contain {7, 8}
+    Finds elements in a master list that are not present in two given sublists. </p>
+
+<p> This function identifies elements in the 'Master<em>' list that are not found in either 'subListA</em>' or 'subListB_'.
+ It uses a helper function 'isInList' to check for element presence in the sublists.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">subListA_</span>
-
-
-
+         The first sublist to check against the master list.
         </li>
         <li><span class="parameter">subListB_</span>
-
-
-
+         The second sublist to check against the master list.
         </li>
         <li><span class="parameter">Master_</span>
-
-
-
+         The master list from which elements are to be checked.
         </li>
     </ul>
 
+    <h3>Returns:</h3>
+    <ol>
+
+        result A list of elements from 'Master<em>' not found in either 'subListA</em>' or 'subListB_'.
+    </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> unusedElements = SPECTRE.UTILS.findUnusedElements({<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>}, {<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>}, {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>}) <span class="comment">-- Returns {7, 8}.</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "SPECTRE.UTILS.getIndex"></a>
     <strong>SPECTRE.UTILS.getIndex(tab, val)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#248">line 248</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#251">line 251</a>
     </dt>
     <dd>
     Get the index of a value in a table. </p>
@@ -494,7 +492,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.merge"></a>
     <strong>SPECTRE.UTILS.merge(t1, t2)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#162">line 162</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#165">line 165</a>
     </dt>
     <dd>
     Deeply merge two tables. </p>
@@ -562,6 +560,41 @@
 
 </dd>
     <dt>
+    <a name = "SPECTRE.UTILS.removeSubstring"></a>
+    <strong>SPECTRE.UTILS.removeSubstring(str, substr)</strong>
+    <a style="float:right;" href="../source/UTILS.lua.html#268">line 268</a>
+    </dt>
+    <dd>
+    Removes a specified substring from a given string. </p>
+
+<p> This function eliminates all occurrences of 'substr' from 'str'. It handles special characters in the substring by escaping them before removal. The removal process uses Lua's string.gsub function.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">str</span>
+         The original string from which the substring is to be removed.
+        </li>
+        <li><span class="parameter">substr</span>
+         The substring that needs to be removed from 'str'.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        modifiedStr The modified string with 'substr' removed.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> modifiedString = SPECTRE.UTILS.removeSubstring(<span class="string">"Hello world"</span>, <span class="string">"world"</span>) <span class="comment">-- Returns "Hello ".</span></pre>
+    </ul>
+
+</dd>
+    <dt>
     <a name = "SPECTRE.UTILS.safeInsert"></a>
     <strong>SPECTRE.UTILS.safeInsert(tbl, value)</strong>
     <a style="float:right;" href="../source/UTILS.lua.html#43">line 43</a>
@@ -594,7 +627,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.sumTable"></a>
     <strong>SPECTRE.UTILS.sumTable(t)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#146">line 146</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#149">line 149</a>
     </dt>
     <dd>
     Gets # keys for K,V pair object. </p>
@@ -622,7 +655,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.table_contains"></a>
     <strong>SPECTRE.UTILS.table_contains(tbl, targetKey)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#120">line 120</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#123">line 123</a>
     </dt>
     <dd>
     Check if a table contains a specific key. </p>
@@ -657,7 +690,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.table_hasValue"></a>
     <strong>SPECTRE.UTILS.table_hasValue(tbl, val)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#131">line 131</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#134">line 134</a>
     </dt>
     <dd>
     Check if a table contains a specific value. </p>
@@ -702,7 +735,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.AirfieldNameConvert"></a>
     <strong>SPECTRE.UTILS.AirfieldNameConvert(PlaceName)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#329">line 329</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#349">line 349</a>
     </dt>
     <dd>
     Convert an airfield name to a standardized format. </p>
@@ -734,7 +767,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DeleteUnitsInZone"></a>
     <strong>SPECTRE.UTILS.DeleteUnitsInZone(zoneName, coalition, eventFlag)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#304">line 304</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#324">line 324</a>
     </dt>
     <dd>
     Delete units in a specified zone. </p>
@@ -767,7 +800,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.GetGroupAttributes"></a>
     <strong>SPECTRE.UTILS.GetGroupAttributes(GroupName_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#269">line 269</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#289">line 289</a>
     </dt>
     <dd>
     Get all type attributes related to all units in a group.
@@ -793,7 +826,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.GetPlayerInfo"></a>
     <strong>SPECTRE.UTILS.GetPlayerInfo(PlayerName, attribute)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#345">line 345</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#365">line 365</a>
     </dt>
     <dd>
     Retrieve information about a player. </p>
@@ -828,7 +861,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.GetUnitAttributes"></a>
     <strong>SPECTRE.UTILS.GetUnitAttributes(UnitName_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#287">line 287</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#307">line 307</a>
     </dt>
     <dd>
     Get all type attributes related to all units in a group.
@@ -854,7 +887,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.ReportGenerator"></a>
     <strong>SPECTRE.UTILS.ReportGenerator(ReportTable)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#371">line 371</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#391">line 391</a>
     </dt>
     <dd>
     Generate a report from a table of data. </p>
@@ -886,48 +919,60 @@
     <dt>
     <a name = "SPECTRE.UTILS.deleteGroupsByName"></a>
     <strong>SPECTRE.UTILS.deleteGroupsByName(_GroupNames)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#381">line 381</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#405">line 405</a>
     </dt>
     <dd>
-    .
+    Deletes groups by their names. </p>
+
+<p> Iterates through a list of group names and deletes each group. It uses the 'GROUP:FindByName' method to find the group and then destroys it.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">_GroupNames</span>
-         ipair table group names
+         An ipair table of group names to be deleted.
         </li>
     </ul>
 
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.UTILS.deleteGroupsByName({<span class="string">"Group1"</span>, <span class="string">"Group2"</span>}) <span class="comment">-- Deletes groups named 'Group1' and 'Group2'.</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "SPECTRE.UTILS.getGroupNamesbyStringMatch"></a>
     <strong>SPECTRE.UTILS.getGroupNamesbyStringMatch(string)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#390">line 390</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#418">line 418</a>
     </dt>
     <dd>
-    .
+    Retrieves group names that contain a specified string. </p>
+
+<p> This function scans all groups and returns the names of those whose name includes the provided string. It utilizes the 'mist.DBs.groupsByName' database for group information.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">string</span>
-         string that the group name contains.
+         The string to match within group names.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        _groupNames ipair strings
+        _groupNames An ipair list of group names that contain the specified string.
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> matchingGroups = SPECTRE.UTILS.getGroupNamesbyStringMatch(<span class="string">"Alpha"</span>) <span class="comment">-- Returns a list of group names containing 'Alpha'.</span></pre>
+    </ul>
 
 </dd>
 </dl>
@@ -947,7 +992,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.computeRatio"></a>
     <strong>SPECTRE.UTILS.computeRatio(A, B)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#496">line 496</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#546">line 546</a>
     </dt>
     <dd>
     Compute the ratio between two numbers. </p>
@@ -982,111 +1027,124 @@
     <dt>
     <a name = "SPECTRE.UTILS.generateNominal"></a>
     <strong>SPECTRE.UTILS.generateNominal(Nominal, Min, Max, NudgeFactor)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#449">line 449</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#499">line 499</a>
     </dt>
     <dd>
-    .
+    Generates a nominal value based on a given range, nudged by a specified factor. </p>
+
+<p> This function calculates a value within a range around 'Nominal', nudged by 'NudgeFactor'.
+ If 'NudgeFactor' is 1, it returns 'Nominal'.
+ If 'NudgeFactor' is 0, it randomly returns either 'Min' or 'Max'.
+ Otherwise, it calculates a 'nudged' range around 'Nominal' and returns a random decimal within this range.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">Nominal</span>
-
-
-
+         The central value around which the range is calculated.
         </li>
         <li><span class="parameter">Min</span>
-
-
-
+         The minimum possible value.
         </li>
         <li><span class="parameter">Max</span>
-
-
-
+         The maximum possible value.
         </li>
         <li><span class="parameter">NudgeFactor</span>
-
-
-
+         The factor determining the extent of the nudge from 'Nominal'.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        returnNominal
+        returnNominal A number within the nudged range around 'Nominal'.
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> nominalValue = SPECTRE.UTILS.generateNominal(<span class="number">50</span>, <span class="number">40</span>, <span class="number">60</span>, <span class="number">0.5</span>) <span class="comment">-- Returns a value in a nudged range around 50.</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "SPECTRE.UTILS.generateNudge"></a>
     <strong>SPECTRE.UTILS.generateNudge(NudgeFactor)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#413">line 413</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#449">line 449</a>
     </dt>
     <dd>
-    .
+    Generates a nudge value based on a provided factor. </p>
+
+<p> This function calculates a nudge value within a dynamic range based on the 'NudgeFactor'.
+ If 'NudgeFactor' is 1 or 0, it returns the 'NudgeFactor' itself.
+ Otherwise, it calculates a random decimal between a lower and an upper bound, derived from 'NudgeFactor'.
+ The lower bound is the greater of 'NudgeFactor' minus its square, and 0.01.
+ The upper bound is the lesser of 'NudgeFactor' plus its square, and 0.99.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">NudgeFactor</span>
-
-
-
+         The factor based on which the nudge value is generated.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        returnValue
+        returnValue The calculated nudge value, a decimal between the determined lower and upper bounds.
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> nudgeValue = SPECTRE.UTILS.generateNudge(<span class="number">0.5</span>) <span class="comment">-- Returns a random decimal between 0.01 and 0.99, based on the calculated bounds.</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "SPECTRE.UTILS.randomDecimalBetween"></a>
     <strong>SPECTRE.UTILS.randomDecimalBetween(a, b)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#434">line 434</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#477">line 477</a>
     </dt>
     <dd>
-    .
+    Generates a random decimal number between two values. </p>
+
+<p> This function returns a random decimal number within the range of two specified values 'a' and 'b'.
+ If 'a' is greater than 'b', their values are swapped to ensure a valid range.
+ It ensures randomness by calling 'math.random()' twice before calculation.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">a</span>
-
-
-
+         The lower bound of the range.
         </li>
         <li><span class="parameter">b</span>
-
-
-
+         The upper bound of the range.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        randomDecimal
+        randomDecimal A random decimal number between 'a' and 'b'.
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> randomNum = SPECTRE.UTILS.randomDecimalBetween(<span class="number">1.0</span>, <span class="number">2.0</span>) <span class="comment">-- Returns a random decimal between 1.0 and 2.0.</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "SPECTRE.UTILS.trunc"></a>
     <strong>SPECTRE.UTILS.trunc(num, digits)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#483">line 483</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#533">line 533</a>
     </dt>
     <dd>
     Truncate a number to a specified number of decimal places. </p>
@@ -1135,63 +1193,71 @@
     <dt>
     <a name = "SPECTRE.UTILS.setTableValues"></a>
     <strong>SPECTRE.UTILS.setTableValues(template_, output_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#524">line 524</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#585">line 585</a>
     </dt>
     <dd>
-    Sets all values in output_ to those in template_.
-  Skips overwriting functions and __index.
+    Sets values in one table based on a template table. </p>
+
+<p> Updates the 'output<em>' table with values from the 'template</em>' table.
+ It skips overwriting any functions and the '__index' key.
+ The function handles nested tables recursively, ensuring deep copying of table values.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">template_</span>
-
-
-
+         The template table providing the values.
         </li>
         <li><span class="parameter">output_</span>
-
-
-
+         The output table to be updated.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        output_
+        output_ The updated output table.
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> updatedTable = SPECTRE.UTILS.setTableValues(templateTable, outputTable) <span class="comment">-- Updates 'outputTable' with values from 'templateTable'.</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "SPECTRE.UTILS.templateFromObject"></a>
     <strong>SPECTRE.UTILS.templateFromObject(OBJECT_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#514">line 514</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#569">line 569</a>
     </dt>
     <dd>
-    .
+    Creates a template from a given object. </p>
+
+<p> This function serializes an object into a string using 'SPECTRE.IO.persistence.serializeNoFunc' and then deserializes it back into a table.
+ The resulting table serves as a template for the original object.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">OBJECT_</span>
-
-
-
+         The object to be converted into a template.
         </li>
     </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        _template
+        _template The template derived from the given object.
     </ol>
 
 
 
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> objectTemplate = SPECTRE.UTILS.templateFromObject(myObject) <span class="comment">-- Converts 'myObject' into a template.</span></pre>
+    </ul>
 
 </dd>
 </dl>
@@ -1209,32 +1275,9 @@
           </div>
     <dl class="function">
     <dt>
-    <a name = "SPECTRE.UTILS.DEBUG_PRINT"></a>
-    <strong>SPECTRE.UTILS.DEBUG_PRINT(self_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#563">line 563</a>
-    </dt>
-    <dd>
-    .
-
-
-    <h3>Parameters:</h3>
-    <ul>
-        <li><span class="parameter">self_</span>
-
-
-
-        </li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#602">line 602</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#650">line 650</a>
     </dt>
     <dd>
     UTILS.DEBUGoutput.
@@ -1257,7 +1300,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoGroupSettings"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoGroupSettings(zone_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#657">line 657</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#705">line 705</a>
     </dt>
     <dd>
     .
@@ -1280,7 +1323,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoZoneCFG"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoZoneCFG(zone_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#614">line 614</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#662">line 662</a>
     </dt>
     <dd>
     .
@@ -1303,7 +1346,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoZoneGEN"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoZoneGEN(zone_)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#635">line 635</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#683">line 683</a>
     </dt>
     <dd>
     .
@@ -1326,7 +1369,7 @@
     <dt>
     <a name = "SPECTRE.UTILS.DEBUGoutput.infoZoneWeights"></a>
     <strong>SPECTRE.UTILS.DEBUGoutput.infoZoneWeights(mainZone, subZones)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#605">line 605</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#653">line 653</a>
     </dt>
     <dd>
     .
@@ -1354,60 +1397,46 @@
     <dt>
     <a name = "SPECTRE.UTILS.PrintTable"></a>
     <strong>SPECTRE.UTILS.PrintTable(tbl, level, maxLevel)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#571">line 571</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#633">line 633</a>
     </dt>
     <dd>
-    .
+    Recursively prints a table's contents up to a specified depth. </p>
+
+<p> This function iterates over each key-value pair in the table 'tbl', printing them. If the value is a table, it recursively calls itself, increasing the indentation level. The printing is limited to 'maxLevel' depth to prevent excessively deep traversal.
 
 
     <h3>Parameters:</h3>
     <ul>
         <li><span class="parameter">tbl</span>
-
-
-
+         The table to be printed.
         </li>
         <li><span class="parameter">level</span>
-
-
-
+         The current depth level (starts at 0).
         </li>
         <li><span class="parameter">maxLevel</span>
-
-
-
+         The maximum depth level to print.
         </li>
     </ul>
 
 
 
 
-
-</dd>
-    <dt>
-    <a name = "SPECTRE.UTILS.ToggleDebugMessages"></a>
-    <strong>SPECTRE.UTILS.ToggleDebugMessages()</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#586">line 586</a>
-    </dt>
-    <dd>
-    .
-
-
-
-
-
-
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.UTILS.PrintTable(myTable, <span class="number">0</span>, <span class="number">3</span>) <span class="comment">-- Prints the contents of 'myTable' up to a depth of 3 levels.</span></pre>
+    </ul>
 
 </dd>
     <dt>
     <a name = "SPECTRE.UTILS.debugInfo"></a>
     <strong>SPECTRE.UTILS.debugInfo(message, data)</strong>
-    <a style="float:right;" href="../source/UTILS.lua.html#555">line 555</a>
+    <a style="float:right;" href="../source/UTILS.lua.html#617">line 617</a>
     </dt>
     <dd>
     Log debug information if debugging is enabled. </p>
 
-<p> Logs a given message when the SPECTRE.DebugEnabled flag is set to 1. If additional data is provided, it's also logged.
+<p> Logs a given message when the SPECTRE.DebugEnabled flag is set to 1.
+ If additional data is provided, it's also logged.
 
 
     <h3>Parameters:</h3>
@@ -1436,7 +1465,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-26 07:35:37 </i>
+<i style="float:right;">Last updated 2023-11-28 20:44:19 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

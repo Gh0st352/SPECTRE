@@ -5,9 +5,9 @@
 -- ------------------------------------------------------------------------------------------
 -- 
 -- S. - Special         |
--- P. - Purpose         | CompileTime : Sunday, November 26, 2023 7:35:35 AM
+-- P. - Purpose         | CompileTime : Tuesday, November 28, 2023 8:44:17 PM
 -- E. - Extension for   |      Commit : 6adc313af566c4a566e5aefe11b85fc2bd03d026
--- C. - Creating        |	    Version : 0.9.8
+-- C. - Creating        |	    Version : 0.9.9
 -- T. - Truly           |      Github : https://github.com/Gh0st352
 -- R. - Reactive        |      Author : Gh0st
 -- E. - Environments    |     Discord : gh0st352
@@ -351,10 +351,6 @@ function SPECTRE:EndMissionSave()
   SPECTRE.IO.PersistenceToFile(self._masterProfileFile, SPECTRE_settings, true)
   return self
 end
-
-
-
-
 
 --- **AI**
 --
@@ -1565,7 +1561,7 @@ SPECTRE.BRAIN = {}
 --              _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
 --              return _Object
 --            end
---
+-- @usage local persistedObject = SPECTRE.BRAIN.checkAndPersist("path/to/file", false, myObject, true, function(obj) return modifyObject(obj) end)
 function SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)
   SPECTRE.UTILS.debugInfo("SPECTRE.BRAIN.checkAndPersist | PERSISTENCE  | ----------------------")
   SPECTRE.UTILS.debugInfo("SPECTRE.BRAIN.checkAndPersist | PATH         | " .. tostring(_filename))
@@ -1606,6 +1602,62 @@ function SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, 
 end
 
 
+--- x - Watchers.
+-- ===
+--
+-- *All watchers.*
+--
+-- ===
+-- @section SPECTRE.BRAIN
+
+
+--- Builds a watcher on a table to monitor changes to a specific key.
+--
+-- This function iterates through each key-value pair in a provided table and sets up a proxy table with a metatable to watch changes. 
+-- The proxy uses metatable magic to intercept changes to a specific key. 
+-- When a change to the specified key is detected, a watcher function is called with additional arguments if provided. 
+-- This is useful for monitoring changes to a table and triggering specific actions when those changes occur.
+--
+-- @param table_ The table on which the watcher is to be set.
+-- @param key_ The key in the table to monitor for changes.
+-- @param watcherFunction The function to call when a change to the specified key is detected.
+-- @param ... Additional arguments to pass to the watcherFunction.
+-- @usage SPECTRE.BRAIN:buildWatcher(myTable, "myKey", function(key, value) print("Key " .. key .. " changed to " .. value) end)
+function SPECTRE.BRAIN:buildWatcher(table_, key_, watcherFunction, ...)
+  local extraArgs = {...}  -- Capture extra arguments in a table
+
+  for tableKey_, tableValue_ in pairs(table_) do
+    local proxy = {
+      __actualValue = tableValue_  -- Store actual value
+    }
+
+    setmetatable(proxy, {
+      __index = function(t, k)
+        return t.__actualValue[k]  -- Access actual value
+      end,
+      
+      __newindex = function(t, k, v)
+        if k == key_ then
+          -- Call the watcher function with extra arguments
+          watcherFunction(tableKey_, v, unpack(extraArgs))
+        end
+        t.__actualValue[k] = v  -- Modify actual value
+      end
+    })
+
+    table_[tableKey_] = proxy  -- Replace original value with the proxy
+  end
+end
+
+--- x - Machine Learning.
+-- ===
+--
+-- *Machine Learning algorithms.*
+--
+-- ===
+-- @section SPECTRE.BRAIN
+
+
 SPECTRE.BRAIN.DBSCANNER = {}
 SPECTRE.BRAIN.DBSCANNER.params = {}
 SPECTRE.BRAIN.DBSCANNER._DBScan = {}
@@ -1619,17 +1671,35 @@ SPECTRE.BRAIN.DBSCANNER.min_samples = 0
 SPECTRE.BRAIN.DBSCANNER.Area = 0
 SPECTRE.BRAIN.DBSCANNER._RadiusExtension = 0
 
-
+--- Constructs a new DBSCANNER object.
+--
+-- This function initializes a new DBSCANNER object with specified parameters. 
+-- It sets up the points, area, and radius extension for the DBSCAN algorithm. 
+-- It also calls 'generateDBSCANparams' to calculate necessary parameters for the DBSCAN process.
+--
+-- @param Points An array of points for the DBSCAN algorithm.
+-- @param Area The area to be considered for the DBSCAN algorithm.
+-- @param RadiusExtension The radius extension value for the DBSCAN calculations.
+-- @return self The newly created DBSCANNER object.
+-- @usage local dbscanner = SPECTRE.BRAIN.DBSCANNER:New(pointsArray, areaValue, radiusExtension)
 function SPECTRE.BRAIN.DBSCANNER:New(Points, Area, RadiusExtension)
   local self=BASE:Inherit(self, SPECTRE:New())
   self.Points = Points
   self.numPoints = #Points
   self.Area = Area
-  self._RadiusExtension = RadiusExtension
+  self._RadiusExtension = RadiusExtension or 0
   self:generateDBSCANparams()
   return self
 end
 
+--- Generates parameters for the DBSCAN algorithm based on the object's attributes.
+--
+-- This function calculates 'epsilon' and 'min_samples' for the DBSCAN algorithm, based on:
+-- the number of points, the area, and specific factors 'f' and 'p'
+-- It updates the object with these calculated values. 
+--
+-- @return self The updated DBSCANNER object with newly calculated parameters.
+-- @usage dbscanner:generateDBSCANparams() -- Updates the 'dbscanner' object with DBSCAN parameters.
 function SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams()
   -- Initial calculations
   local n = self.numPoints
@@ -1647,11 +1717,28 @@ function SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams()
 
   return self
 end
+
+--- Executes the DBSCAN clustering algorithm and post-processes the clusters.
+--
+-- This function initiates the DBSCAN clustering process by calling '_DBScan' and then performs post-processing on the clusters formed. 
+-- It structures the scanning process and post-processing as a sequence of operations on the DBSCANNER object.
+--
+-- @return self The DBSCANNER object after completing the scan and post-processing steps.
+-- @usage dbscanner:Scan() -- Performs the DBSCAN algorithm and post-processes the results.
 function SPECTRE.BRAIN.DBSCANNER:Scan()
   self:_DBScan()
   self:post_process_clusters()
   return self
 end
+
+--- Core function of the DBSCAN algorithm for clustering points.
+--
+-- This internal function implements the DBSCAN clustering algorithm. 
+-- It initializes each point as unmarked, then iterates through each point to determine if it is a core point and expands clusters accordingly. 
+-- Points are marked as either part of a cluster or as noise.
+--
+-- @return self The DBSCANNER object with updated clustering information.
+-- @usage dbscanner:_DBScan() -- Directly performs the DBSCAN clustering algorithm.
 function SPECTRE.BRAIN.DBSCANNER:_DBScan()
   -- Initialization
   local UNMARKED, NOISE = 0, -1
@@ -1676,6 +1763,15 @@ function SPECTRE.BRAIN.DBSCANNER:_DBScan()
   return self
 end
 
+--- Identifies neighboring points within a specified epsilon distance of a given point.
+--
+-- This function searches for neighbors of a given 'point' within the 'epsilon' radius. 
+-- It utilizes a private function '_distance' to calculate the Euclidean distance between points. 
+-- The function is used within the DBSCAN algorithm to find points in the epsilon neighborhood of a given point.
+--
+-- @param point The point around which neighbors are to be found.
+-- @return neighbors A list of neighboring points within the epsilon distance of the given point.
+-- @usage local neighbors = dbscanner:region_query(specificPoint) -- Finds neighbors of 'specificPoint'.
 function SPECTRE.BRAIN.DBSCANNER:region_query(point)
   local function _distance(point1, point2)
     -- Calculate the differences in x and y coordinates between the two points
@@ -1699,6 +1795,17 @@ function SPECTRE.BRAIN.DBSCANNER:region_query(point)
   return neighbors
 end
 
+--- Expands a cluster around a given point based on its neighbors and a specified cluster ID.
+--
+-- This function adds a given point and its neighbors to a cluster identified by 'cluster_id'. 
+-- It iteratively checks each neighbor and includes them in the cluster if they are not already part of another cluster or marked as noise. 
+-- The function also discovers new neighbors of neighbors, expanding the cluster until no further additions are possible.
+--
+-- @param point The point around which the cluster is being expanded.
+-- @param neighbors The initial set of neighbors of the point.
+-- @param cluster_id The identifier of the cluster being expanded.
+-- @return self The updated DBSCANNER object after expanding the cluster.
+-- @usage dbscanner:expand_cluster(corePoint, initialNeighbors, clusterId) -- Expands a cluster around 'corePoint'.
 function SPECTRE.BRAIN.DBSCANNER:expand_cluster(point, neighbors, cluster_id)
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | -------------------------------------------- ")
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:expand_cluster | cluster_id  | " .. cluster_id)
@@ -1724,6 +1831,14 @@ function SPECTRE.BRAIN.DBSCANNER:expand_cluster(point, neighbors, cluster_id)
   return self
 end
 
+--- Post-processes the clusters formed by the DBSCAN algorithm.
+--
+-- After clustering is done, this function processes each cluster to compute its center, radius, and other relevant details. 
+-- It organizes the clusters into a sorted array and calculates the center and radius for each cluster, including any radius extension. 
+-- The results are stored in the 'Clusters' attribute of the DBSCANNER object.
+--
+-- @return self The updated DBSCANNER object with fully processed clusters.
+-- @usage dbscanner:post_process_clusters() -- Post-processes clusters to compute centers and radii.
 function SPECTRE.BRAIN.DBSCANNER:post_process_clusters()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:post_process_clusters | -------------------------------------------- ")
   local function _distance(point1, point2)
@@ -1784,6 +1899,8 @@ function SPECTRE.BRAIN.DBSCANNER:post_process_clusters()
 end
 
 
+
+
 -- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ --
 
 --- **HANDLERS**
@@ -1822,19 +1939,30 @@ end
 -- @section SPECTRE.HANDLERS
 
 
----.
+---Automatically clean up pesky parachute markers on the map upon touchdown.
 -- @field #HANDLERS.ParachuteCleanup
 SPECTRE.HANDLERS.ParachuteCleanup = {}
 SPECTRE.HANDLERS.ParachuteCleanup = EVENT:New()
---- Init remove parachutes from map on landing.
--- @param #HANDLERS.ParachuteCleanup
--- @return #HANDLERS.ParachuteCleanup self
+--- Initializes the Parachute Cleanup handler.
+--
+-- This function sets up an event handler to remove parachutes from the map upon landing after ejection. 
+-- It listens to the `EVENTS.LandingAfterEjection` event and triggers `_ParachuteCleanup` function whenever such an event occurs.
+--
+-- @return #HANDLERS.ParachuteCleanup self The updated ParachuteCleanup handler with event handling initialized.
+-- @usage SPECTRE.HANDLERS:ParachuteCleanupInit() -- Initializes the Parachute Cleanup event handling.
 function SPECTRE.HANDLERS:ParachuteCleanupInit()
   SPECTRE.UTILS.debugInfo("SPECTRE.HANDLERS.ParachuteCleanup | Init")
   self:HandleEvent(EVENTS.LandingAfterEjection, self._ParachuteCleanup)
   return self
 end
----.
+--- Handles the cleanup of parachutes on landing after ejection.
+--
+-- This function is triggered upon landing after ejection events. 
+-- It logs the event details and, if the initiator (parachute) exists, attempts to destroy it. 
+-- This function is designed to be used as an event handler and not called directly.
+--
+-- @param ParachuteCleanupEvent The event data associated with a landing after ejection.
+-- @usage Called internally as an event handler for `EVENTS.LandingAfterEjection`.
 function SPECTRE.HANDLERS:_ParachuteCleanup(ParachuteCleanupEvent)
   if SPECTRE.DebugEnabled == 1 then
     SPECTRE.UTILS.debugInfo("SPECTRE.HANDLERS.ParachuteCleanup | OnEventLandingAfterEjection")
@@ -1861,41 +1989,6 @@ function SPECTRE.HANDLERS:_ParachuteCleanup(ParachuteCleanupEvent)
   end
 end
 
-
-
-
-
------ Removes parachutes from map on landing.
-
----- @param parashooEvent
-
---function SPECTRE.HANDLERS.ParachuteCleanup.OnEventLandingAfterEjection(ParachuteCleanupEvent)
-
---
-
---
-
---  if SPECTRE.DebugEnabled == 1 then
-
---    local force = true
-
---    local _Randname = os.time()
-
---    local _filename = SPECTRE._persistenceLocations.SPECTRE.path .. "DEBUG/ParachuteCleanup/" .. _Randname .. ".lua"
-
---    SPECTRE.IO.PersistenceToFile(_filename, ParachuteCleanupEvent, force)
-
---  end
-
---
-
---  SPECTRE.UTILS.debugInfo("SPECTRE.HANDLERS.ParachuteCleanup | Event     " , ParachuteCleanupEvent )
-
---  SPECTRE.UTILS.debugInfo("SPECTRE.HANDLERS.ParachuteCleanup   | initiator " , ParachuteCleanupEvent.initiator )
-
---  Unit.destroy(ParachuteCleanupEvent.initiator)
-
---end
 
 -- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ --
 
@@ -2023,7 +2116,6 @@ SPECTRE.IADS.UpdateIntervalNudge = 0.25
 function SPECTRE.IADS:New(coal,ZONEMGR_)
   local self = BASE:Inherit(self, SPECTRE:New())
   self.coal = coal
-  --self:assignZONEMGR(ZONEMGR_)
   self.ZONEMGR = ZONEMGR_
   return self
 end
@@ -4375,10 +4467,15 @@ end
 -- @usage manager:_EventMarker(packetData) -- Process the marker event based on the provided packet data.
 function SPECTRE.PLYRMGR:_EventMarker(Packet)
   local _,_,heading, distance, code,MarkInfo,NewMarkerCoord,PlayerUCID,descriptor,newMarkerText,newMarkerID
-  local _tCode = SPECTRE.COUNTERS
-  code = _tCode--self.COUNTERS.CodeMarker -- Incrementing CodeMarker counter
+  --local _tCode = SPECTRE.COUNTERS
+  code = SPECTRE.COUNTER--self.COUNTERS.CodeMarker -- Incrementing CodeMarker counter
   --self.COUNTERS.CodeMarker = self.COUNTERS.CodeMarker + 5
-  SPECTRE.COUNTERS = code + 1
+  SPECTRE.COUNTER = SPECTRE.COUNTER + 1
+  --  local _,_,heading, distance, code,MarkInfo,NewMarkerCoord,PlayerUCID,descriptor,newMarkerText,newMarkerID
+  --  local _tCode = SPECTRE.COUNTERS
+  --  code = _tCode--self.COUNTERS.CodeMarker -- Incrementing CodeMarker counter
+  --  --self.COUNTERS.CodeMarker = self.COUNTERS.CodeMarker + 5
+  --  SPECTRE.COUNTERS = code + 1
   MarkInfo = SPECTRE.MARKERS.World.FindByText(Packet.origText) -- Finding mark info using Text
   NewMarkerCoord = COORDINATE:New(MarkInfo.pos.x,MarkInfo.pos.y,MarkInfo.pos.z) -- Creating a new coordinate object
   PlayerUCID = SPECTRE.UTILS.GetPlayerInfo(MarkInfo.author, "ucid") -- Fetching the unique ID of the player who changed the mark
@@ -10093,11 +10190,16 @@ function SPECTRE.UTILS.removeMatchingEntries(A, B)
   return A
 end
 
----.
--- Example Usage
--- subListA_ = {1, 2, 3}, subListB_ = {4, 5, 6}, Master_ = {1, 2, 3, 4, 5, 6, 7, 8}
--- result = findUnusedElements(subListA_, subListB_, Master_)
--- result will contain {7, 8}
+--- Finds elements in a master list that are not present in two given sublists.
+--
+-- This function identifies elements in the 'Master_' list that are not found in either 'subListA_' or 'subListB_'.
+-- It uses a helper function 'isInList' to check for element presence in the sublists.
+--
+-- @param subListA_ The first sublist to check against the master list.
+-- @param subListB_ The second sublist to check against the master list.
+-- @param Master_ The master list from which elements are to be checked.
+-- @return result A list of elements from 'Master_' not found in either 'subListA_' or 'subListB_'.
+-- @usage local unusedElements = SPECTRE.UTILS.findUnusedElements({1, 2, 3}, {4, 5, 6}, {1, 2, 3, 4, 5, 6, 7, 8}) -- Returns {7, 8}.
 function SPECTRE.UTILS.findUnusedElements(subListA_, subListB_, Master_)
   local result = {}
   local foundInAorB
@@ -10125,8 +10227,6 @@ function SPECTRE.UTILS.findUnusedElements(subListA_, subListB_, Master_)
 
   return result
 end
-
-
 
 --- Check if a table contains a specific key.
 --
@@ -10273,6 +10373,23 @@ function SPECTRE.UTILS.getIndex(tab, val)
   return nil
 end
 
+--- Removes a specified substring from a given string.
+--
+-- This function eliminates all occurrences of 'substr' from 'str'. It handles special characters in the substring by escaping them before removal. The removal process uses Lua's string.gsub function.
+--
+-- @param str The original string from which the substring is to be removed.
+-- @param substr The substring that needs to be removed from 'str'.
+-- @return modifiedStr The modified string with 'substr' removed.
+-- @usage local modifiedString = SPECTRE.UTILS.removeSubstring("Hello world", "world") -- Returns "Hello ".
+function SPECTRE.UTILS.removeSubstring(str, substr)
+  -- Pattern escape to handle special characters in the substring.
+  local escapedSubstr = string.gsub(substr, "([%W])", "%%%1")
+
+  -- Use gsub to replace all occurrences of the substring with an empty string.
+  local modifiedStr = string.gsub(str, escapedSubstr, "")
+
+  return modifiedStr
+end
 
 --- Game Manipulation.
 -- ===
@@ -10395,17 +10512,25 @@ function SPECTRE.UTILS.ReportGenerator(ReportTable)
   return report
 end
 
---- .
--- @param _GroupNames ipair table group names
+--- Deletes groups by their names.
+--
+-- Iterates through a list of group names and deletes each group. It uses the 'GROUP:FindByName' method to find the group and then destroys it.
+--
+-- @param _GroupNames An ipair table of group names to be deleted.
+-- @usage SPECTRE.UTILS.deleteGroupsByName({"Group1", "Group2"}) -- Deletes groups named 'Group1' and 'Group2'.
 function SPECTRE.UTILS.deleteGroupsByName(_GroupNames)
   for _,_gName in ipairs(_GroupNames) do
     GROUP:FindByName(_gName):Destroy(true)
   end
 end
 
---- .
--- @param string string that the group name contains.
--- @return _groupNames ipair strings
+--- Retrieves group names that contain a specified string.
+--
+-- This function scans all groups and returns the names of those whose name includes the provided string. It utilizes the 'mist.DBs.groupsByName' database for group information.
+--
+-- @param string The string to match within group names.
+-- @return _groupNames An ipair list of group names that contain the specified string.
+-- @usage local matchingGroups = SPECTRE.UTILS.getGroupNamesbyStringMatch("Alpha") -- Returns a list of group names containing 'Alpha'.
 function SPECTRE.UTILS.getGroupNamesbyStringMatch(string)
   local _groupNames = {}
   local allGroups = mist.DBs.groupsByName
@@ -10426,9 +10551,17 @@ end
 -- @section SPECTRE.UTILS
 
 
---- .
--- @param NudgeFactor
--- @return returnValue
+--- Generates a nudge value based on a provided factor.
+--
+-- This function calculates a nudge value within a dynamic range based on the 'NudgeFactor'. 
+-- If 'NudgeFactor' is 1 or 0, it returns the 'NudgeFactor' itself. 
+-- Otherwise, it calculates a random decimal between a lower and an upper bound, derived from 'NudgeFactor'. 
+-- The lower bound is the greater of 'NudgeFactor' minus its square, and 0.01. 
+-- The upper bound is the lesser of 'NudgeFactor' plus its square, and 0.99.
+--
+-- @param NudgeFactor The factor based on which the nudge value is generated.
+-- @return returnValue The calculated nudge value, a decimal between the determined lower and upper bounds.
+-- @usage local nudgeValue = SPECTRE.UTILS.generateNudge(0.5) -- Returns a random decimal between 0.01 and 0.99, based on the calculated bounds.
 function SPECTRE.UTILS.generateNudge(NudgeFactor)
   --SPECTRE.UTILS.debugInfo("SPECTRE.UTILS.generateNudge : " .. NudgeFactor )
   -- Check if NudgeFactor is 1 or 0
@@ -10446,10 +10579,17 @@ function SPECTRE.UTILS.generateNudge(NudgeFactor)
   --  SPECTRE.UTILS.debugInfo("SPECTRE.UTILS.generateNudge : returnValue: " .. returnValue )
   return returnValue
 end
---- .
--- @param a
--- @param b
--- @return randomDecimal
+
+--- Generates a random decimal number between two values.
+--
+-- This function returns a random decimal number within the range of two specified values 'a' and 'b'. 
+-- If 'a' is greater than 'b', their values are swapped to ensure a valid range. 
+-- It ensures randomness by calling 'math.random()' twice before calculation.
+--
+-- @param a The lower bound of the range.
+-- @param b The upper bound of the range.
+-- @return randomDecimal A random decimal number between 'a' and 'b'.
+-- @usage local randomNum = SPECTRE.UTILS.randomDecimalBetween(1.0, 2.0) -- Returns a random decimal between 1.0 and 2.0.
 function SPECTRE.UTILS.randomDecimalBetween(a, b)
   math.random()
   math.random()
@@ -10459,12 +10599,19 @@ function SPECTRE.UTILS.randomDecimalBetween(a, b)
   return a + (b - a) * math.random()
 end
 
----.
--- @param Nominal
--- @param Min
--- @param Max
--- @param NudgeFactor
--- @return returnNominal
+--- Generates a nominal value based on a given range, nudged by a specified factor.
+--
+-- This function calculates a value within a range around 'Nominal', nudged by 'NudgeFactor'. 
+-- If 'NudgeFactor' is 1, it returns 'Nominal'. 
+-- If 'NudgeFactor' is 0, it randomly returns either 'Min' or 'Max'. 
+-- Otherwise, it calculates a 'nudged' range around 'Nominal' and returns a random decimal within this range.
+--
+-- @param Nominal The central value around which the range is calculated.
+-- @param Min The minimum possible value.
+-- @param Max The maximum possible value.
+-- @param NudgeFactor The factor determining the extent of the nudge from 'Nominal'.
+-- @return returnNominal A number within the nudged range around 'Nominal'.
+-- @usage local nominalValue = SPECTRE.UTILS.generateNominal(50, 40, 60, 0.5) -- Returns a value in a nudged range around 50.
 function SPECTRE.UTILS.generateNominal(Nominal, Min, Max, NudgeFactor)
   math.random()
   math.random()
@@ -10527,19 +10674,30 @@ end
 -- ===
 -- @section SPECTRE.UTILS
 
---- .
--- @param OBJECT_
--- @return _template
+--- Creates a template from a given object.
+--
+-- This function serializes an object into a string using 'SPECTRE.IO.persistence.serializeNoFunc' and then deserializes it back into a table. 
+-- The resulting table serves as a template for the original object.
+--
+-- @param OBJECT_ The object to be converted into a template.
+-- @return _template The template derived from the given object.
+-- @usage local objectTemplate = SPECTRE.UTILS.templateFromObject(myObject) -- Converts 'myObject' into a template.
 function SPECTRE.UTILS.templateFromObject(OBJECT_)
   local serialString_ = SPECTRE.IO.persistence.serializeNoFunc(OBJECT_)
   local _template = SPECTRE.IO.persistence.deSerialize(serialString_)
   return _template
 end
----Sets all values in output_ to those in template_.
---  Skips overwriting functions and __index.
--- @param template_
--- @param output_
--- @return output_
+
+--- Sets values in one table based on a template table.
+--
+-- Updates the 'output_' table with values from the 'template_' table. 
+-- It skips overwriting any functions and the '__index' key. 
+-- The function handles nested tables recursively, ensuring deep copying of table values.
+--
+-- @param template_ The template table providing the values.
+-- @param output_ The output table to be updated.
+-- @return output_ The updated output table.
+-- @usage local updatedTable = SPECTRE.UTILS.setTableValues(templateTable, outputTable) -- Updates 'outputTable' with values from 'templateTable'.
 function SPECTRE.UTILS.setTableValues(template_, output_)
   for key, value in pairs(template_) do
     -- Skip if the key is __index or if the value in output_ is a function
@@ -10566,7 +10724,8 @@ end
 
 --- Log debug information if debugging is enabled.
 --
--- Logs a given message when the SPECTRE.DebugEnabled flag is set to 1. If additional data is provided, it's also logged.
+-- Logs a given message when the SPECTRE.DebugEnabled flag is set to 1. 
+-- If additional data is provided, it's also logged.
 --
 -- @param message The debug message to be logged.
 -- @param data Optional data to be logged.
@@ -10578,15 +10737,15 @@ function SPECTRE.UTILS.debugInfo(message, data)
   end
 end
 
----.
-function SPECTRE.UTILS.DEBUG_PRINT(self_)
-  if self.DebugEnabled == 1 then
-    BASE:E("SPECTRE|SPAWNER - DEBUG_PRINT_self()")
-    self:PrintTable(self_, 0, 3)
-  end
-end
 
----.
+--- Recursively prints a table's contents up to a specified depth.
+--
+-- This function iterates over each key-value pair in the table 'tbl', printing them. If the value is a table, it recursively calls itself, increasing the indentation level. The printing is limited to 'maxLevel' depth to prevent excessively deep traversal.
+--
+-- @param tbl The table to be printed.
+-- @param level The current depth level (starts at 0).
+-- @param maxLevel The maximum depth level to print.
+-- @usage SPECTRE.UTILS.PrintTable(myTable, 0, 3) -- Prints the contents of 'myTable' up to a depth of 3 levels.
 function SPECTRE.UTILS.PrintTable(tbl, level, maxLevel)
   if level > maxLevel then
     return
@@ -10598,20 +10757,6 @@ function SPECTRE.UTILS.PrintTable(tbl, level, maxLevel)
     else
       BASE:E(string.rep("  ", level + 1) .. value)
     end
-  end
-end
-
----.
-function SPECTRE.UTILS.ToggleDebugMessages()
-  if SPECTRE.DebugEnabled == 0 then
-    SPECTRE.DebugEnabled = 1
-    trigger.action.outText("Debug Messages Started",5, false)
-  elseif SPECTRE.DebugEnabled == 1 then
-    SPECTRE.DebugEnabled = 0
-    trigger.action.outText("Debug Messages Stopped",5, false)
-  end
-  if self.DebugEnabled == 1 then
-    BASE:E("SPECTRE|SPAWNER - ToggleDebugMessages - State: " .. SPECTRE.DebugEnabled )
   end
 end
 
@@ -10991,6 +11136,7 @@ SPECTRE.ZONEMGR.Handler_ = EVENT:New()
 SPECTRE.ZONEMGR.schedulerCAPMin = 20
 SPECTRE.ZONEMGR.schedulerCAPMax = 30
 SPECTRE.ZONEMGR.schedulerCAPFactor = 0.25
+
 --- WIP.
 -- Flag for enabling CAP functionality.
 -- Indicates if CAP Defense is active in ZONEMGR.
@@ -11083,8 +11229,6 @@ SPECTRE.ZONEMGR.UpdatingZones = false
 -- @field #ZONEMGR.UpdateSched
 SPECTRE.ZONEMGR.UpdateSched = {}
 
---- _AirfieldCaptureHandler
-SPECTRE.ZONEMGR._AirfieldCaptureHandler = {}
 --- Flag indicating if SSB management is active.
 SPECTRE.ZONEMGR.SSB = false
 
@@ -11341,13 +11485,17 @@ function SPECTRE.ZONEMGR.getZoneCoalition(self, zoneName)
   return ownedBy
 end
 
---- Retrieves the owned airfield and zones for red and blue.
+--- Retrieves the airfields and zones owned by the red and blue coalitions.
+--
+-- This function iterates through the zones managed by the `ZONEMGR` instance, determining which coalition owns each zone and airfield. 
+-- It classifies the zones and airfields based on their ownership and returns separate lists for red and blue coalitions.
 --
 -- @param #ZONEMGR self The instance of the zone manager.
--- @return redZones
--- @return blueZones
--- @return redAirfields
--- @return blueAirfields
+-- @return redZones Table of zones owned by the red coalition.
+-- @return blueZones Table of zones owned by the blue coalition.
+-- @return redAirfields Table of airfields owned by the red coalition.
+-- @return blueAirfields Table of airfields owned by the blue coalition.
+-- @usage local redZones, blueZones, redAirfields, blueAirfields = zoneManager:getOwnedProperty() -- Retrieves owned zones and airfields.
 function SPECTRE.ZONEMGR.getOwnedProperty(self)
   local redZones, blueZones, redAirfields, blueAirfields = {}, {}, {}, {}
   for _k, _v in pairs(self.Zones) do
@@ -11803,7 +11951,7 @@ end
 function SPECTRE.ZONEMGR:spawnFillInZoneSmart(_zoneName, coalition, country,  SPWNR_, _bias, SPWNRTemplate)
   SPWNR_ = SPWNR_ or nil
   SPWNRTemplate = SPWNRTemplate or nil
-   if SPWNRTemplate ~= nil then SPWNR_ = SPECTRE.SPAWNER:New():ImportTemplate(SPWNRTemplate) end
+  if SPWNRTemplate ~= nil then SPWNR_ = SPECTRE.SPAWNER:New():ImportTemplate(SPWNRTemplate) end
   _bias = _bias or 0
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnFillInZone | ---- | " .. _zoneName .. " | --------")
   local _spawner = SPWNR_ or SPECTRE.SPAWNER:New():ImportTemplate(self.FILLSPAWNERS[SPECTRE.UTILS.PickRandomFromKVTable(self.FILLSPAWNERS)])
@@ -11847,9 +11995,14 @@ end
 -- ===
 -- @section SPECTRE.ZONEMGR
 
---- .
+--- Clears all fill spawner templates in the zone manager.
+--
+-- This function resets the 'FILLSPAWNERS' table within the zone manager instance, effectively clearing all existing fill spawner templates. 
+-- It's useful for reinitializing or updating the spawner settings in the zone manager.
+--
 -- @param #ZONEMGR
--- @return #ZONEMGR self The zone manager instance after adding or updating the spawner template.
+-- @return #ZONEMGR self
+-- @usage zoneManager:clearFillSpawnerTemplates() -- Clears all fill spawner templat
 function SPECTRE.ZONEMGR:clearFillSpawnerTemplates()
   self.FILLSPAWNERS = {}
   return self
@@ -11886,9 +12039,14 @@ function SPECTRE.ZONEMGR:AddFillSpawnerTemplate(_SPWNR, name_, force)
   return self
 end
 
---- .
+--- Clears all Airfield spawner templates in the zone manager.
+--
+-- This function resets the 'AIRFIELDSPAWNERS' table within the zone manager instance, effectively clearing all existing Airfield spawner templates. 
+-- It's useful for reinitializing or updating the spawner settings in the zone manager.
+--
 -- @param #ZONEMGR
--- @return #ZONEMGR self The zone manager instance after adding or updating the spawner template.
+-- @return #ZONEMGR self
+-- @usage zoneManager:clearFillSpawnerTemplates() -- Clears all fill spawner templat
 function SPECTRE.ZONEMGR:clearAirfieldSpawnerTemplates()
   self.AIRFIELDSPAWNERS = {}
   return self
@@ -11926,7 +12084,16 @@ function SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate(_SPWNR, name_, force)
   return self
 end
 
----.
+--- Creates a spawner template based on a provided spawner object.
+--
+-- This function generates a template from the given '_SPWNR' spawner object using 'SPECTRE.UTILS.templateFromObject'. 
+-- It updates the '_Object' with this new template. 
+-- This function is typically used internally within the zone manager to create or update templates for spawners.
+--
+-- @param _SPWNR The spawner object from which the template is to be created.
+-- @param _Object The object to be updated with the new spawner template.
+-- @return _Object The updated object with the new spawner template.
+-- @usage local updatedObject = SPECTRE.ZONEMGR._CreateSpawnerTemplate(spawner, existingObject) -- Updates 'existingObject' with a template from 'spawner'.
 function SPECTRE.ZONEMGR._CreateSpawnerTemplate(_SPWNR, _Object)
   -- Update _Object with the new template and return it
   _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
@@ -12049,9 +12216,16 @@ function SPECTRE.ZONEMGR:UpdateSchedInit()
   return self
 end
 
----.
--- @param #ZONEMGR
--- @return #ZONEMGR self The zone manager instance with the update scheduler initialized.
+--- Initializes the marker update scheduler for the zone manager.
+--
+-- This function sets up a scheduler to manage marker operations within the zone manager. 
+-- It processes various marker queues including hotspot, marker, and marker removal queues. 
+-- The scheduler handles the addition, update, and removal of markers at specified intervals. 
+-- This only exists because of a bug in DCS. When it is fixed updates wont be tied to a schedule queue. 
+--
+-- @param #ZONEMGR 
+-- @return #ZONEMGR self 
+-- @usage zoneManager:MarkerScheduleInit() -- Initializes the marker update scheduler for 'zoneManager'.
 function SPECTRE.ZONEMGR:MarkerScheduleInit()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerScheduleInit | ---------------------")
 
@@ -12092,71 +12266,7 @@ function SPECTRE.ZONEMGR:MarkerScheduleInit()
 
   return self
 end
---function SPECTRE.ZONEMGR:MarkerScheduleInit()
---  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerScheduleInit | ---------------------")
---  --SPECTRE.ZONEMGR._markerQueue = {}
---  --SPECTRE.ZONEMGR._markerScheduler = {}
---
---  self._markerScheduler = SCHEDULER:New(self, function()
---    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | ---------------------")
---    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Mark Circle: ")
---    for _i, _marker in ipairs(self._hotspotQueue) do
---      if _marker then
---        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Mark ... " .. tostring(_marker.MarkerID))
---        trigger.action.circleToAll(_marker.coal, _marker.MarkerID, _marker.Vec3, _marker.radius, _marker.color, _marker.fillColor, _marker.num, _marker.ReadOnly)
---        _marker = nil
---        --table.remove(self._hotspotQueue, _i)
---      end
---    end
---    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | ---------------------")
---    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Mark Intel: ")
---    for _i, _marker in ipairs(self._markerQueue) do
---      if _marker then
---        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Mark ... " .. tostring(_marker.MarkerID))
---        trigger.action.markToCoalition(_marker.MarkerID, _marker.intelString, _marker.Vec3, _marker.coal, _marker.ReadOnly)
---        _marker = nil
---        --table.remove(self._markerQueue, _i)
---      end
---    end
---
---    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | ---------------------")
---    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Remove: ")
---    for _i, _marker in ipairs(self._removeMarkerQueue) do
---      if _marker then
---        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Remove ... " .. tostring(_marker.MarkerID))
---
---        local _hotspot = false
---        local _intel = false
---
---        for _i, _markerT in ipairs(self._hotspotQueue) do
---          if _markerT.MarkerID == _marker.MarkerID then
---            _hotspot = true
---          end
---        end
---        for _i, _markerT in ipairs(self._markerQueue) do
---          if _markerT.MarkerID == _marker.MarkerID then
---            _intel = true
---          end
---        end
---
---        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Contained in Hotspot? ... " .. tostring(_hotspot))
---        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | Contained in Intel?   ... " .. tostring(_intel))
---        if not _hotspot and not _intel then
---          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerSchedule | CONFIRM REMOVE:       ... " .. tostring(_marker.MarkerID))
---          trigger.action.removeMark(_marker.MarkerID)
---          _marker = nil
---        end
---        --table.remove(self._removeMarkerQueue, _i)
---      end
---    end
---
---
---    return self
---  end, {self}, self.UpdateInterval, 20)--self.UpdateInterval, self.UpdateIntervalNudge)
---
---
---  return self
---end
+
 
 --- Activates the SSB  property within the ZoneManager.
 --
@@ -12213,7 +12323,20 @@ function SPECTRE.ZONEMGR:HotspotSchedInit()
   return self
 end
 
----WIP.
+--- Initializes the Combat Air Patrol (CAP) scheduler for the zone manager.
+--
+-- This function sets up a scheduler to manage CAP operations within the zone manager. 
+-- 
+-- It periodically checks and updates CAP units based on coalition ownership of zones. 
+-- 
+-- The scheduler handles the dynamic allocation and management of CAP units, considering factors like:
+-- zone ownership, available templates, and specific settings for each coalition. 
+-- 
+-- It ensures CAP units are deployed and managed effectively in response to the changing game environment.
+--
+-- @param #ZONEMGR 
+-- @return #ZONEMGR self 
+-- @usage zoneManager:CAPschedInit() -- Initializes the CAP scheduler for 'zoneManager'.
 function SPECTRE.ZONEMGR:CAPschedInit()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | ---------------------")
 
@@ -12408,11 +12531,16 @@ end
 -- ===
 -- @section SPECTRE.ZONEMGR
 
---- .
+--- Adds a CAP group template for a specified coalition.
+--
+-- This function adds a new Combat Air Patrol (CAP) group template to the zone manager for a specific coalition, ensuring no duplicates. 
+-- It updates the `_CAPtemplates` attribute by adding the specified group name if it's not already present.
+--
 -- @param #ZONEMGR self
--- @param coalition 0, 1, or 2
--- @param ucid player UCID to add to admin list
--- @return #ZONEMGR self
+-- @param coalition The coalition identifier (0, 1, or 2).
+-- @param groupName The name of the CAP group to be added.
+-- @return #ZONEMGR self 
+-- @usage zoneManager:addCAP(1, "CAPGroup1") -- Adds "CAPGroup1" to the CAP templates for coalition 1.
 function SPECTRE.ZONEMGR:addCAP(coalition, groupName)
   if not SPECTRE.UTILS.table_hasValue( self._CAPtemplates[coalition], groupName) then
     table.insert(self._CAPtemplates[coalition],groupName )
@@ -12421,10 +12549,16 @@ function SPECTRE.ZONEMGR:addCAP(coalition, groupName)
   return self
 end
 
---- .
--- @param #ZONEMGR self
--- @param ucid player UCID to add to admin list
--- @return #ZONEMGR self
+--- Removes a CAP group template from a specified coalition.
+--
+-- This function removes a specified Combat Air Patrol (CAP) group template from the zone manager for a given coalition. 
+-- It locates the group name within the `_CAPtemplates` and removes it if found.
+--
+-- @param #ZONEMGR self 
+-- @param coalition The coalition identifier (0, 1, or 2).
+-- @param groupName The name of the CAP group to be removed.
+-- @return #ZONEMGR self 
+-- @usage zoneManager:removeCAP(1, "CAPGroup1") -- Removes "CAPGroup1" from the CAP templates for coalition 1.
 function SPECTRE.ZONEMGR:removeCAP(coalition, groupName)
   local _index = SPECTRE.UTILS.getIndex(self._CAPtemplates[coalition], groupName)
   if _index then
@@ -12433,19 +12567,27 @@ function SPECTRE.ZONEMGR:removeCAP(coalition, groupName)
   return self
 end
 
---- Adds admin.
+--- Adds a player UCID to the admin list.
+--
+-- This function adds a specified player's UCID to the zone manager's admin list, allowing for administrative control or privileges within the game.
+--
 -- @param #ZONEMGR self
--- @param ucid player UCID to add to admin list
--- @return #ZONEMGR self
+-- @param ucid The player UCID to be added to the admin list.
+-- @return #ZONEMGR self 
+-- @usage zoneManager:addAdmin("PlayerUCID1234") -- Adds "PlayerUCID1234" to the admin list.
 function SPECTRE.ZONEMGR:addAdmin(ucid)
   self.AdminUCIDs[ucid] = ucid
   return self
 end
 
---- Removes admin.
--- @param #ZONEMGR self
--- @param ucid player UCID to remove from admin list
--- @return #ZONEMGR self
+--- Removes a player UCID from the admin list.
+--
+-- This function removes a specified player's UCID from the zone manager's admin list, revoking any administrative control or privileges.
+--
+-- @param #ZONEMGR self 
+-- @param ucid The player UCID to be removed from the admin list.
+-- @return #ZONEMGR self 
+-- @usage zoneManager:removeAdmin("PlayerUCID1234") -- Removes "PlayerUCID1234" from the admin list.
 function SPECTRE.ZONEMGR:removeAdmin(ucid)
   self.AdminUCIDs[ucid] = nil
   return self
@@ -12643,59 +12785,6 @@ function SPECTRE.ZONEMGR:seedAirbase()
 
   return self
 end
---- x - Events.
--- ===
---
--- *All Functions associated with Zone Manager operations.*
---
--- ===
--- @section SPECTRE.ZONEMGR
-
---- Handle base capture events.
---
--- @param #ZONEMGR self
--- @param eventData Table containing the base captured event data.
--- @return #ZONEMGR self
-function SPECTRE.ZONEMGR:_AirfieldCapture(eventData)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_AirfieldCapture | ---------------------")
-  self:AirfieldCapture(eventData)
-  return self
-end
-
---- Handle base capture events.
---
--- @param #ZONEMGR self
--- @param eventData Table containing the base captured event data.
--- @return #ZONEMGR self
-function SPECTRE.ZONEMGR:AirfieldCapture(eventData)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | ---------------------")
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | CaptureSPAWN: " .. tostring(self._AirfieldCaptureSpawns))
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | Airfield    : " .. tostring(eventData.PlaceName))
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | Initiator   : " , eventData.initiator)
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | eventData   : " , eventData)
-  -- Increment the UpdateQueue.
-  --self.UpdateQueue = self.UpdateQueue + 1
-  --
-  --  if self._AirfieldCaptureSpawns then
-  --    for _zName, _zValue in pairs(self.Zones) do
-  --      -- Check if the captured airbase is within this zone.
-  --      local capturedAirbase = _zValue.Airbases[eventData.PlaceName]
-  --      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | ZoneName    : " .. tostring(_zName))
-  --      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | AB OBJ      : " , capturedAirbase)
-  --      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | Zone OBJ    : " , _zValue)
-  --
-  --      if capturedAirbase and _zValue._AirfieldCaptureSpawns then
-  --        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | IniCoal     : " .. tostring(eventData.initiator.getCoalition()))
-  --        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:AirfieldCapture | IniCountry  : " .. tostring(eventData.initiator.getCountry()))
-  --        self:spawnAirbase(eventData.PlaceName, eventData.initiator.getCoalition(), eventData.initiator.getCountry())
-  --        break
-  --      end
-  --    end
-  --  end
-
-  return self
-end
-
 
 --- x - Live Editor.
 -- ===
@@ -13047,6 +13136,7 @@ function SPECTRE.ZONEMGR:_SPAWNcircle(Packet)
   return self
 end
 
+
 --- x - Live Edit Cfg.
 -- ===
 --
@@ -13217,6 +13307,9 @@ SPECTRE.ZONEMGR.Zone.SSBList = {}
 --- Specifies the coalition that owns the zone (Default: 0=Neutral).
 -- @field #ZONEMGR.Zone.OwnedByCoalition
 SPECTRE.ZONEMGR.Zone.OwnedByCoalition = 0
+--- Specifies the coalition that previously owned the zone (Default: 0=Neutral).
+-- @field #ZONEMGR.Zone.OldOwnedByCoalition
+SPECTRE.ZONEMGR.Zone.OldOwnedByCoalition = 0
 --- ID representing the drawn zone marker.
 -- @field #ZONEMGR.Zone.DrawnZoneMarkID
 SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID = 0
@@ -13442,6 +13535,9 @@ function SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership()
       blueCount = blueCount + 1
     end
   end
+
+  local _tx = self.OwnedByCoalition
+  self.OldOwnedByCoalition = _tx
 
   -- Determine the zone ownership based on the counts.
   if redCount > blueCount then
@@ -13960,6 +14056,8 @@ end
 --  end
 --  return self
 --end
+
+
 --- Identify and list all airbases within the specified zone.
 --
 -- This function is essential for understanding the strategic layout of the zone by identifying all airbases within its boundaries.

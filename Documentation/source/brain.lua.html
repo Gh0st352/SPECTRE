@@ -138,7 +138,7 @@
 </span><span class="comment">--              _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
 </span><span class="comment">--              return _Object
 </span><span class="comment">--            end
-</span><a id="60"></a><span class="comment">--
+</span><a id="60"></a><span class="comment">-- @usage local persistedObject = SPECTRE.BRAIN.checkAndPersist("path/to/file", false, myObject, true, function(obj) return modifyObject(obj) end)
 </span><span class="keyword">function</span> SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | PERSISTENCE  | ----------------------"</span>)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.BRAIN.checkAndPersist | PATH         | "</span> .. <span class="global">tostring</span>(_filename))
@@ -179,6 +179,62 @@
 <span class="keyword">end</span>
 
 
+<span class="comment">--- x - Watchers.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *All watchers.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section SPECTRE.BRAIN
+</span>
+
+<span class="comment">--- Builds a watcher on a table to monitor changes to a specific key.
+</span><span class="comment">--
+</span><span class="comment">-- This function iterates through each key-value pair in a provided table and sets up a proxy table with a metatable to watch changes.
+</span><span class="comment">-- The proxy uses metatable magic to intercept changes to a specific key.
+</span><span class="comment">-- When a change to the specified key is detected, a watcher function is called with additional arguments if provided.
+</span><span class="comment">-- This is useful for monitoring changes to a table and triggering specific actions when those changes occur.
+</span><span class="comment">--
+</span><span class="comment">-- @param table_ The table on which the watcher is to be set.
+</span><span class="comment">-- @param key_ The key in the table to monitor for changes.
+</span><span class="comment">-- @param watcherFunction The function to call when a change to the specified key is detected.
+</span><span class="comment">-- @param ... Additional arguments to pass to the watcherFunction.
+</span><a id="121"></a><span class="comment">-- @usage SPECTRE.BRAIN:buildWatcher(myTable, "myKey", function(key, value) print("Key " .. key .. " changed to " .. value) end)
+</span><span class="keyword">function</span> SPECTRE.BRAIN:buildWatcher(table_, key_, watcherFunction, ...)
+  <span class="keyword">local</span> extraArgs = {...}  <span class="comment">-- Capture extra arguments in a table
+</span>
+  <span class="keyword">for</span> tableKey_, tableValue_ <span class="keyword">in</span> <span class="global">pairs</span>(table_) <span class="keyword">do</span>
+    <span class="keyword">local</span> proxy = {
+      __actualValue = tableValue_  <span class="comment">-- Store actual value
+</span>    }
+
+    <span class="global">setmetatable</span>(proxy, {
+      __index = <span class="keyword">function</span>(t, k)
+        <span class="keyword">return</span> t.__actualValue[k]  <span class="comment">-- Access actual value
+</span>      <span class="keyword">end</span>,
+
+      __newindex = <span class="keyword">function</span>(t, k, v)
+        <span class="keyword">if</span> k == key_ <span class="keyword">then</span>
+          <span class="comment">-- Call the watcher function with extra arguments
+</span>          watcherFunction(tableKey_, v, <span class="global">unpack</span>(extraArgs))
+        <span class="keyword">end</span>
+        t.__actualValue[k] = v  <span class="comment">-- Modify actual value
+</span>      <span class="keyword">end</span>
+    })
+
+    table_[tableKey_] = proxy  <span class="comment">-- Replace original value with the proxy
+</span>  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">--- x - Machine Learning.
+</span><span class="comment">-- ===
+</span><span class="comment">--
+</span><span class="comment">-- *Machine Learning algorithms.*
+</span><span class="comment">--
+</span><span class="comment">-- ===
+</span><span class="comment">-- @section SPECTRE.BRAIN
+</span>
+
 SPECTRE.BRAIN.DBSCANNER = {}
 SPECTRE.BRAIN.DBSCANNER.params = {}
 SPECTRE.BRAIN.DBSCANNER._DBScan = {}
@@ -192,18 +248,36 @@ SPECTRE.BRAIN.DBSCANNER.min_samples = <span class="number">0</span>
 SPECTRE.BRAIN.DBSCANNER.Area = <span class="number">0</span>
 SPECTRE.BRAIN.DBSCANNER._RadiusExtension = <span class="number">0</span>
 
-
-<span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:New(Points, Area, RadiusExtension)
+<span class="comment">--- Constructs a new DBSCANNER object.
+</span><span class="comment">--
+</span><span class="comment">-- This function initializes a new DBSCANNER object with specified parameters.
+</span><span class="comment">-- It sets up the points, area, and radius extension for the DBSCAN algorithm.
+</span><span class="comment">-- It also calls 'generateDBSCANparams' to calculate necessary parameters for the DBSCAN process.
+</span><span class="comment">--
+</span><span class="comment">-- @param Points An array of points for the DBSCAN algorithm.
+</span><span class="comment">-- @param Area The area to be considered for the DBSCAN algorithm.
+</span><span class="comment">-- @param RadiusExtension The radius extension value for the DBSCAN calculations.
+</span><span class="comment">-- @return self The newly created DBSCANNER object.
+</span><a id="180"></a><span class="comment">-- @usage local dbscanner = SPECTRE.BRAIN.DBSCANNER:New(pointsArray, areaValue, radiusExtension)
+</span><span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:New(Points, Area, RadiusExtension)
   <span class="keyword">local</span> self=BASE:Inherit(self, SPECTRE:New())
   self.Points = Points
   self.numPoints = #Points
   self.Area = Area
-  self._RadiusExtension = RadiusExtension
+  self._RadiusExtension = RadiusExtension <span class="keyword">or</span> <span class="number">0</span>
   self:generateDBSCANparams()
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
 
-<span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams()
+<span class="comment">--- Generates parameters for the DBSCAN algorithm based on the object's attributes.
+</span><span class="comment">--
+</span><span class="comment">-- This function calculates 'epsilon' and 'min_samples' for the DBSCAN algorithm, based on:
+</span><span class="comment">-- the number of points, the area, and specific factors 'f' and 'p'
+</span><span class="comment">-- It updates the object with these calculated values.
+</span><span class="comment">--
+</span><span class="comment">-- @return self The updated DBSCANNER object with newly calculated parameters.
+</span><a id="198"></a><span class="comment">-- @usage dbscanner:generateDBSCANparams() -- Updates the 'dbscanner' object with DBSCAN parameters.
+</span><span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams()
   <span class="comment">-- Initial calculations
 </span>  <span class="keyword">local</span> n = self.numPoints
   self.epsilon = self.f * <span class="global">math</span>.sqrt(self.Area / n)
@@ -220,12 +294,29 @@ SPECTRE.BRAIN.DBSCANNER._RadiusExtension = <span class="number">0</span>
 
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
-<span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:Scan()
+
+<span class="comment">--- Executes the DBSCAN clustering algorithm and post-processes the clusters.
+</span><span class="comment">--
+</span><span class="comment">-- This function initiates the DBSCAN clustering process by calling '_DBScan' and then performs post-processing on the clusters formed.
+</span><span class="comment">-- It structures the scanning process and post-processing as a sequence of operations on the DBSCANNER object.
+</span><span class="comment">--
+</span><span class="comment">-- @return self The DBSCANNER object after completing the scan and post-processing steps.
+</span><a id="223"></a><span class="comment">-- @usage dbscanner:Scan() -- Performs the DBSCAN algorithm and post-processes the results.
+</span><span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:Scan()
   self:_DBScan()
   self:post_process_clusters()
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
-<span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:_DBScan()
+
+<span class="comment">--- Core function of the DBSCAN algorithm for clustering points.
+</span><span class="comment">--
+</span><span class="comment">-- This internal function implements the DBSCAN clustering algorithm.
+</span><span class="comment">-- It initializes each point as unmarked, then iterates through each point to determine if it is a core point and expands clusters accordingly.
+</span><span class="comment">-- Points are marked as either part of a cluster or as noise.
+</span><span class="comment">--
+</span><span class="comment">-- @return self The DBSCANNER object with updated clustering information.
+</span><a id="237"></a><span class="comment">-- @usage dbscanner:_DBScan() -- Directly performs the DBSCAN clustering algorithm.
+</span><span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:_DBScan()
   <span class="comment">-- Initialization
 </span>  <span class="keyword">local</span> UNMARKED, NOISE = <span class="number">0</span>, -<span class="number">1</span>
   <span class="keyword">local</span> cluster_id = <span class="number">0</span>
@@ -249,7 +340,16 @@ SPECTRE.BRAIN.DBSCANNER._RadiusExtension = <span class="number">0</span>
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
 
-<span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:region_query(point)
+<span class="comment">--- Identifies neighboring points within a specified epsilon distance of a given point.
+</span><span class="comment">--
+</span><span class="comment">-- This function searches for neighbors of a given 'point' within the 'epsilon' radius.
+</span><span class="comment">-- It utilizes a private function '_distance' to calculate the Euclidean distance between points.
+</span><span class="comment">-- The function is used within the DBSCAN algorithm to find points in the epsilon neighborhood of a given point.
+</span><span class="comment">--
+</span><span class="comment">-- @param point The point around which neighbors are to be found.
+</span><span class="comment">-- @return neighbors A list of neighboring points within the epsilon distance of the given point.
+</span><a id="270"></a><span class="comment">-- @usage local neighbors = dbscanner:region_query(specificPoint) -- Finds neighbors of 'specificPoint'.
+</span><span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:region_query(point)
   <span class="keyword">local</span> <span class="keyword">function</span> _distance(point1, point2)
     <span class="comment">-- Calculate the differences in x and y coordinates between the two points
 </span>    <span class="keyword">local</span> dx = point1.x - point2.x
@@ -272,7 +372,18 @@ SPECTRE.BRAIN.DBSCANNER._RadiusExtension = <span class="number">0</span>
   <span class="keyword">return</span> neighbors
 <span class="keyword">end</span>
 
-<span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:expand_cluster(point, neighbors, cluster_id)
+<span class="comment">--- Expands a cluster around a given point based on its neighbors and a specified cluster ID.
+</span><span class="comment">--
+</span><span class="comment">-- This function adds a given point and its neighbors to a cluster identified by 'cluster_id'.
+</span><span class="comment">-- It iteratively checks each neighbor and includes them in the cluster if they are not already part of another cluster or marked as noise.
+</span><span class="comment">-- The function also discovers new neighbors of neighbors, expanding the cluster until no further additions are possible.
+</span><span class="comment">--
+</span><span class="comment">-- @param point The point around which the cluster is being expanded.
+</span><span class="comment">-- @param neighbors The initial set of neighbors of the point.
+</span><span class="comment">-- @param cluster_id The identifier of the cluster being expanded.
+</span><span class="comment">-- @return self The updated DBSCANNER object after expanding the cluster.
+</span><a id="304"></a><span class="comment">-- @usage dbscanner:expand_cluster(corePoint, initialNeighbors, clusterId) -- Expands a cluster around 'corePoint'.
+</span><span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:expand_cluster(point, neighbors, cluster_id)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:expand_cluster | -------------------------------------------- "</span>)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:expand_cluster | cluster_id  | "</span> .. cluster_id)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:expand_cluster | point       | "</span>, point)
@@ -297,7 +408,15 @@ SPECTRE.BRAIN.DBSCANNER._RadiusExtension = <span class="number">0</span>
   <span class="keyword">return</span> self
 <span class="keyword">end</span>
 
-<span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:post_process_clusters()
+<span class="comment">--- Post-processes the clusters formed by the DBSCAN algorithm.
+</span><span class="comment">--
+</span><span class="comment">-- After clustering is done, this function processes each cluster to compute its center, radius, and other relevant details.
+</span><span class="comment">-- It organizes the clusters into a sorted array and calculates the center and radius for each cluster, including any radius extension.
+</span><span class="comment">-- The results are stored in the 'Clusters' attribute of the DBSCANNER object.
+</span><span class="comment">--
+</span><span class="comment">-- @return self The updated DBSCANNER object with fully processed clusters.
+</span><a id="337"></a><span class="comment">-- @usage dbscanner:post_process_clusters() -- Post-processes clusters to compute centers and radii.
+</span><span class="keyword">function</span> SPECTRE.BRAIN.DBSCANNER:post_process_clusters()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:post_process_clusters | -------------------------------------------- "</span>)
   <span class="keyword">local</span> <span class="keyword">function</span> _distance(point1, point2)
     <span class="comment">-- Calculate the differences in x and y coordinates between the two points
@@ -361,7 +480,7 @@ SPECTRE.BRAIN.DBSCANNER._RadiusExtension = <span class="number">0</span>
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-26 07:35:37 </i>
+<i style="float:right;">Last updated 2023-11-28 20:44:19 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

@@ -35,6 +35,8 @@
 <ul>
 <li><a href="#Tables">Tables</a></li>
 <li><a href="#Persistence">Persistence </a></li>
+<li><a href="#x___Watchers">x - Watchers </a></li>
+<li><a href="#x___Machine_Learning">x - Machine Learning </a></li>
 </ul>
 
 
@@ -85,6 +87,44 @@
 	<tr>
 	<td class="name" ><a href="#SPECTRE.BRAIN.checkAndPersist">SPECTRE.BRAIN.checkAndPersist(_filename, force, _Object, _persistence, _InputFunction, ...)</a></td>
 	<td class="summary">Checks for the existence of a persistence file and manages object persistence.</td>
+	</tr>
+</table>
+<h2><a href="#x___Watchers">x - Watchers </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN:buildWatcher">SPECTRE.BRAIN:buildWatcher(table_, key_, watcherFunction, ...)</a></td>
+	<td class="summary">Builds a watcher on a table to monitor changes to a specific key.</td>
+	</tr>
+</table>
+<h2><a href="#x___Machine_Learning">x - Machine Learning </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.DBSCANNER:New">SPECTRE.BRAIN.DBSCANNER:New(Points, Area, RadiusExtension)</a></td>
+	<td class="summary">Constructs a new DBSCANNER object.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.DBSCANNER:Scan">SPECTRE.BRAIN.DBSCANNER:Scan()</a></td>
+	<td class="summary">Executes the DBSCAN clustering algorithm and post-processes the clusters.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.DBSCANNER:_DBScan">SPECTRE.BRAIN.DBSCANNER:_DBScan()</a></td>
+	<td class="summary">Core function of the DBSCAN algorithm for clustering points.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.DBSCANNER:expand_cluster">SPECTRE.BRAIN.DBSCANNER:expand_cluster(point, neighbors, cluster_id)</a></td>
+	<td class="summary">Expands a cluster around a given point based on its neighbors and a specified cluster ID.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams">SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams()</a></td>
+	<td class="summary">Generates parameters for the DBSCAN algorithm based on the object's attributes.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.DBSCANNER:post_process_clusters">SPECTRE.BRAIN.DBSCANNER:post_process_clusters()</a></td>
+	<td class="summary">Post-processes the clusters formed by the DBSCAN algorithm.</td>
+	</tr>
+	<tr>
+	<td class="name" ><a href="#SPECTRE.BRAIN.DBSCANNER:region_query">SPECTRE.BRAIN.DBSCANNER:region_query(point)</a></td>
+	<td class="summary">Identifies neighboring points within a specified epsilon distance of a given point.</td>
 	</tr>
 </table>
 
@@ -182,7 +222,7 @@
 
     <h3>Usage:</h3>
     <ul>
-        <pre class="example">Example:
+        <li><pre class="example">Example:
 
            self.FILLSPAWNERS[_Randname] = SPECTRE.BRAIN.checkAndPersist(
             _filename,
@@ -199,7 +239,300 @@ where
             <span class="comment">-- Update _Object with the new template and return it
 </span>            _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
             <span class="keyword">return</span> _Object
-          <span class="keyword">end</span></pre>
+          <span class="keyword">end</span></pre></li>
+        <li><pre class="example"><span class="keyword">local</span> persistedObject = SPECTRE.BRAIN.checkAndPersist(<span class="string">"path/to/file"</span>, <span class="keyword">false</span>, myObject, <span class="keyword">true</span>, <span class="keyword">function</span>(obj) <span class="keyword">return</span> modifyObject(obj) <span class="keyword">end</span>)</pre></li>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Watchers"></a>x - Watchers </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>All watchers.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.BRAIN:buildWatcher"></a>
+    <strong>SPECTRE.BRAIN:buildWatcher(table_, key_, watcherFunction, ...)</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#121">line 121</a>
+    </dt>
+    <dd>
+    Builds a watcher on a table to monitor changes to a specific key. </p>
+
+<p> This function iterates through each key-value pair in a provided table and sets up a proxy table with a metatable to watch changes.
+ The proxy uses metatable magic to intercept changes to a specific key.
+ When a change to the specified key is detected, a watcher function is called with additional arguments if provided.
+ This is useful for monitoring changes to a table and triggering specific actions when those changes occur.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">table_</span>
+         The table on which the watcher is to be set.
+        </li>
+        <li><span class="parameter">key_</span>
+         The key in the table to monitor for changes.
+        </li>
+        <li><span class="parameter">watcherFunction</span>
+         The function to call when a change to the specified key is detected.
+        </li>
+        <li><span class="parameter">...</span>
+         Additional arguments to pass to the watcherFunction.
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">SPECTRE.BRAIN:buildWatcher(myTable, <span class="string">"myKey"</span>, <span class="keyword">function</span>(key, value) <span class="global">print</span>(<span class="string">"Key "</span> .. key .. <span class="string">" changed to "</span> .. value) <span class="keyword">end</span>)</pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="x___Machine_Learning"></a>x - Machine Learning </h2>
+
+          <div class="section-description">
+
+
+<hr/>
+
+<p> <em>Machine Learning algorithms.</em></p>
+
+<hr/>
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "SPECTRE.BRAIN.DBSCANNER:New"></a>
+    <strong>SPECTRE.BRAIN.DBSCANNER:New(Points, Area, RadiusExtension)</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#180">line 180</a>
+    </dt>
+    <dd>
+    Constructs a new DBSCANNER object. </p>
+
+<p> This function initializes a new DBSCANNER object with specified parameters.
+ It sets up the points, area, and radius extension for the DBSCAN algorithm.
+ It also calls 'generateDBSCANparams' to calculate necessary parameters for the DBSCAN process.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Points</span>
+         An array of points for the DBSCAN algorithm.
+        </li>
+        <li><span class="parameter">Area</span>
+         The area to be considered for the DBSCAN algorithm.
+        </li>
+        <li><span class="parameter">RadiusExtension</span>
+         The radius extension value for the DBSCAN calculations.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self The newly created DBSCANNER object.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> dbscanner = SPECTRE.BRAIN.DBSCANNER:New(pointsArray, areaValue, radiusExtension)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.BRAIN.DBSCANNER:Scan"></a>
+    <strong>SPECTRE.BRAIN.DBSCANNER:Scan()</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#223">line 223</a>
+    </dt>
+    <dd>
+    Executes the DBSCAN clustering algorithm and post-processes the clusters. </p>
+
+<p> This function initiates the DBSCAN clustering process by calling '_DBScan' and then performs post-processing on the clusters formed.
+ It structures the scanning process and post-processing as a sequence of operations on the DBSCANNER object.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self The DBSCANNER object after completing the scan and post-processing steps.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">dbscanner:Scan() <span class="comment">-- Performs the DBSCAN algorithm and post-processes the results.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.BRAIN.DBSCANNER:_DBScan"></a>
+    <strong>SPECTRE.BRAIN.DBSCANNER:_DBScan()</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#237">line 237</a>
+    </dt>
+    <dd>
+    Core function of the DBSCAN algorithm for clustering points. </p>
+
+<p> This internal function implements the DBSCAN clustering algorithm.
+ It initializes each point as unmarked, then iterates through each point to determine if it is a core point and expands clusters accordingly.
+ Points are marked as either part of a cluster or as noise.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self The DBSCANNER object with updated clustering information.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">dbscanner:_DBScan() <span class="comment">-- Directly performs the DBSCAN clustering algorithm.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.BRAIN.DBSCANNER:expand_cluster"></a>
+    <strong>SPECTRE.BRAIN.DBSCANNER:expand_cluster(point, neighbors, cluster_id)</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#304">line 304</a>
+    </dt>
+    <dd>
+    Expands a cluster around a given point based on its neighbors and a specified cluster ID. </p>
+
+<p> This function adds a given point and its neighbors to a cluster identified by 'cluster_id'.
+ It iteratively checks each neighbor and includes them in the cluster if they are not already part of another cluster or marked as noise.
+ The function also discovers new neighbors of neighbors, expanding the cluster until no further additions are possible.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">point</span>
+         The point around which the cluster is being expanded.
+        </li>
+        <li><span class="parameter">neighbors</span>
+         The initial set of neighbors of the point.
+        </li>
+        <li><span class="parameter">cluster_id</span>
+         The identifier of the cluster being expanded.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self The updated DBSCANNER object after expanding the cluster.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">dbscanner:expand_cluster(corePoint, initialNeighbors, clusterId) <span class="comment">-- Expands a cluster around 'corePoint'.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams"></a>
+    <strong>SPECTRE.BRAIN.DBSCANNER:generateDBSCANparams()</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#198">line 198</a>
+    </dt>
+    <dd>
+    Generates parameters for the DBSCAN algorithm based on the object's attributes. </p>
+
+<p> This function calculates 'epsilon' and 'min_samples' for the DBSCAN algorithm, based on:
+ the number of points, the area, and specific factors 'f' and 'p'
+ It updates the object with these calculated values.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self The updated DBSCANNER object with newly calculated parameters.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">dbscanner:generateDBSCANparams() <span class="comment">-- Updates the 'dbscanner' object with DBSCAN parameters.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.BRAIN.DBSCANNER:post_process_clusters"></a>
+    <strong>SPECTRE.BRAIN.DBSCANNER:post_process_clusters()</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#337">line 337</a>
+    </dt>
+    <dd>
+    Post-processes the clusters formed by the DBSCAN algorithm. </p>
+
+<p> After clustering is done, this function processes each cluster to compute its center, radius, and other relevant details.
+ It organizes the clusters into a sorted array and calculates the center and radius for each cluster, including any radius extension.
+ The results are stored in the 'Clusters' attribute of the DBSCANNER object.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self The updated DBSCANNER object with fully processed clusters.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">dbscanner:post_process_clusters() <span class="comment">-- Post-processes clusters to compute centers and radii.</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "SPECTRE.BRAIN.DBSCANNER:region_query"></a>
+    <strong>SPECTRE.BRAIN.DBSCANNER:region_query(point)</strong>
+    <a style="float:right;" href="../source/BRAIN.lua.html#270">line 270</a>
+    </dt>
+    <dd>
+    Identifies neighboring points within a specified epsilon distance of a given point. </p>
+
+<p> This function searches for neighbors of a given 'point' within the 'epsilon' radius.
+ It utilizes a private function '_distance' to calculate the Euclidean distance between points.
+ The function is used within the DBSCAN algorithm to find points in the epsilon neighborhood of a given point.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">point</span>
+         The point around which neighbors are to be found.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        neighbors A list of neighboring points within the epsilon distance of the given point.
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> neighbors = dbscanner:region_query(specificPoint) <span class="comment">-- Finds neighbors of 'specificPoint'.</span></pre>
     </ul>
 
 </dd>
@@ -210,7 +543,7 @@ where
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-26 07:35:37 </i>
+<i style="float:right;">Last updated 2023-11-28 20:44:19 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
