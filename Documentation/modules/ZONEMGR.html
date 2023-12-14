@@ -286,7 +286,7 @@
 <h2><a href="#x___Spawner">x - Spawner </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" ><a href="#SPECTRE.ZONEMGR:spawnAirbase">SPECTRE.ZONEMGR:spawnAirbase(ZONEMGR, _airbaseName, _coalition, _country, _zoneNameT, SPWNR_, SPWNRTemplate)</a></td>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:spawnAirbase">SPECTRE.ZONEMGR:spawnAirbase(ZONEMGR, _airbaseName, coalition, country, _zoneNameT, SPWNR_, SPWNRTemplate)</a></td>
 	<td class="summary">Spawns airbase elements within specified zones.</td>
 	</tr>
 	<tr>
@@ -363,7 +363,7 @@
 <h2><a href="#x___Setup">x - Setup </a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" ><a href="#SPECTRE.ZONEMGR:Setup">SPECTRE.ZONEMGR:Setup(ZONEMGR, ZoneNames, SSBFarps)</a></td>
+	<td class="name" ><a href="#SPECTRE.ZONEMGR:Setup">SPECTRE.ZONEMGR:Setup(ZONEMGR, ZoneNames, SSBFarps, SSBAll)</a></td>
 	<td class="summary">Configures the ZoneManager with specified zones.</td>
 	</tr>
 	<tr>
@@ -1353,14 +1353,13 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:New"></a>
     <strong>SPECTRE.ZONEMGR:New(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#210">line 210</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#209">line 209</a>
     </dt>
     <dd>
     Create a new zone manager instance. </p>
 
 <p> This function initializes a new instance of the SPECTRE.ZONEMGR class. It inherits from the BASE class
- and sets up the random seed count based on predefined parameters. The random seed generation is an integral
- part of managing various zone-related functionalities within the SPECTRE framework.
+ and sets up the random seed count based on predefined parameters.
 
 
     <h3>Parameters:</h3>
@@ -1405,7 +1404,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:enableAirfieldCaptureSpawns"></a>
     <strong>SPECTRE.ZONEMGR:enableAirfieldCaptureSpawns(ZONEMGR, enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#278">line 278</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#277">line 277</a>
     </dt>
     <dd>
     Enable or disable automatic spawns for the coalition that captures an airfield for the SPECTRE.ZONEMGR instance. </p>
@@ -1443,7 +1442,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:enableCAP"></a>
     <strong>SPECTRE.ZONEMGR:enableCAP(ZONEMGR, enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#237">line 237</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#236">line 236</a>
     </dt>
     <dd>
     Enable or disable the CAP defense system for the SPECTRE.ZONEMGR instance. </p>
@@ -1479,7 +1478,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:enableHotspotIntel"></a>
     <strong>SPECTRE.ZONEMGR:enableHotspotIntel(ZONEMGR, enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#312">line 312</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#311">line 311</a>
     </dt>
     <dd>
     Enables or disables hotspot intelligence within the ZoneManager. </p>
@@ -1518,7 +1517,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:enableHotspots"></a>
     <strong>SPECTRE.ZONEMGR:enableHotspots(ZONEMGR, enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#295">line 295</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#294">line 294</a>
     </dt>
     <dd>
     Enables or disables hotspots within the ZoneManager. </p>
@@ -1557,7 +1556,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:enableLiveEdit"></a>
     <strong>SPECTRE.ZONEMGR:enableLiveEdit(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#346">line 346</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#345">line 345</a>
     </dt>
     <dd>
 
@@ -1616,7 +1615,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:enablePersistance"></a>
     <strong>SPECTRE.ZONEMGR:enablePersistance(ZONEMGR, enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#259">line 259</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#258">line 258</a>
     </dt>
     <dd>
     Enable or disable the persistence system for the SPECTRE.ZONEMGR instance. </p>
@@ -1671,7 +1670,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.FindUnitsInZone"></a>
     <strong>SPECTRE.ZONEMGR.FindUnitsInZone(ZONEMGR, t_ZOBJ)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#613">line 613</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#612">line 612</a>
     </dt>
     <dd>
     Identifies and categorizes units within a specified zone. </p>
@@ -1709,7 +1708,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.buildGroupsFromUnits"></a>
     <strong>SPECTRE.ZONEMGR.buildGroupsFromUnits(ZONEMGR, _detectedUnits, coal)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#651">line 651</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#650">line 650</a>
     </dt>
     <dd>
     Constructs a list of group names from detected units based on their coalition. </p>
@@ -1748,7 +1747,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.findZoneForVec2"></a>
     <strong>SPECTRE.ZONEMGR.findZoneForVec2(ZONEMGR, vec2)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#683">line 683</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#682">line 682</a>
     </dt>
     <dd>
     Determines the zone object for a given coordinate (Vec2). </p>
@@ -1787,7 +1786,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.getOwnedProperty"></a>
     <strong>SPECTRE.ZONEMGR.getOwnedProperty(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#437">line 437</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#436">line 436</a>
     </dt>
     <dd>
     Retrieves the airfields and zones owned by the red and blue coalitions. </p>
@@ -1826,7 +1825,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.getSmartVec2"></a>
     <strong>SPECTRE.ZONEMGR.getSmartVec2(ZONEMGR, quad_bounds, hotspot_clusters, coalition_bias, min_distance, max_distance)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#474">line 474</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#473">line 473</a>
     </dt>
     <dd>
     Calculates a strategically positioned vector point within a zone. </p>
@@ -1877,7 +1876,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.getZoneCoalition"></a>
     <strong>SPECTRE.ZONEMGR.getZoneCoalition(ZONEMGR, zoneName)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#420">line 420</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#419">line 419</a>
     </dt>
     <dd>
     Retrieves the coalition ownership of a specified zone. </p>
@@ -1927,8 +1926,8 @@
     <dl class="function">
     <dt>
     <a name = "SPECTRE.ZONEMGR:spawnAirbase"></a>
-    <strong>SPECTRE.ZONEMGR:spawnAirbase(ZONEMGR, _airbaseName, _coalition, _country, _zoneNameT, SPWNR_, SPWNRTemplate)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#722">line 722</a>
+    <strong>SPECTRE.ZONEMGR:spawnAirbase(ZONEMGR, _airbaseName, coalition, country, _zoneNameT, SPWNR_, SPWNRTemplate)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#721">line 721</a>
     </dt>
     <dd>
     Spawns airbase elements within specified zones. </p>
@@ -1947,10 +1946,10 @@
         <li><span class="parameter">_airbaseName</span>
          The name of the airbase to be spawned.
         </li>
-        <li><span class="parameter">_coalition</span>
+        <li><span class="parameter">coalition</span>
          The coalition to which the airbase belongs.
         </li>
-        <li><span class="parameter">_country</span>
+        <li><span class="parameter">country</span>
          The country to which the airbase belongs.
         </li>
         <li><span class="parameter">_zoneNameT</span>
@@ -1984,7 +1983,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:spawnAirbasesInZone"></a>
     <strong>SPECTRE.ZONEMGR:spawnAirbasesInZone(ZONEMGR, _zoneName, _coalition, _country, SPWNRTemplate)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#767">line 767</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#766">line 766</a>
     </dt>
     <dd>
     Spawns airbases within a specific zone. </p>
@@ -2033,7 +2032,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:spawnFillAtVec2"></a>
     <strong>SPECTRE.ZONEMGR:spawnFillAtVec2(ZONEMGR, vec2_SpawnCenter, diameter_SpawnZone, coalition, country, _zoneName, SPWNR_, SPWNRTemplate)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#798">line 798</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#797">line 797</a>
     </dt>
     <dd>
     Spawns fill elements at a specified vector location within a zone. </p>
@@ -2062,7 +2061,7 @@
          The country to which the fill elements will belong.
         </li>
         <li><span class="parameter">_zoneName</span>
-         The name of the zone where the elements are to be spawned.
+         (optional) The name of the zone where the elements are to be spawned.
         </li>
         <li><span class="parameter">SPWNR_</span>
          (optional) The spawner to use for fill generation.
@@ -2092,7 +2091,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:spawnFillInZone"></a>
     <strong>SPECTRE.ZONEMGR:spawnFillInZone(ZONEMGR, _zoneName, coalition, country, SPWNR_, SPWNRTemplate)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#834">line 834</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#845">line 845</a>
     </dt>
     <dd>
     Spawns fill elements within a specified zone. </p>
@@ -2145,7 +2144,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:spawnFillInZoneSmart"></a>
     <strong>SPECTRE.ZONEMGR:spawnFillInZoneSmart(ZONEMGR, _zoneName, coalition, country, SPWNR_, _bias)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#889">line 889</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#900">line 900</a>
     </dt>
     <dd>
     Spawns fill elements within a specified zone using intelligent positioning. </p>
@@ -2213,7 +2212,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR._CreateSpawnerTemplate"></a>
     <strong>SPECTRE.ZONEMGR._CreateSpawnerTemplate(_SPWNR, _Object)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1035">line 1035</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1046">line 1046</a>
     </dt>
     <dd>
     Creates a spawner template based on a provided spawner object. </p>
@@ -2250,7 +2249,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate"></a>
     <strong>SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate(ZONEMGR, SPAWNER, name_, force)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1007">line 1007</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1018">line 1018</a>
     </dt>
     <dd>
     Adds an airfield spawner template to the zone manager. </p>
@@ -2297,7 +2296,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:AddFillSpawnerTemplate"></a>
     <strong>SPECTRE.ZONEMGR:AddFillSpawnerTemplate(ZONEMGR, SPAWNER, name_, force)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#963">line 963</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#974">line 974</a>
     </dt>
     <dd>
     Adds a fill spawner template to the zone manager. </p>
@@ -2344,7 +2343,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:clearAirfieldSpawnerTemplates"></a>
     <strong>SPECTRE.ZONEMGR:clearAirfieldSpawnerTemplates(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#988">line 988</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#999">line 999</a>
     </dt>
     <dd>
     Clears all Airfield spawner templates in the zone manager. </p>
@@ -2381,7 +2380,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:clearFillSpawnerTemplates"></a>
     <strong>SPECTRE.ZONEMGR:clearFillSpawnerTemplates(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#944">line 944</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#955">line 955</a>
     </dt>
     <dd>
     Clears all fill spawner templates in the zone manager. </p>
@@ -2432,17 +2431,17 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:CAPschedInit"></a>
     <strong>SPECTRE.ZONEMGR:CAPschedInit(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1278">line 1278</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1323">line 1323</a>
     </dt>
     <dd>
     Initializes the Combat Air Patrol (CAP) scheduler for the zone manager. </p>
 
-<p> This function sets up a scheduler to manage CAP operations within the zone manager. </p>
+<p> This function sets up a scheduler to manage CAP operations within the zone manager.</p>
 
-<p> It periodically checks and updates CAP units based on coalition ownership of zones. </p>
+<p> It periodically checks and updates CAP units based on coalition ownership of zones.</p>
 
 <p> The scheduler handles the dynamic allocation and management of CAP units, considering factors like:
- zone ownership, available templates, and specific settings for each coalition. </p>
+ zone ownership, available templates, and specific settings for each coalition.</p>
 
 <p> It ensures CAP units are deployed and managed effectively in response to the changing game environment.
 
@@ -2475,15 +2474,21 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:HotspotSchedInit"></a>
     <strong>SPECTRE.ZONEMGR:HotspotSchedInit(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1254">line 1254</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1272">line 1272</a>
     </dt>
     <dd>
     Initializes the scheduler for managing hotspots within zones. </p>
 
 <p> This function iterates through all zones managed by the ZONEMGR system and initializes individual hotspot schedulers
- for zones where hotspots are enabled. It ensures that hotspots, which are critical for dynamic and strategic gameplay,
+ for zones where hotspots are enabled. It ensures that hotspots
  are actively managed and updated within each zone. This process is vital for maintaining a dynamic and engaging game
- environment where strategic points (hotspots) can influence player actions and scenarios.
+ environment where strategic points (hotspots) can influence player actions and scenarios.</p>
+
+
+<p> This function sets up a scheduler to periodically check and update hotspots within the zone. It ensures that the hotspots
+ and any related intelligence data are refreshed at regular intervals. The scheduler also accounts for ongoing updates,
+ avoiding overlaps in processing. This systematic approach to managing hotspots enhances the zone's dynamics, ensuring
+ that changes in game conditions are regularly reflected in hotspot statuses and information.
 
 
     <h3>Parameters:</h3>
@@ -2515,7 +2520,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:Init"></a>
     <strong>SPECTRE.ZONEMGR:Init(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1060">line 1060</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1071">line 1071</a>
     </dt>
     <dd>
     Initializes the ZoneManager with all necessary configurations. </p>
@@ -2554,7 +2559,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:InitSSB"></a>
     <strong>SPECTRE.ZONEMGR:InitSSB(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1234">line 1234</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1245">line 1245</a>
     </dt>
     <dd>
     Activates the SSB property within the ZoneManager. </p>
@@ -2588,7 +2593,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:MarkerScheduleInit"></a>
     <strong>SPECTRE.ZONEMGR:MarkerScheduleInit(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1167">line 1167</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1178">line 1178</a>
     </dt>
     <dd>
     Initializes the marker update scheduler for the zone manager. </p>
@@ -2627,7 +2632,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:UpdateSchedInit"></a>
     <strong>SPECTRE.ZONEMGR:UpdateSchedInit(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1115">line 1115</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1126">line 1126</a>
     </dt>
     <dd>
     Initializes a scheduler for periodic zone updates following base captures. </p>
@@ -2666,7 +2671,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:enableSSB"></a>
     <strong>SPECTRE.ZONEMGR:enableSSB(ZONEMGR, enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1218">line 1218</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1229">line 1229</a>
     </dt>
     <dd>
     Activates the SSB  property within the ZoneManager. </p>
@@ -2717,8 +2722,8 @@
     <dl class="function">
     <dt>
     <a name = "SPECTRE.ZONEMGR:Setup"></a>
-    <strong>SPECTRE.ZONEMGR:Setup(ZONEMGR, ZoneNames, SSBFarps)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1568">line 1568</a>
+    <strong>SPECTRE.ZONEMGR:Setup(ZONEMGR, ZoneNames, SSBFarps, SSBAll)</strong>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1614">line 1614</a>
     </dt>
     <dd>
     Configures the ZoneManager with specified zones. </p>
@@ -2739,9 +2744,10 @@
          A list of strings representing the names of the zones to be managed (e.g., {"Zone1", "Zone2"}).
         </li>
         <li><span class="parameter">SSBFarps</span>
-
-
-
+         Currently unused
+        </li>
+        <li><span class="parameter">SSBAll</span>
+         Currently unused
         </li>
     </ul>
 
@@ -2764,7 +2770,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:addAdmin"></a>
     <strong>SPECTRE.ZONEMGR:addAdmin(ZONEMGR, ucid)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1516">line 1516</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1561">line 1561</a>
     </dt>
     <dd>
     Adds a player UCID to the admin list. </p>
@@ -2801,7 +2807,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:addCAP"></a>
     <strong>SPECTRE.ZONEMGR:addCAP(ZONEMGR, coalition, groupName)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1482">line 1482</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1527">line 1527</a>
     </dt>
     <dd>
     Adds a CAP group template for a specified coalition. </p>
@@ -2842,7 +2848,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:removeAdmin"></a>
     <strong>SPECTRE.ZONEMGR:removeAdmin(ZONEMGR, ucid)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1529">line 1529</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1574">line 1574</a>
     </dt>
     <dd>
     Removes a player UCID from the admin list. </p>
@@ -2879,7 +2885,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:removeCAP"></a>
     <strong>SPECTRE.ZONEMGR:removeCAP(ZONEMGR, coalition, groupName)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1500">line 1500</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1545">line 1545</a>
     </dt>
     <dd>
     Removes a CAP group template from a specified coalition. </p>
@@ -2920,7 +2926,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:setUpdateInterval"></a>
     <strong>SPECTRE.ZONEMGR:setUpdateInterval(ZONEMGR, interval, nudge)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1547">line 1547</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1592">line 1592</a>
     </dt>
     <dd>
     Sets the interval and nudge factor for periodic zone updates. </p>
@@ -2978,7 +2984,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:determineBorderingZones"></a>
     <strong>SPECTRE.ZONEMGR:determineBorderingZones(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1616">line 1616</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1662">line 1662</a>
     </dt>
     <dd>
     Identifies and defines the borders between adjacent zones. </p>
@@ -3017,7 +3023,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:seedAirbase"></a>
     <strong>SPECTRE.ZONEMGR:seedAirbase(ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1706">line 1706</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1752">line 1752</a>
     </dt>
     <dd>
     Identifies the airbases relevant to the current map. </p>
@@ -3070,7 +3076,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_DELairfield"></a>
     <strong>SPECTRE.ZONEMGR:_DELairfield(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1885">line 1885</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1931">line 1931</a>
     </dt>
     <dd>
     Deletes an airfield and its associated elements based on a marker event in the ZoneManager. </p>
@@ -3108,7 +3114,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_DELallAirfield"></a>
     <strong>SPECTRE.ZONEMGR:_DELallAirfield(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1957">line 1957</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2003">line 2003</a>
     </dt>
     <dd>
     Deletes all airfields within a specific zone based on a marker event. </p>
@@ -3148,7 +3154,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_DELcircle"></a>
     <strong>SPECTRE.ZONEMGR:_DELcircle(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2030">line 2030</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2076">line 2076</a>
     </dt>
     <dd>
     Deletes units within a specified circular area based on a marker event. </p>
@@ -3188,7 +3194,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_DELmarkerDispatcher"></a>
     <strong>SPECTRE.ZONEMGR:_DELmarkerDispatcher(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1772">line 1772</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1818">line 1818</a>
     </dt>
     <dd>
     Dispatches delete operations based on marker events in the ZoneManager. </p>
@@ -3227,7 +3233,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_DELzone"></a>
     <strong>SPECTRE.ZONEMGR:_DELzone(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1820">line 1820</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1866">line 1866</a>
     </dt>
     <dd>
     Handles the deletion of a zone based on marker events in the ZoneManager. </p>
@@ -3266,7 +3272,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_EventMarker"></a>
     <strong>SPECTRE.ZONEMGR:_EventMarker(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1745">line 1745</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1791">line 1791</a>
     </dt>
     <dd>
     Processes marker events for live editing in the ZoneManager. </p>
@@ -3305,7 +3311,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_SPAWNairfield"></a>
     <strong>SPECTRE.ZONEMGR:_SPAWNairfield(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1918">line 1918</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1964">line 1964</a>
     </dt>
     <dd>
     Spawns an airfield based on a marker event in the ZoneManager. </p>
@@ -3344,7 +3350,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_SPAWNallAirfield"></a>
     <strong>SPECTRE.ZONEMGR:_SPAWNallAirfield(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1990">line 1990</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2036">line 2036</a>
     </dt>
     <dd>
     Spawns all airfields within a specific zone based on a marker event. </p>
@@ -3384,7 +3390,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_SPAWNcircle"></a>
     <strong>SPECTRE.ZONEMGR:_SPAWNcircle(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2058">line 2058</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2104">line 2104</a>
     </dt>
     <dd>
     Spawns units within a specified circular area based on a marker event. </p>
@@ -3424,7 +3430,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_SPAWNmarkerDispatcher"></a>
     <strong>SPECTRE.ZONEMGR:_SPAWNmarkerDispatcher(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1796">line 1796</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1842">line 1842</a>
     </dt>
     <dd>
     Dispatches spawn operations based on marker events in the ZoneManager. </p>
@@ -3463,7 +3469,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR:_SPAWNzone"></a>
     <strong>SPECTRE.ZONEMGR:_SPAWNzone(ZONEMGR, Packet)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#1842">line 1842</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#1888">line 1888</a>
     </dt>
     <dd>
     Handles spawning elements in a specific zone based on marker events in the ZoneManager. </p>
@@ -3516,7 +3522,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.MARKERS"></a>
     <strong>SPECTRE.ZONEMGR.MARKERS</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2088">line 2088</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2134">line 2134</a>
     </dt>
     <dd>
     Marker settings for the SPECTRE.ZONEMGR module.
@@ -3531,7 +3537,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.MARKERS.Settings"></a>
     <strong>SPECTRE.ZONEMGR.MARKERS.Settings</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2092">line 2092</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2138">line 2138</a>
     </dt>
     <dd>
     .
@@ -3546,7 +3552,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.MARKERS.Settings.DEL"></a>
     <strong>SPECTRE.ZONEMGR.MARKERS.Settings.DEL</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2095">line 2095</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2141">line 2141</a>
     </dt>
     <dd>
     Marker settings for deletion commands.
@@ -3561,7 +3567,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN"></a>
     <strong>SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2103">line 2103</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2149">line 2149</a>
     </dt>
     <dd>
     Marker settings for spawn commands.
@@ -3576,7 +3582,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.MARKERS.TRACKERS"></a>
     <strong>SPECTRE.ZONEMGR.MARKERS.TRACKERS</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2111">line 2111</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2157">line 2157</a>
     </dt>
     <dd>
     Tracker for marker events.
@@ -3591,7 +3597,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Settings"></a>
     <strong>SPECTRE.ZONEMGR.Settings</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2114">line 2114</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2160">line 2160</a>
     </dt>
     <dd>
     Settings for the SPECTRE.ZONEMGR module.
@@ -3606,7 +3612,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Settings.Edit"></a>
     <strong>SPECTRE.ZONEMGR.Settings.Edit</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2116">line 2116</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2162">line 2162</a>
     </dt>
     <dd>
     Settings for edit functionalities.
@@ -3641,7 +3647,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Airbases"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Airbases</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2235">line 2235</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2281">line 2281</a>
     </dt>
     <dd>
     List of airbases contained within the zone.
@@ -3656,7 +3662,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Alpha"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Alpha</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2199">line 2199</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2245">line 2245</a>
     </dt>
     <dd>
     Transparency of the zone (Default: 0.80).
@@ -3671,7 +3677,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Area"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Area</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2161">line 2161</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2207">line 2207</a>
     </dt>
     <dd>
     Area of Zone.
@@ -3687,7 +3693,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.ArrowLength"></a>
     <strong>SPECTRE.ZONEMGR.Zone.ArrowLength</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2259">line 2259</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2305">line 2305</a>
     </dt>
     <dd>
     Specifies the length of arrows for the zone (Default: 20000).
@@ -3702,7 +3708,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_"></a>
     <strong>SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2241">line 2241</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2287">line 2287</a>
     </dt>
     <dd>
     Event handler for base capture events within the zone.
@@ -3717,7 +3723,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.BorderOffsetThreshold"></a>
     <strong>SPECTRE.ZONEMGR.Zone.BorderOffsetThreshold</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2256">line 2256</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2302">line 2302</a>
     </dt>
     <dd>
     Value indicating the threshold for border offsets (Default: 800).
@@ -3732,7 +3738,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.BorderingZones"></a>
     <strong>SPECTRE.ZONEMGR.Zone.BorderingZones</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2262">line 2262</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2308">line 2308</a>
     </dt>
     <dd>
     List of zones that share a border with the current zone.
@@ -3747,7 +3753,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Coalition"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Coalition</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2193">line 2193</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2239">line 2239</a>
     </dt>
     <dd>
     Specifies the coalition ownership of the zone (Default: All=-1).
@@ -3762,7 +3768,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Color"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Color</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2196">line 2196</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2242">line 2242</a>
     </dt>
     <dd>
     RGB values defining the color of the zone (Default: Black).
@@ -3777,7 +3783,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID"></a>
     <strong>SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2253">line 2253</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2299">line 2299</a>
     </dt>
     <dd>
     ID representing the drawn zone marker.
@@ -3792,7 +3798,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.FillAlpha"></a>
     <strong>SPECTRE.ZONEMGR.Zone.FillAlpha</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2226">line 2226</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2272">line 2272</a>
     </dt>
     <dd>
     Specifies the transparency of the zone's fill color (Default: 0.20).
@@ -3807,7 +3813,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.FillColor"></a>
     <strong>SPECTRE.ZONEMGR.Zone.FillColor</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2202">line 2202</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2248">line 2248</a>
     </dt>
     <dd>
     RGB values defining the fill color of the zone (Default: Black).
@@ -3822,7 +3828,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Handler_"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Handler_</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2238">line 2238</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2284">line 2284</a>
     </dt>
     <dd>
     Event handler for the zone.
@@ -3837,7 +3843,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.HotspotClusters"></a>
     <strong>SPECTRE.ZONEMGR.Zone.HotspotClusters</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2150">line 2150</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2196">line 2196</a>
     </dt>
     <dd>
     Processed DB clusters for ground units in zone.
@@ -3852,7 +3858,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.HotspotMarkers"></a>
     <strong>SPECTRE.ZONEMGR.Zone.HotspotMarkers</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2153">line 2153</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2199">line 2199</a>
     </dt>
     <dd>
     Marker storage for DB clusters.
@@ -3867,7 +3873,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.HotspotSched"></a>
     <strong>SPECTRE.ZONEMGR.Zone.HotspotSched</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2185">line 2185</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2231">line 2231</a>
     </dt>
     <dd>
     HotspotSched Scheduler for periodic unit hotspot drawing updates.
@@ -3882,7 +3888,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Hotspots"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Hotspots</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2187">line 2187</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2233">line 2233</a>
     </dt>
     <dd>
     Boolean Toggle for drawing unit hotspots (default false).
@@ -3897,7 +3903,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Intel"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Intel</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2189">line 2189</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2235">line 2235</a>
     </dt>
     <dd>
     Boolean Toggle for giving hotspot Intel (default false).
@@ -3912,7 +3918,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.IntelMarkers"></a>
     <strong>SPECTRE.ZONEMGR.Zone.IntelMarkers</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2156">line 2156</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2202">line 2202</a>
     </dt>
     <dd>
     Intel Marker storage for DB clusters.
@@ -3927,7 +3933,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.LineType"></a>
     <strong>SPECTRE.ZONEMGR.Zone.LineType</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2229">line 2229</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2275">line 2275</a>
     </dt>
     <dd>
     Specifies the line type of the zone's border (Default: 4=Dot dash).
@@ -3942,7 +3948,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.LinesVec2"></a>
     <strong>SPECTRE.ZONEMGR.Zone.LinesVec2</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2281">line 2281</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2327">line 2327</a>
     </dt>
     <dd>
     Lines that define the boundaries of the zone in vector format.
@@ -3957,7 +3963,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.OldOwnedByCoalition"></a>
     <strong>SPECTRE.ZONEMGR.Zone.OldOwnedByCoalition</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2250">line 2250</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2296">line 2296</a>
     </dt>
     <dd>
     Specifies the coalition that previously owned the zone (Default: 0=Neutral).
@@ -3972,7 +3978,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.OwnedByCoalition"></a>
     <strong>SPECTRE.ZONEMGR.Zone.OwnedByCoalition</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2247">line 2247</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2293">line 2293</a>
     </dt>
     <dd>
     Specifies the coalition that owns the zone (Default: 0=Neutral).
@@ -3987,7 +3993,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.ReadOnly"></a>
     <strong>SPECTRE.ZONEMGR.Zone.ReadOnly</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2232">line 2232</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2278">line 2278</a>
     </dt>
     <dd>
     Flag indicating if the zone marker is read-only (Default: true).
@@ -4002,7 +4008,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.SSBList"></a>
     <strong>SPECTRE.ZONEMGR.Zone.SSBList</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2244">line 2244</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2290">line 2290</a>
     </dt>
     <dd>
     List of Static Shore-Based (SSB) entities within the zone.
@@ -4017,7 +4023,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.UpdateQueue"></a>
     <strong>SPECTRE.ZONEMGR.Zone.UpdateQueue</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2177">line 2177</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2223">line 2223</a>
     </dt>
     <dd>
     Counter to track pending updates for the zone.
@@ -4032,7 +4038,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.UpdatingHotspots"></a>
     <strong>SPECTRE.ZONEMGR.Zone.UpdatingHotspots</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2182">line 2182</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2228">line 2228</a>
     </dt>
     <dd>
     UpdatingHotSpots Flag indicating if hotspots are currently being updated.
@@ -4047,7 +4053,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Vertices2D"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Vertices2D</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2265">line 2265</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2311">line 2311</a>
     </dt>
     <dd>
     2D vertices that define the boundaries of the zone.
@@ -4062,7 +4068,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.Vertices3D"></a>
     <strong>SPECTRE.ZONEMGR.Zone.Vertices3D</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2273">line 2273</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2319">line 2319</a>
     </dt>
     <dd>
     3D vertices that define the boundaries of the zone.
@@ -4077,7 +4083,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.ZONEPOLYOBJ"></a>
     <strong>SPECTRE.ZONEMGR.Zone.ZONEPOLYOBJ</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2139">line 2139</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2185">line 2185</a>
     </dt>
     <dd>
     Moose ZonePoly.
@@ -4092,7 +4098,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.ZoneManager"></a>
     <strong>SPECTRE.ZONEMGR.Zone.ZoneManager</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2180">line 2180</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2226">line 2226</a>
     </dt>
     <dd>
     Reference to the ZoneManager managing this Zone.
@@ -4107,7 +4113,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.ZoneName"></a>
     <strong>SPECTRE.ZONEMGR.Zone.ZoneName</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2136">line 2136</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2182">line 2182</a>
     </dt>
     <dd>
     Specifies the name of the zone.
@@ -4122,7 +4128,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._AirfieldCaptureSpawns"></a>
     <strong>SPECTRE.ZONEMGR.Zone._AirfieldCaptureSpawns</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2134">line 2134</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2180">line 2180</a>
     </dt>
     <dd>
     Flag to indicate if _AirfieldCaptureSpawns.
@@ -4137,7 +4143,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._ArrowColors"></a>
     <strong>SPECTRE.ZONEMGR.Zone._ArrowColors</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2219">line 2219</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2265">line 2265</a>
     </dt>
     <dd>
     Lookup table for RGB arrow colors with transparency based on coalition ownership.
@@ -4152,7 +4158,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._Colors"></a>
     <strong>SPECTRE.ZONEMGR.Zone._Colors</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2205">line 2205</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2251">line 2251</a>
     </dt>
     <dd>
     Lookup table for RGB values based on coalition ownership.
@@ -4167,7 +4173,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._DBScan"></a>
     <strong>SPECTRE.ZONEMGR.Zone._DBScan</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2145">line 2145</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2191">line 2191</a>
     </dt>
     <dd>
     Density-based clustering for ground units in zone.
@@ -4182,7 +4188,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._DBScanInProg"></a>
     <strong>SPECTRE.ZONEMGR.Zone._DBScanInProg</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2147">line 2147</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2193">line 2193</a>
     </dt>
     <dd>
     .
@@ -4197,7 +4203,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._FillColors"></a>
     <strong>SPECTRE.ZONEMGR.Zone._FillColors</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2212">line 2212</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2258">line 2258</a>
     </dt>
     <dd>
     Lookup table for RGB fill colors based on coalition ownership.
@@ -4212,7 +4218,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._detectedUnits"></a>
     <strong>SPECTRE.ZONEMGR.Zone._detectedUnits</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2142">line 2142</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2188">line 2188</a>
     </dt>
     <dd>
     Detected ground units in zone.
@@ -4227,7 +4233,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone._hotspotDrawExtension"></a>
     <strong>SPECTRE.ZONEMGR.Zone._hotspotDrawExtension</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2158">line 2158</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2204">line 2204</a>
     </dt>
     <dd>
     Added to calculated radius for hotspot, extends radius of drawn circle, meters.
@@ -4242,7 +4248,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.epsilon"></a>
     <strong>SPECTRE.ZONEMGR.Zone.epsilon</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2164">line 2164</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2210">line 2210</a>
     </dt>
     <dd>
     Epsilon value for DBSCAN clustering.
@@ -4258,7 +4264,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.f"></a>
     <strong>SPECTRE.ZONEMGR.Zone.f</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2170">line 2170</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2216">line 2216</a>
     </dt>
     <dd>
     Adjust this factor based on desired granularity for hotspots.
@@ -4274,7 +4280,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.min_samples"></a>
     <strong>SPECTRE.ZONEMGR.Zone.min_samples</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2167">line 2167</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2213">line 2213</a>
     </dt>
     <dd>
     Minimum sample size for DBSCAN clustering.
@@ -4290,7 +4296,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone.shapeId"></a>
     <strong>SPECTRE.ZONEMGR.Zone.shapeId</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2191">line 2191</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2237">line 2237</a>
     </dt>
     <dd>
     Specifies the shape of the zone (Default: 7=Freeform).
@@ -4305,7 +4311,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:New"></a>
     <strong>SPECTRE.ZONEMGR.Zone:New(ZoneName, ZONEMGR)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2296">line 2296</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2342">line 2342</a>
     </dt>
     <dd>
     Create a new Zone object. </p>
@@ -4362,7 +4368,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_"></a>
     <strong>SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_(eventData)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2338">line 2338</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2384">line 2384</a>
     </dt>
     <dd>
     Handle base capture events. </p>
@@ -4395,7 +4401,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:ClearHotspots"></a>
     <strong>SPECTRE.ZONEMGR.Zone:ClearHotspots()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3343">line 3343</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3397">line 3397</a>
     </dt>
     <dd>
     Clear all drawn hotspots from the map for each coalition. </p>
@@ -4425,7 +4431,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:ClearIntel"></a>
     <strong>SPECTRE.ZONEMGR.Zone:ClearIntel()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3443">line 3443</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3497">line 3497</a>
     </dt>
     <dd>
     Clear all intelligence markers from the map for each coalition. </p>
@@ -4455,7 +4461,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2694">line 2694</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2743">line 2743</a>
     </dt>
     <dd>
     Create a table associating airbases with their client units for Simple Slot Block (SSB) handling. </p>
@@ -4490,7 +4496,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2817">line 2817</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2866">line 2866</a>
     </dt>
     <dd>
     DO NOT USE THIS YET. </p>
@@ -4529,7 +4535,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3009">line 3009</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3058">line 3058</a>
     </dt>
     <dd>
     Identify and list all airbases within the specified zone. </p>
@@ -4560,7 +4566,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DetermineDrawColor"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DetermineDrawColor()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2522">line 2522</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2571">line 2571</a>
     </dt>
     <dd>
     Determine the drawing color for the zone. </p>
@@ -4591,7 +4597,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2877">line 2877</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2926">line 2926</a>
     </dt>
     <dd>
     FARP usage mainly, or "ground" spawns. </p>
@@ -4619,7 +4625,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2459">line 2459</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2508">line 2508</a>
     </dt>
     <dd>
     Determine the ownership of the zone. </p>
@@ -4649,7 +4655,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DrawArrows"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DrawArrows()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2576">line 2576</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2625">line 2625</a>
     </dt>
     <dd>
     Draw arrows from the zone to its bordering zones. </p>
@@ -4681,7 +4687,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DrawHotspots"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DrawHotspots()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3290">line 3290</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3344">line 3344</a>
     </dt>
     <dd>
     Draw hotspot circles on the map for each coalition. </p>
@@ -4712,7 +4718,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:DrawZone"></a>
     <strong>SPECTRE.ZONEMGR.Zone:DrawZone()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2541">line 2541</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2590">line 2590</a>
     </dt>
     <dd>
     Draw the zone on the map. </p>
@@ -4743,7 +4749,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:FindUnitsInZone"></a>
     <strong>SPECTRE.ZONEMGR.Zone:FindUnitsInZone()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3049">line 3049</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3098">line 3098</a>
     </dt>
     <dd>
     Identify and return all units within the specified Quadpoint zone. </p>
@@ -4775,7 +4781,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:InitHandlers"></a>
     <strong>SPECTRE.ZONEMGR.Zone:InitHandlers()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2442">line 2442</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2491">line 2491</a>
     </dt>
     <dd>
     Bind the event handler for base capture events. </p>
@@ -4806,7 +4812,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership"></a>
     <strong>SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2502">line 2502</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2551">line 2551</a>
     </dt>
     <dd>
     Update the coalition ownership of each bordering zone. </p>
@@ -4837,7 +4843,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield"></a>
     <strong>SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield(Airfield)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#2636">line 2636</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#2685">line 2685</a>
     </dt>
     <dd>
     Update SSB flags at an Airfield. </p>
@@ -4873,7 +4879,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:_HotspotSchedInit"></a>
     <strong>SPECTRE.ZONEMGR.Zone:_HotspotSchedInit()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3153">line 3153</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3202">line 3202</a>
     </dt>
     <dd>
     Initialize a scheduler for managing hotspots within the zone. </p>
@@ -4904,7 +4910,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean"></a>
     <strong>SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean(enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3234">line 3234</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3287">line 3287</a>
     </dt>
     <dd>
     WIP.  Non Functional</p>
@@ -4941,7 +4947,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns"></a>
     <strong>SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns(enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3216">line 3216</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3268">line 3268</a>
     </dt>
     <dd>
     Enable or disable automatic spawns for the coalition that captures an airfield for the SPECTRE.ZONEMGR instance. </p>
@@ -4978,7 +4984,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:enableHotspotIntel"></a>
     <strong>SPECTRE.ZONEMGR.Zone:enableHotspotIntel(enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3197">line 3197</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3249">line 3249</a>
     </dt>
     <dd>
     Enable or disable hotspot intelligence for the zone. </p>
@@ -5014,7 +5020,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:enableZoneHotspot"></a>
     <strong>SPECTRE.ZONEMGR.Zone:enableZoneHotspot(enabled)</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3136">line 3136</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3185">line 3185</a>
     </dt>
     <dd>
     Enable or disable the hotspot feature for the zone. </p>
@@ -5051,7 +5057,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:getHotspotGroups"></a>
     <strong>SPECTRE.ZONEMGR.Zone:getHotspotGroups()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3252">line 3252</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3306">line 3306</a>
     </dt>
     <dd>
     Retrieve and organize groups of units as hotspots within the zone. </p>
@@ -5082,7 +5088,7 @@
     <dt>
     <a name = "SPECTRE.ZONEMGR.Zone:getHotspotsIntel"></a>
     <strong>SPECTRE.ZONEMGR.Zone:getHotspotsIntel()</strong>
-    <a style="float:right;" href="../source/ZONEMGR.lua.html#3376">line 3376</a>
+    <a style="float:right;" href="../source/ZONEMGR.lua.html#3430">line 3430</a>
     </dt>
     <dd>
     Gathers and displays intelligence information for hotspots in the zone.
@@ -5115,7 +5121,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-11-28 20:44:19 </i>
+<i style="float:right;">Last updated 2023-12-13 21:00:14 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

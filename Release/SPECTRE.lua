@@ -5,7 +5,7 @@
 -- ------------------------------------------------------------------------------------------
 -- 
 -- S. - Special         |
--- P. - Purpose         | CompileTime : Tuesday, November 28, 2023 8:44:17 PM
+-- P. - Purpose         | CompileTime : Wednesday, December 13, 2023 9:00:11 PM
 -- E. - Extension for   |      Commit : 6adc313af566c4a566e5aefe11b85fc2bd03d026
 -- C. - Creating        |	    Version : 0.9.9
 -- T. - Truly           |      Github : https://github.com/Gh0st352
@@ -689,7 +689,7 @@ function SPECTRE.AI.configureGroup.BOMBER(MANAGER, spawnGroup_, route, Packet)
   -- Schedule a periodic check for bomber ammunition
   spawnGroup_.ammocheck_  = SCHEDULER:New({spawnGroup_}, function()
     SPECTRE.UTILS.debugInfo("spawnGroup_.ammocheck_")
- if not spawnGroup_.InitTime then spawnGroup_.InitTime = os.time() end
+    if not spawnGroup_.InitTime then spawnGroup_.InitTime = os.time() end
     if spawnGroup_ then
       local BomberAmmo = spawnGroup_:GetAmmunition()
       if BomberAmmo == 0 or (os.time - spawnGroup_.InitTime  > 600) then
@@ -1110,15 +1110,15 @@ function SPECTRE.AI.buildPacket.determineAICoalitionValues(Packet)
   local coal_, country_, alias_, aliasDropped_
 
   -- Define values based on player's coalition
-  if PlayerSide == 1 then
-    coal_ = SPECTRE.Coalitions.Red
-    country_ = SPECTRE.Countries.Red
-    alias_ = SPECTRE.MENU.Settings[Type].TemplateName.Red
-  else
-    coal_ = SPECTRE.Coalitions.Blue
-    country_ = SPECTRE.Countries.Blue
-    alias_ = SPECTRE.MENU.Settings[Type].TemplateName.Blue
-  end
+  --  if PlayerSide == 1 then
+  --    coal_ = SPECTRE.Coalitions.Red
+  --    country_ = SPECTRE.Countries.Red
+  --    alias_ = SPECTRE.MENU.Settings[Type].TemplateName.Red or "ALIAS_"
+  --  else
+  --    coal_ = SPECTRE.Coalitions.Blue
+  --    country_ = SPECTRE.Countries.Blue
+  --    alias_ = SPECTRE.MENU.Settings[Type].TemplateName.Blue or "ALIAS_"
+  --  end
 
   -- Define specific alias values for STRIKE and AIRDROP types
   if Type == "STRIKE" then
@@ -1127,7 +1127,8 @@ function SPECTRE.AI.buildPacket.determineAICoalitionValues(Packet)
   elseif Type == "AIRDROP" then
     aliasDropped_ = PlayerSide == 1 and SPECTRE.MENU.Settings[Type].Types[Packet.subtype_].TemplateName.Red or SPECTRE.MENU.Settings[Type].Types[Packet.subtype_].TemplateName.Blue
   end
-
+    coal_ = PlayerSide == 1 and SPECTRE.Coalitions.Red or SPECTRE.Coalitions.Blue
+    country_ = PlayerSide == 1 and SPECTRE.Countries.Red or SPECTRE.Countries.Blue
   -- Update the Packet with the determined values
   Packet.coal_ = coal_
   Packet.country_ = country_
@@ -2261,7 +2262,7 @@ SPECTRE.IADS.SAM.ActAsEW = false
 --- Go Live Zone.
 -- Defines the conditions under which the SAM system will switch to a live (active) state.
 -- A value determining the condition for SAM activation, based on SkynetIADSAbstractRadarElement constants.
-SPECTRE.IADS.SAM.goLiveZone = SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_KILL_ZONE --SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_SEARCH_RANGE
+SPECTRE.IADS.SAM.goLiveZone = ""--SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_KILL_ZONE --SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_SEARCH_RANGE
 --- Go Live Percent.
 -- Specifies the percentage of maximum engagement range at which the SAM system will go live.
 -- An integer indicating the percent of maximum range for SAM activation.
@@ -2287,7 +2288,7 @@ function SPECTRE.IADS.SAM:New(_Name, _SAMTYPE, _IADS)
   SPECTRE.UTILS.debugInfo("SPECTRE.IADS.SAM:New | ------------------ ")
   -- Inherit properties from the BASE class.
   local self = BASE:Inherit(self, SPECTRE:New())
-
+  self.goLiveZone = SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_KILL_ZONE
   self.groupName = _Name
   self.type = _SAMTYPE
   self.SkynetObj = _IADS.SkynetIADS:getSAMSiteByGroupName(_Name)
@@ -2336,7 +2337,7 @@ SPECTRE.IADS.EWR.SkynetObj = {}
 --- Go Live Zone.
 -- Defines the conditions under which the EWR system will switch to a live (active) state.
 -- A value determining the condition for EWR activation, based on SkynetIADSAbstractRadarElement constants.
-SPECTRE.IADS.EWR.goLiveZone = SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_SEARCH_RANGE
+SPECTRE.IADS.EWR.goLiveZone = ""--SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_SEARCH_RANGE
 --- Go Live Percent.
 -- Specifies the percentage of maximum detection range at which the EWR system will go live.
 -- An integer indicating the percent of maximum range for EWR activation.
@@ -2354,7 +2355,7 @@ function SPECTRE.IADS.EWR:New(_groupName, _unitName, _IADS)
   SPECTRE.UTILS.debugInfo("SPECTRE.IADS.EWR:New | ------------------ ")
   -- Inherit properties from the BASE class.
   local self = BASE:Inherit(self, SPECTRE:New())
-
+  self.goLiveZone = SkynetIADSAbstractRadarElement.GO_LIVE_WHEN_IN_SEARCH_RANGE
   self.groupName = _groupName
   self.unitName = _unitName
   self.SkynetObj = _IADS.SkynetIADS:getEarlyWarningRadarByUnitName(_unitName)
@@ -4128,6 +4129,296 @@ function SPECTRE.PLYRMGR:New()
   return self
 end
 
+--- Sets the point cost for CAP custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_CAP(cost_)
+  SPECTRE.REWARDS.Config.PointCost.CAP = cost_
+  SPECTRE.MENU.Text.CAP.Cost = string.format("C.A.P. Cost: %d Points", cost_)
+  return self
+end
+
+--- Sets the point cost for TOMAHAWK custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_TOMAHAWK(cost_)
+  SPECTRE.REWARDS.Config.PointCost.TOMAHAWK = cost_
+  SPECTRE.MENU.Text.TOMAHAWK.Cost = string.format("Tomahawk Cost: %d Points", cost_)
+  return self
+end
+
+--- Sets the point cost for BOMBER custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_BOMBER(cost_)
+  SPECTRE.REWARDS.Config.PointCost.BOMBER = cost_
+  SPECTRE.MENU.Text.BOMBER.Cost = string.format("Bomber Cost: %d Points", cost_)
+  return self
+end
+
+--- Sets the point cost for STRIKE custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_STRIKE(cost_)
+  SPECTRE.REWARDS.Config.PointCost.STRIKE = cost_
+  SPECTRE.MENU.Text.STRIKE.Cost = string.format("Strike Team Cost: %d Points", cost_)
+  return self
+end
+
+--- Sets the point cost for AIRDROP_ARTILLERY custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_ARTILLERY(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+
+  return self
+end
+--- Sets the point cost for AIRDROP_IFV custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_IFV(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+  return self
+end
+
+--- Sets the point cost for AIRDROP_TANK custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_TANK(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+  return self
+end
+
+--- Sets the point cost for AIRDROP_AAA custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_AAA(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+  return self
+end
+
+--- Sets the point cost for AIRDROP_IRSAM custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_IRSAM(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+  return self
+end
+
+--- Sets the point cost for AIRDROP_RDRSAM custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_RDRSAM(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+  return self
+end
+
+--- Sets the point cost for AIRDROP_EWR custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_EWR(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+  return self
+end
+
+--- Sets the point cost for AIRDROP_SUPPLY custom support redemption.
+-- @param #PLYRMGR self
+-- @param cost_
+-- @return #PLYRMGR self
+function SPECTRE.PLYRMGR:setPointCost_AIRDROP_SUPPLY(cost_)
+  SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY = cost_
+
+  SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
+    "Airdrop Group {Type} Costs:",
+    "================================",
+    "",
+    "Usage: /airdrop artillery",
+    string.format("Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.ARTILLERY),
+    "Usage: /airdrop ifv",
+    string.format("Infantry Fighting Vehicle Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IFV),
+    "Usage: /airdrop tank",
+    string.format("Tank Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.TANK),
+    "Usage: /airdrop aaa",
+    string.format("Anti-Aircraft Artillery Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.AAA),
+    "Usage: /airdrop irsam",
+    string.format("IR SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.IRSAM),
+    "Usage: /airdrop rdrsam",
+    string.format("Radar SAM Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.RDRSAM),
+    "Usage: /airdrop ewr",
+    string.format("Early Warning Radar Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.EWR),
+    "Usage: /airdrop supply",
+    string.format("Supply Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.AIRDROP.SUPPLY),
+  }
+  return self
+end
+
+
+
 --- Init.
 -- ===
 --
@@ -4601,6 +4892,7 @@ end
 -- @param eventData Data associated with the "PlayerEnterAircraft" event, including the player's details.
 -- @return #PLYRMGR self The player manager instance after handling the "PlayerEnterAircraft" event.
 function SPECTRE.PLYRMGR:PlayerEnterAircraft_(eventData)
+if eventData.IniPlayerName ~= nil then
   -- Retrieve the player's information using their name from the event data
   local PlayerInfo = SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName)
   local PlayerUCID = PlayerInfo.ucid
@@ -4618,7 +4910,7 @@ function SPECTRE.PLYRMGR:PlayerEnterAircraft_(eventData)
   if self:anySupportOn() then
     self.Players[PlayerUCID]:setupMenu(self)
   end
-
+end
   return self
 end
 
@@ -4705,8 +4997,8 @@ function SPECTRE.PLYRMGR:EndMizResourceCollate()
       -- If the support type is not AIRDROP, update the Red and Blue resources directly
       if supportType ~= "AIRDROP" then
 
-        self.RESOURCES[supportType].Red = self.RESOURCES[supportType].Red + self.COUNTERS.RESTOCK[supportType].Red
-        self.RESOURCES[supportType].Blue = self.RESOURCES[supportType].Blue + self.COUNTERS.RESTOCK[supportType].Blue
+--        self.RESOURCES[supportType].Red = self.RESOURCES[supportType].Red + self.COUNTERS.RESTOCK[supportType].Red
+--        self.RESOURCES[supportType].Blue = self.RESOURCES[supportType].Blue + self.COUNTERS.RESTOCK[supportType].Blue
       else
         SPECTRE.UTILS.debugInfo("SPECTRE.PLYRMGR:EndMizResourceCollate | AIRDROP.Types: " , self.MARKERS.Settings.AIRDROP.Types)
         -- If the support type is AIRDROP, iterate over the airdrop types and update their counts
@@ -6714,7 +7006,7 @@ SPECTRE.MENU.Text.BOMBER.Cost = string.format("Bomber Cost: %d Points", SPECTRE.
 SPECTRE.MENU.Text.AIRDROP.Cost = "Print Airdrop Types & Costs"
 SPECTRE.MENU.Text.STRIKE.Cost = string.format("Strike Team Cost: %d Points", SPECTRE.REWARDS.Config.PointCost.STRIKE)
 
-SPECTRE.MENU.Text.Reports.Instructions.Airdrop = {
+SPECTRE.MENU.Text.Reports.Instructions.AIRDROPCOST = {
   "Airdrop Group {Type} Costs:",
   "================================",
   "",
@@ -11124,7 +11416,7 @@ SPECTRE.ZONEMGR._markerScheduler = {}
 SPECTRE.ZONEMGR._markerQueue = {}
 SPECTRE.ZONEMGR._removeMarkerQueue = {}
 SPECTRE.ZONEMGR._hotspotQueue = {}
-
+SPECTRE.ZONEMGR._HotspotSched = {}
 
 --- WIP.
 -- Flag for enabling CAP functionality.
@@ -11263,8 +11555,7 @@ SPECTRE.ZONEMGR.UpdateIntervalNudge = 0.25
 --- Create a new zone manager instance.
 --
 -- This function initializes a new instance of the SPECTRE.ZONEMGR class. It inherits from the BASE class
--- and sets up the random seed count based on predefined parameters. The random seed generation is an integral
--- part of managing various zone-related functionalities within the SPECTRE framework.
+-- and sets up the random seed count based on predefined parameters.
 --
 -- @param #ZONEMGR
 -- @return #ZONEMGR self The newly created instance of the zone manager.
@@ -11487,7 +11778,7 @@ end
 
 --- Retrieves the airfields and zones owned by the red and blue coalitions.
 --
--- This function iterates through the zones managed by the `ZONEMGR` instance, determining which coalition owns each zone and airfield. 
+-- This function iterates through the zones managed by the `ZONEMGR` instance, determining which coalition owns each zone and airfield.
 -- It classifies the zones and airfields based on their ownership and returns separate lists for red and blue coalitions.
 --
 -- @param #ZONEMGR self The instance of the zone manager.
@@ -11773,8 +12064,8 @@ end
 --
 -- @param #ZONEMGR self The instance of the zone manager.
 -- @param _airbaseName The name of the airbase to be spawned.
--- @param _coalition The coalition to which the airbase belongs.
--- @param _country The country to which the airbase belongs.
+-- @param coalition The coalition to which the airbase belongs.
+-- @param country The country to which the airbase belongs.
 -- @param _zoneNameT (optional) Specific zone name to process, or all zones if not provided.
 -- @param SPWNR_ (optional) Spawner to use for airbase generation.
 -- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
@@ -11806,7 +12097,7 @@ function SPECTRE.ZONEMGR:spawnAirbase(_airbaseName, coalition, country, _zoneNam
       self.generatedAirfields[genIndex]:setCoalition(coalition)
       self.generatedAirfields[genIndex]:setCountry(country)
       self.generatedAirfields[genIndex]:setZoneSizeMain(_airbaseSize, _airbaseSize * 0.8, _airbaseSize * 1.2, 0.5)
-      self.generatedAirfields[genIndex]:DynamicGenerationZONE(_vec2, _airbaseName, true, true)
+      self.generatedAirfields[genIndex]:DynamicGenerationZONE(_vec2, _airbaseName)--, true, true)
     end
   end
   return self
@@ -11851,7 +12142,7 @@ end
 -- @param diameter_SpawnZone The diameter of the spawn zone around the vector location.
 -- @param coalition The coalition to which the fill elements will belong.
 -- @param country The country to which the fill elements will belong.
--- @param _zoneName The name of the zone where the elements are to be spawned.
+-- @param _zoneName (optional) The name of the zone where the elements are to be spawned.
 -- @param SPWNR_ (optional) The spawner to use for fill generation.
 -- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 -- @return #ZONEMGR self The zone manager instance after spawning the fill elements.
@@ -11860,6 +12151,18 @@ end
 function SPECTRE.ZONEMGR:spawnFillAtVec2(vec2_SpawnCenter, diameter_SpawnZone, coalition, country, _zoneName, SPWNR_ , SPWNRTemplate)
   SPWNR_ = SPWNR_ or nil
   SPWNRTemplate = SPWNRTemplate or nil
+  _zoneName = _zoneName or nil
+
+  if _zoneName == nil then
+    local InZone = false
+    for _zName, _zObject in pairs(self.Zones) do
+      InZone =  SPECTRE.WORLD.PointInZone(vec2_SpawnCenter, _zName)
+
+      if InZone then _zoneName = _zName break end
+    end
+
+  end
+
   if SPWNRTemplate ~= nil then SPWNR_ = SPECTRE.SPAWNER:New():ImportTemplate(SPWNRTemplate) end
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnFillAtVec2 | ------- ")
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnFillAtVec2 | _zoneName : " .. _zoneName)
@@ -11873,7 +12176,7 @@ function SPECTRE.ZONEMGR:spawnFillAtVec2(vec2_SpawnCenter, diameter_SpawnZone, c
   self.generatedFills[genIndex]:setCoalition(coalition)
   self.generatedFills[genIndex]:setCountry(country)
   self.generatedFills[genIndex]:setZoneSizeMain(diameter_SpawnZone, diameter_SpawnZone * 0.8, diameter_SpawnZone * 1.2, 0.5)
-  self.generatedFills[genIndex]:DynamicGenerationZONE(vec2_SpawnCenter, _zoneName, true, true)
+  self.generatedFills[genIndex]:DynamicGenerationZONE(vec2_SpawnCenter, _zoneName)--, true, true)
   return self
 end
 
@@ -11997,7 +12300,7 @@ end
 
 --- Clears all fill spawner templates in the zone manager.
 --
--- This function resets the 'FILLSPAWNERS' table within the zone manager instance, effectively clearing all existing fill spawner templates. 
+-- This function resets the 'FILLSPAWNERS' table within the zone manager instance, effectively clearing all existing fill spawner templates.
 -- It's useful for reinitializing or updating the spawner settings in the zone manager.
 --
 -- @param #ZONEMGR
@@ -12041,7 +12344,7 @@ end
 
 --- Clears all Airfield spawner templates in the zone manager.
 --
--- This function resets the 'AIRFIELDSPAWNERS' table within the zone manager instance, effectively clearing all existing Airfield spawner templates. 
+-- This function resets the 'AIRFIELDSPAWNERS' table within the zone manager instance, effectively clearing all existing Airfield spawner templates.
 -- It's useful for reinitializing or updating the spawner settings in the zone manager.
 --
 -- @param #ZONEMGR
@@ -12086,8 +12389,8 @@ end
 
 --- Creates a spawner template based on a provided spawner object.
 --
--- This function generates a template from the given '_SPWNR' spawner object using 'SPECTRE.UTILS.templateFromObject'. 
--- It updates the '_Object' with this new template. 
+-- This function generates a template from the given '_SPWNR' spawner object using 'SPECTRE.UTILS.templateFromObject'.
+-- It updates the '_Object' with this new template.
 -- This function is typically used internally within the zone manager to create or update templates for spawners.
 --
 -- @param _SPWNR The spawner object from which the template is to be created.
@@ -12218,13 +12521,13 @@ end
 
 --- Initializes the marker update scheduler for the zone manager.
 --
--- This function sets up a scheduler to manage marker operations within the zone manager. 
--- It processes various marker queues including hotspot, marker, and marker removal queues. 
--- The scheduler handles the addition, update, and removal of markers at specified intervals. 
--- This only exists because of a bug in DCS. When it is fixed updates wont be tied to a schedule queue. 
+-- This function sets up a scheduler to manage marker operations within the zone manager.
+-- It processes various marker queues including hotspot, marker, and marker removal queues.
+-- The scheduler handles the addition, update, and removal of markers at specified intervals.
+-- This only exists because of a bug in DCS. When it is fixed updates wont be tied to a schedule queue.
 --
--- @param #ZONEMGR 
--- @return #ZONEMGR self 
+-- @param #ZONEMGR
+-- @return #ZONEMGR self
 -- @usage zoneManager:MarkerScheduleInit() -- Initializes the marker update scheduler for 'zoneManager'.
 function SPECTRE.ZONEMGR:MarkerScheduleInit()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:MarkerScheduleInit | ---------------------")
@@ -12302,12 +12605,19 @@ function SPECTRE.ZONEMGR:InitSSB()
   end
   return self
 end
+
 --- Initializes the scheduler for managing hotspots within zones.
 --
 -- This function iterates through all zones managed by the ZONEMGR system and initializes individual hotspot schedulers
--- for zones where hotspots are enabled. It ensures that hotspots, which are critical for dynamic and strategic gameplay,
+-- for zones where hotspots are enabled. It ensures that hotspots
 -- are actively managed and updated within each zone. This process is vital for maintaining a dynamic and engaging game
 -- environment where strategic points (hotspots) can influence player actions and scenarios.
+--
+--
+-- This function sets up a scheduler to periodically check and update hotspots within the zone. It ensures that the hotspots
+-- and any related intelligence data are refreshed at regular intervals. The scheduler also accounts for ongoing updates,
+-- avoiding overlaps in processing. This systematic approach to managing hotspots enhances the zone's dynamics, ensuring
+-- that changes in game conditions are regularly reflected in hotspot statuses and information.
 --
 -- @param #ZONEMGR
 -- @return #ZONEMGR self The zone manager instance with hotspot schedulers initialized for relevant zones.
@@ -12316,26 +12626,53 @@ end
 function SPECTRE.ZONEMGR:HotspotSchedInit()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSchedInit | ---------------------")
   for zoneName, zoneObject in pairs(self.Zones) do
-    if zoneObject.Hotspots == true then
-      zoneObject:_HotspotSchedInit()
-    end
+    -- Initialize a scheduler to periodically check and update zones
+    self._HotspotSched[zoneName] = {}
+    self._HotspotSched[zoneName] = SCHEDULER:New(self, function()
+
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | ZONE: " .. zoneName)
+        -- Only proceed if zones are not already being updated
+        if not zoneObject.UpdatingHotspots then
+          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | UPDATES NOT IN PROG, STARTING")
+          zoneObject.UpdatingHotspots = true
+
+          local _Timer = TIMER:New(function()
+            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | UPDATING     | " .. zoneObject.ZoneName )
+            if zoneObject.Hotspots == true then
+              zoneObject:getHotspotGroups()
+              zoneObject:ClearHotspots()
+              zoneObject:DrawHotspots()
+            end
+            if zoneObject.Intel == true then
+              zoneObject:ClearIntel()
+              zoneObject:getHotspotsIntel()
+              --zoneObject:DrawHotspotsIntel()
+            end
+            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | END UPDATING | " .. zoneObject.ZoneName )
+            zoneObject.UpdatingHotspots = false
+          end, zoneObject)
+          _Timer:Start(math.random(1,5))
+        else
+          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | UPDATES ALREADY IN PROG")
+        end
+    end, {self}, math.random(1,20), self.UpdateInterval, self.UpdateIntervalNudge)
   end
   return self
 end
 
 --- Initializes the Combat Air Patrol (CAP) scheduler for the zone manager.
 --
--- This function sets up a scheduler to manage CAP operations within the zone manager. 
--- 
--- It periodically checks and updates CAP units based on coalition ownership of zones. 
--- 
+-- This function sets up a scheduler to manage CAP operations within the zone manager.
+--
+-- It periodically checks and updates CAP units based on coalition ownership of zones.
+--
 -- The scheduler handles the dynamic allocation and management of CAP units, considering factors like:
--- zone ownership, available templates, and specific settings for each coalition. 
--- 
+-- zone ownership, available templates, and specific settings for each coalition.
+--
 -- It ensures CAP units are deployed and managed effectively in response to the changing game environment.
 --
--- @param #ZONEMGR 
--- @return #ZONEMGR self 
+-- @param #ZONEMGR
+-- @return #ZONEMGR self
 -- @usage zoneManager:CAPschedInit() -- Initializes the CAP scheduler for 'zoneManager'.
 function SPECTRE.ZONEMGR:CAPschedInit()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | ---------------------")
@@ -12533,13 +12870,13 @@ end
 
 --- Adds a CAP group template for a specified coalition.
 --
--- This function adds a new Combat Air Patrol (CAP) group template to the zone manager for a specific coalition, ensuring no duplicates. 
+-- This function adds a new Combat Air Patrol (CAP) group template to the zone manager for a specific coalition, ensuring no duplicates.
 -- It updates the `_CAPtemplates` attribute by adding the specified group name if it's not already present.
 --
 -- @param #ZONEMGR self
 -- @param coalition The coalition identifier (0, 1, or 2).
 -- @param groupName The name of the CAP group to be added.
--- @return #ZONEMGR self 
+-- @return #ZONEMGR self
 -- @usage zoneManager:addCAP(1, "CAPGroup1") -- Adds "CAPGroup1" to the CAP templates for coalition 1.
 function SPECTRE.ZONEMGR:addCAP(coalition, groupName)
   if not SPECTRE.UTILS.table_hasValue( self._CAPtemplates[coalition], groupName) then
@@ -12551,13 +12888,13 @@ end
 
 --- Removes a CAP group template from a specified coalition.
 --
--- This function removes a specified Combat Air Patrol (CAP) group template from the zone manager for a given coalition. 
+-- This function removes a specified Combat Air Patrol (CAP) group template from the zone manager for a given coalition.
 -- It locates the group name within the `_CAPtemplates` and removes it if found.
 --
--- @param #ZONEMGR self 
+-- @param #ZONEMGR self
 -- @param coalition The coalition identifier (0, 1, or 2).
 -- @param groupName The name of the CAP group to be removed.
--- @return #ZONEMGR self 
+-- @return #ZONEMGR self
 -- @usage zoneManager:removeCAP(1, "CAPGroup1") -- Removes "CAPGroup1" from the CAP templates for coalition 1.
 function SPECTRE.ZONEMGR:removeCAP(coalition, groupName)
   local _index = SPECTRE.UTILS.getIndex(self._CAPtemplates[coalition], groupName)
@@ -12573,7 +12910,7 @@ end
 --
 -- @param #ZONEMGR self
 -- @param ucid The player UCID to be added to the admin list.
--- @return #ZONEMGR self 
+-- @return #ZONEMGR self
 -- @usage zoneManager:addAdmin("PlayerUCID1234") -- Adds "PlayerUCID1234" to the admin list.
 function SPECTRE.ZONEMGR:addAdmin(ucid)
   self.AdminUCIDs[ucid] = ucid
@@ -12584,9 +12921,9 @@ end
 --
 -- This function removes a specified player's UCID from the zone manager's admin list, revoking any administrative control or privileges.
 --
--- @param #ZONEMGR self 
+-- @param #ZONEMGR self
 -- @param ucid The player UCID to be removed from the admin list.
--- @return #ZONEMGR self 
+-- @return #ZONEMGR self
 -- @usage zoneManager:removeAdmin("PlayerUCID1234") -- Removes "PlayerUCID1234" from the admin list.
 function SPECTRE.ZONEMGR:removeAdmin(ucid)
   self.AdminUCIDs[ucid] = nil
@@ -12624,7 +12961,8 @@ end
 --
 -- @param #ZONEMGR self The instance of the zone manager.
 -- @param ZoneNames A list of strings representing the names of the zones to be managed (e.g., {"Zone1", "Zone2"}).
--- @param SSBFarps
+-- @param SSBFarps Currently unused
+-- @param SSBAll Currently unused
 -- @return #ZONEMGR self The zone manager instance after setup with the specified zones.
 -- @usage local setupZoneManager = SPECTRE.ZONEMGR:Setup({"Zone1", "Zone2"}) -- Sets up the ZoneManager with "Zone1" and "Zone2".
 function SPECTRE.ZONEMGR:Setup(ZoneNames, SSBFarps, SSBAll)
@@ -13414,21 +13752,24 @@ function SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_(eventData)
     self:UpdateSSBAirfield(eventData.PlaceName)
   end
 
-  if capturedAirbase and
-    self._AirfieldCaptureSpawns and
-    capturedAirbase.oldOwnedBy ~= capturedAirbase.ownedBy
-    and capturedAirbase.oldOwnedBy ~= 3
-  then
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | ---------------------")
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | CaptureSPAWN: " .. tostring(self._AirfieldCaptureSpawns))
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | Airfield    : " .. tostring(eventData.PlaceName))
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | Initiator   : " , eventData.initiator)
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | eventData   : " , eventData)
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | IniCoal     : " .. tostring(eventData.initiator.getCoalition(eventData.initiator)))
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | IniCountry  : " .. tostring(eventData.initiator.getCountry(eventData.initiator)))
-    self.ZoneManager:spawnAirbase(eventData.PlaceName, eventData.initiator.getCoalition(eventData.initiator), eventData.initiator.getCountry(eventData.initiator))
-  end
+  if self._AirfieldCaptureSpawns == true then
 
+
+    if capturedAirbase and
+      -- self._AirfieldCaptureSpawns == true and
+      capturedAirbase.oldOwnedBy ~= capturedAirbase.ownedBy
+      and capturedAirbase.oldOwnedBy ~= 3
+    then
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | ---------------------")
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | CaptureSPAWN: " .. tostring(self._AirfieldCaptureSpawns))
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | Airfield    : " .. tostring(eventData.PlaceName))
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | Initiator   : " , eventData.initiator)
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | eventData   : " , eventData)
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | IniCoal     : " .. tostring(eventData.initiator.getCoalition(eventData.initiator)))
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | IniCountry  : " .. tostring(eventData.initiator.getCountry(eventData.initiator)))
+      self.ZoneManager:spawnAirbase(eventData.PlaceName, eventData.initiator.getCoalition(eventData.initiator), eventData.initiator.getCountry(eventData.initiator))
+    end
+  end
   if capturedAirbase and
     self._AirfieldCaptureClean
   then
@@ -14215,34 +14556,37 @@ end
 function SPECTRE.ZONEMGR.Zone:_HotspotSchedInit()
   SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSchedInit | ---------------------")
   -- Initialize a scheduler to periodically check and update zones
-
-  self.HotspotSched = SCHEDULER:New(self, function()
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:self.HotspotSched | ZONE: " .. self.ZoneName)
-    -- Only proceed if zones are not already being updated
-    if not self.UpdatingHotspots then
-      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSchedInit | UPDATES NOT IN PROG, STARTING")
-      self.UpdatingHotspots = true
-
-      -- local _Timer = TIMER:New(function()
-      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSchedInit | UPDATING | " .. self.ZoneName .. " ~~~~~~~~~~")
-      if self.Hotspots == true then
-        self:getHotspotGroups():ClearHotspots():DrawHotspots()
-      end
-      if self.Intel == true then
-        self:ClearIntel()
-        self:getHotspotsIntel()
-        --zoneObject:DrawHotspotsIntel()
-      end
-      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSchedInit | END UPDATING | " .. self.ZoneName .. " ~~~~~~~~~~")
-      self.UpdatingHotspots = false
-      --return self
-      --end, self)
-      --_Timer:Start(math.random(1,5))
-    else
-      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSchedInit | UPDATES ALREADY IN PROG")
-    end
-    return self
-  end, {self}, math.random(1,20), self.UpdateInterval, self.UpdateIntervalNudge)
+  --self.ZoneManager._HotspotSched[self.ZoneName] = {}
+  --self.ZoneManager._HotspotSched[self.ZoneName] = SCHEDULER:New(nil, function()
+  --  self.HotspotSched = SCHEDULER:New(self, function()
+  --    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:self.HotspotSched | ZONE: " .. self.ZoneName)
+  --    -- Only proceed if zones are not already being updated
+  --    if not self.UpdatingHotspots then
+  --      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | UPDATES NOT IN PROG, STARTING")
+  --      self.UpdatingHotspots = true
+  --
+  --      local _Timer = TIMER:New(function()
+  --        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | UPDATING | " .. self.ZoneName .. " ~~~~~~~~~~")
+  --        if self.Hotspots == true then
+  --          self:getHotspotGroups()
+  --          self:ClearHotspots()
+  --          self:DrawHotspots()
+  --        end
+  --        if self.Intel == true then
+  --          self:ClearIntel()
+  --          self:getHotspotsIntel()
+  --          --zoneObject:DrawHotspotsIntel()
+  --        end
+  --        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | END UPDATING | " .. self.ZoneName .. " ~~~~~~~~~~")
+  --        self.UpdatingHotspots = false
+  ----        return self
+  --      end, self)
+  --      _Timer:Start(math.random(1,5))
+  --    else
+  --      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:HotspotSched | UPDATES ALREADY IN PROG")
+  --    end
+  --    return self
+  --  end, {self}, math.random(1,20), self.UpdateInterval, self.UpdateIntervalNudge)
 
   return self
 end
@@ -14277,7 +14621,8 @@ end
 -- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
 function SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns(enabled)
   -- Default to true if no value is provided
-  enabled = enabled or true
+  if enabled == nil then enabled = true end
+  --  enabled = enabled or true
   self._AirfieldCaptureSpawns = enabled
   return self
 end
@@ -14295,7 +14640,8 @@ end
 -- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
 function SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean(enabled)
   -- Default to true if no value is provided
-  enabled = enabled or true
+  if enabled == nil then enabled = true end
+  --enabled = enabled or true
   self._AirfieldCaptureClean = enabled
   return self
 end
