@@ -8,9 +8,9 @@ SPECTRE.DebugEnabled = 1
 
 SPECTRE:setTerrainCaucasus() -- Set the map for SPECTRE using `setTerrain` method.
 
---- Set your machine learning tuning parameters do determine what is considered a hotspot.
-SPECTRE.BRAIN.DBSCANNER.f = 2
-SPECTRE.BRAIN.DBSCANNER.p = 0.1
+--- Set your machine learning tuning parameters to determine what is considered a hotspot.
+SPECTRE.ZONEMGR:setAI_granularityFactor(2)
+SPECTRE.ZONEMGR:setAI_percentFactor(0.1)
 
 --- Set the zone names to have the ZONEMGR monitor.
 --

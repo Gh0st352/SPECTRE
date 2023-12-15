@@ -5,7 +5,7 @@
 -- ------------------------------------------------------------------------------------------
 -- 
 -- S. - Special         |
--- P. - Purpose         | CompileTime : Wednesday, December 13, 2023 9:00:11 PM
+-- P. - Purpose         | CompileTime : Thursday, December 14, 2023 7:20:27 PM
 -- E. - Extension for   |      Commit : 6adc313af566c4a566e5aefe11b85fc2bd03d026
 -- C. - Creating        |	    Version : 0.9.9
 -- T. - Truly           |      Github : https://github.com/Gh0st352
@@ -11551,7 +11551,12 @@ SPECTRE.ZONEMGR.UpdateInterval = 25
 
 --- Adjust how often to update self.
 SPECTRE.ZONEMGR.UpdateIntervalNudge = 0.25
-
+--- Adjust this factor based on desired granularity for hotspots.
+-- Hotspots
+SPECTRE.ZONEMGR.AI_f = 2 -- 1.5
+--- Percentage of total units (adjust based on your use case).
+-- Hotspots
+SPECTRE.ZONEMGR.AI_p = 0.1 -- 0.02
 --- Create a new zone manager instance.
 --
 -- This function initializes a new instance of the SPECTRE.ZONEMGR class. It inherits from the BASE class
@@ -12951,6 +12956,27 @@ function SPECTRE.ZONEMGR:setUpdateInterval(interval, nudge)
   return self
 end
 
+--- Sets the desired granularity for hotspots.
+--
+-- @param #ZONEMGR  self
+-- @param factor Adjust this factor based on desired granularity for hotspots.
+-- @return #ZONEMGR self
+function SPECTRE.ZONEMGR:setAI_granularityFactor(factor)
+  self.AI_f = factor
+  return self
+end
+
+
+--- Sets the Percentage of total units for hotspots.
+--
+-- @param #ZONEMGR self
+-- @param factor Adjust this factor based on Percentage of total units for hotspots.
+-- @return #ZONEMGR self
+function SPECTRE.ZONEMGR:setAI_percentFactor(factor)
+  self.AI_p = factor
+  return self
+end
+
 --- Configures the ZoneManager with specified zones.
 --
 -- This function is essential for initializing the ZoneManager with a specific set of zones. It seeds the airbases,
@@ -13567,10 +13593,10 @@ SPECTRE.ZONEMGR.Zone.epsilon = 0
 SPECTRE.ZONEMGR.Zone.min_samples = 0
 --- Adjust this factor based on desired granularity for hotspots.
 -- Hotspots
-SPECTRE.ZONEMGR.Zone.f = 2 -- 1.5
+SPECTRE.ZONEMGR.Zone.AI_f = 2 -- 1.5
 --- Percentage of total units (adjust based on your use case).
 -- Hotspots
-SPECTRE.ZONEMGR.Zone.p = 0.1 -- 0.02
+SPECTRE.ZONEMGR.Zone.AI_p = 0.1 -- 0.02
 --- Flag to indicate if the zone is currently being updated.
 SPECTRE.ZONEMGR.Zone.UpdatingZone = false
 --- Counter to track pending updates for the zone.
@@ -13707,6 +13733,15 @@ function SPECTRE.ZONEMGR.Zone:New(ZoneName, ZoneManager)
   self.Area = SPECTRE.POLY.polygonArea(self.Vertices2D)
   -- Convert the 2D vertices to lines.
   self.LinesVec2 = SPECTRE.POLY.convertZoneToLines(self.Vertices2D)
+  
+  self.AI_p = ZoneManager.AI_p
+  self.AI_f = ZoneManager.AI_f
+  
+SPECTRE.ZONEMGR.f = 2 -- 1.5
+--- Percentage of total units (adjust based on your use case).
+-- Hotspots
+SPECTRE.ZONEMGR.p = 0.1 -- 0.02
+
 
   -- Convert the 2D vertices to 3D coordinates.
   self.Vertices3D = {}
@@ -14666,7 +14701,10 @@ function SPECTRE.ZONEMGR.Zone:getHotspotGroups()
 
   for _coal = 0, 2 , 1 do
     if self._detectedUnits[_coal] and #self._detectedUnits[_coal] > 0 then
-      local _DBscanner = SPECTRE.BRAIN.DBSCANNER:New(self._detectedUnits[_coal],self.Area, self._hotspotDrawExtension):Scan()
+      local _DBscanner = SPECTRE.BRAIN.DBSCANNER:New(self._detectedUnits[_coal],self.Area, self._hotspotDrawExtension)
+      _DBscanner.f = self.AI_f
+      _DBscanner.p = self.AI_p
+      _DBscanner:Scan()
       self.HotspotClusters[_coal] = _DBscanner.Clusters
 
       if SPECTRE.DebugEnabled == 1 then
@@ -14872,6 +14910,26 @@ function SPECTRE.ZONEMGR.Zone:ClearIntel()
     self.IntelMarkers[_coal] = {}
   end
   SPECTRE.UTILS.debugInfo(debugInfo)
+  return self
+end
+
+--- Sets the desired granularity for hotspots.
+--
+-- @param #ZONEMGR.Zone self 
+-- @param factor Adjust this factor based on desired granularity for hotspots.
+-- @return #ZONEMGR.Zone self 
+function SPECTRE.ZONEMGR.Zone:setAI_granularityFactor(factor)
+  self.AI_f = factor
+  return self
+end
+
+--- Sets the Percentage of total units for hotspots.
+--
+-- @param #ZONEMGR.Zone self 
+-- @param factor Adjust this factor based on Percentage of total units for hotspots.
+-- @return #ZONEMGR.Zone self 
+function SPECTRE.ZONEMGR.Zone:setAI_percentFactor(factor)
+  self.AI_p = factor
   return self
 end
 
