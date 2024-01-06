@@ -92,6 +92,7 @@
 </span><span class="comment">-- @module ZONEMGR
 </span><span class="comment">-- @extends SPECTRE
 </span>
+
 <span class="comment">--- 1 - Zone Manager.
 </span><span class="comment">-- ===
 </span><span class="comment">--
@@ -109,35 +110,35 @@
 </span><span class="comment">-- The <a href="../modules/ZONEMGR.html#">ZONEMGR</a> module within the SPECTRE system is designed for dynamic zone management,
 </span><span class="comment">-- offering a centralized approach to handle various zone-related operations.
 </span><span class="comment">--
-</span><a id="31"></a><span class="comment">-- @field #ZONEMGR
+</span><a id="32"></a><span class="comment">-- @field #ZONEMGR
 </span>SPECTRE.ZONEMGR = {}
 
 <span class="comment">--- Configurations for ZONEMGR operations.
-</span><a id="35"></a><span class="comment">-- @field #ZONEMGR.Config Configuration table with operation limit.
+</span><a id="36"></a><span class="comment">-- @field #ZONEMGR.Config Configuration table with operation limit.
 </span>SPECTRE.ZONEMGR.Config = {}
 
 <span class="comment">--- Maximum number of operations that ZONEMGR can handle.
-</span><a id="39"></a><span class="comment">-- Defines the upper limit for ZONEMGR operations.
+</span><a id="40"></a><span class="comment">-- Defines the upper limit for ZONEMGR operations.
 </span>SPECTRE.ZONEMGR.Config.operationLimit = <span class="number">150</span>
 
 <span class="comment">--- Minimum value for random seed generation.
-</span><a id="43"></a><span class="comment">-- Sets the lower bound for random seed values.
+</span><a id="44"></a><span class="comment">-- Sets the lower bound for random seed values.
 </span>SPECTRE.ZONEMGR._randSeedMin = <span class="number">500</span>
 
 <span class="comment">--- Maximum value for random seed generation.
-</span><a id="47"></a><span class="comment">-- Sets the upper bound for random seed values.
+</span><a id="48"></a><span class="comment">-- Sets the upper bound for random seed values.
 </span>SPECTRE.ZONEMGR._randSeedMax = <span class="number">2000</span>
 
 <span class="comment">--- Nominal value for random seed generation.
-</span><a id="51"></a><span class="comment">-- The default or standard seed value used in randomization.
+</span><a id="52"></a><span class="comment">-- The default or standard seed value used in randomization.
 </span>SPECTRE.ZONEMGR._randSeedNom = <span class="number">2000</span>
 
 <span class="comment">--- Nudge factor for random seed adjustment.
-</span><a id="55"></a><span class="comment">-- Modifier to fine-tune the randomization process.
+</span><a id="56"></a><span class="comment">-- Modifier to fine-tune the randomization process.
 </span>SPECTRE.ZONEMGR._randSeedNudge = <span class="number">0.7</span>
 
 <span class="comment">--- Flag for enabling persistence functionality.
-</span><a id="59"></a><span class="comment">-- Indicates if persistence is active in ZONEMGR.
+</span><a id="60"></a><span class="comment">-- Indicates if persistence is active in ZONEMGR.
 </span>SPECTRE.ZONEMGR._persistence = <span class="keyword">false</span>
 
 SPECTRE.ZONEMGR._markerScheduler = {}
@@ -148,7 +149,7 @@ SPECTRE.ZONEMGR._HotspotSched = {}
 
 <span class="comment">--- WIP.
 </span><span class="comment">-- Flag for enabling CAP functionality.
-</span><a id="70"></a><span class="comment">-- Indicates if CAP Defense is active in ZONEMGR.
+</span><a id="71"></a><span class="comment">-- Indicates if CAP Defense is active in ZONEMGR.
 </span>SPECTRE.ZONEMGR._enableCAP = <span class="keyword">false</span>
 SPECTRE.ZONEMGR.UpdatingCAP = <span class="keyword">false</span>
 SPECTRE.ZONEMGR.COUNTER = <span class="number">1</span>
@@ -159,19 +160,19 @@ SPECTRE.ZONEMGR.schedulerCAPFactor = <span class="number">0.25</span>
 
 <span class="comment">--- WIP.
 </span><span class="comment">-- Flag for enabling CAP functionality.
-</span><a id="81"></a><span class="comment">-- Indicates if CAP Defense is active in ZONEMGR.
+</span><a id="82"></a><span class="comment">-- Indicates if CAP Defense is active in ZONEMGR.
 </span>SPECTRE.ZONEMGR._schedlerCAP = {}
 
 <span class="comment">--- WIP.
 </span><span class="comment">-- Storage for CAP template group names.
-</span><a id="86"></a><span class="comment">-- ipair, key = coalition, value = ipair string table of CAP template group names
+</span><a id="87"></a><span class="comment">-- ipair, key = coalition, value = ipair string table of CAP template group names
 </span>SPECTRE.ZONEMGR._CAPtemplates = {
   [<span class="number">0</span>] = {},
   [<span class="number">1</span>] = {},
   [<span class="number">2</span>] = {}
 }
 
-<a id="93"></a><span class="comment">--- WIP.
+<a id="94"></a><span class="comment">--- WIP.
 </span>SPECTRE.ZONEMGR.settingsCAP = {
   [<span class="number">0</span>] = {
     RestockTime = <span class="number">999999</span>,
@@ -205,82 +206,82 @@ SPECTRE.ZONEMGR._CAPspawns = {
   [<span class="number">2</span>] = {},
 }
 
-<a id="127"></a><span class="comment">--- Flag for enabling _AirfieldCaptureSpawns functionality.
+<a id="128"></a><span class="comment">--- Flag for enabling _AirfieldCaptureSpawns functionality.
 </span>SPECTRE.ZONEMGR._AirfieldCaptureSpawns = <span class="keyword">false</span>
-<a id="129"></a><span class="comment">--- Flag for enabling _AirfieldCaptureClean functionality.
+<a id="130"></a><span class="comment">--- Flag for enabling _AirfieldCaptureClean functionality.
 </span>SPECTRE.ZONEMGR._AirfieldCaptureClean = <span class="keyword">false</span>
 <span class="comment">--- Persistence settings for different templates.
-</span><a id="132"></a><span class="comment">-- @field #ZONEMGR.persistanceSettings Specifies paths for Fill and Airfield templates.
+</span><a id="133"></a><span class="comment">-- @field #ZONEMGR.persistanceSettings Specifies paths for Fill and Airfield templates.
 </span>SPECTRE.ZONEMGR.persistanceSettings = {
   FillTemplates = <span class="string">"SPAWNERTemplates/Fill/"</span>,
   AirfieldTemplates = <span class="string">"SPAWNERTemplates/Airfield/"</span>,
 }
 
-<a id="138"></a><span class="comment">--- Table to store Admin UCIDs for special functions like LiveEditor.
+<a id="139"></a><span class="comment">--- Table to store Admin UCIDs for special functions like LiveEditor.
 </span>SPECTRE.ZONEMGR.AdminUCIDs = {}
 
-<a id="141"></a><span class="comment">--- keep small, for ex: zone with min distance from side to side = 148680m, a scale facor of 0.05 gives min dist from detected groups of 148680*0.05=7434m.
+<a id="142"></a><span class="comment">--- keep small, for ex: zone with min distance from side to side = 148680m, a scale facor of 0.05 gives min dist from detected groups of 148680*0.05=7434m.
 </span>SPECTRE.ZONEMGR._smartFillMinDistFactor = <span class="number">0.05</span>
 
 <span class="comment">--- Dictionary to store zone instances.
-</span><a id="145"></a><span class="comment">-- @field #ZONEMGR.Zones
+</span><a id="146"></a><span class="comment">-- @field #ZONEMGR.Zones
 </span>SPECTRE.ZONEMGR.Zones = {}
 
 <span class="comment">--- Dictionary to store airfield spawner instances.
-</span><a id="149"></a><span class="comment">-- @field #ZONEMGR.AIRFIELDSPAWNERS
+</span><a id="150"></a><span class="comment">-- @field #ZONEMGR.AIRFIELDSPAWNERS
 </span>SPECTRE.ZONEMGR.AIRFIELDSPAWNERS = {}
 
 <span class="comment">--- Dictionary to store fill spawner instances.
-</span><a id="153"></a><span class="comment">-- @field #ZONEMGR.FILLSPAWNERS
+</span><a id="154"></a><span class="comment">-- @field #ZONEMGR.FILLSPAWNERS
 </span>SPECTRE.ZONEMGR.FILLSPAWNERS = {}
 
 <span class="comment">--- Dictionary to store generated airfield spawns.
-</span><a id="157"></a><span class="comment">-- @field #ZONEMGR.generatedAirfields
+</span><a id="158"></a><span class="comment">-- @field #ZONEMGR.generatedAirfields
 </span>SPECTRE.ZONEMGR.generatedAirfields = {}
 
 <span class="comment">--- Dictionary to store generated fill spawns.
-</span><a id="161"></a><span class="comment">-- @field #ZONEMGR.generatedFills
+</span><a id="162"></a><span class="comment">-- @field #ZONEMGR.generatedFills
 </span>SPECTRE.ZONEMGR.generatedFills = {}
 
-<a id="164"></a><span class="comment">--- Flag indicating if zones are currently being updated.
+<a id="165"></a><span class="comment">--- Flag indicating if zones are currently being updated.
 </span>SPECTRE.ZONEMGR.UpdatingZones = <span class="keyword">false</span>
 
 <span class="comment">--- Scheduler for periodic Zone ownership updates.
-</span><a id="168"></a><span class="comment">-- @field #ZONEMGR.UpdateSched
+</span><a id="169"></a><span class="comment">-- @field #ZONEMGR.UpdateSched
 </span>SPECTRE.ZONEMGR.UpdateSched = {}
 
-<a id="171"></a><span class="comment">--- Flag indicating if SSB management is active.
+<a id="172"></a><span class="comment">--- Flag indicating if SSB management is active.
 </span>SPECTRE.ZONEMGR.SSB = <span class="keyword">false</span>
 
-<a id="174"></a><span class="comment">--- Flags for SSB on state (default 0).
+<a id="175"></a><span class="comment">--- Flags for SSB on state (default 0).
 </span>SPECTRE.ZONEMGR.SSBon = <span class="number">0</span>
 
-<a id="177"></a><span class="comment">--- Flags for SSB off states (default 100).
+<a id="178"></a><span class="comment">--- Flags for SSB off states (default 100).
 </span>SPECTRE.ZONEMGR.SSBoff = <span class="number">100</span>
 
-<a id="180"></a><span class="comment">--- Boolean Toggle for drawing unit hotspots (default false).
+<a id="181"></a><span class="comment">--- Boolean Toggle for drawing unit hotspots (default false).
 </span>SPECTRE.ZONEMGR.Hotspots = <span class="keyword">false</span>
 
-<a id="183"></a><span class="comment">--- Boolean Toggle for drawing hotspot intel (default false).
+<a id="184"></a><span class="comment">--- Boolean Toggle for drawing hotspot intel (default false).
 </span>SPECTRE.ZONEMGR.Intel = <span class="keyword">false</span>
 
-<a id="186"></a><span class="comment">--- Code marker for the zones (default 1035200).
+<a id="187"></a><span class="comment">--- Code marker for the zones (default 1035200).
 </span>SPECTRE.ZONEMGR.codeMarker_ = <span class="number">1035200</span>
 
 <span class="comment">--- A list to seed airbases.
-</span><a id="190"></a><span class="comment">-- @field #ZONEMGR.AirbaseSeed
+</span><a id="191"></a><span class="comment">-- @field #ZONEMGR.AirbaseSeed
 </span>SPECTRE.ZONEMGR.AirbaseSeed = {}
 
-<a id="193"></a><span class="comment">--- Factor for determining minimum distance for smart fill (scale factor).
+<a id="194"></a><span class="comment">--- Factor for determining minimum distance for smart fill (scale factor).
 </span>SPECTRE.ZONEMGR._smartFillMinDistFactor = <span class="number">0.05</span>
 
-<a id="196"></a><span class="comment">--- How often to update self.
+<a id="197"></a><span class="comment">--- How often to update self.
 </span>SPECTRE.ZONEMGR.UpdateInterval = <span class="number">25</span>
 
-<a id="199"></a><span class="comment">--- Adjust how often to update self.
+<a id="200"></a><span class="comment">--- Adjust how often to update self.
 </span>SPECTRE.ZONEMGR.UpdateIntervalNudge = <span class="number">0.25</span>
 <span class="comment">--- Adjust this factor based on desired granularity for hotspots.
-</span><a id="202"></a><span class="comment">-- Hotspots
+</span><a id="203"></a><span class="comment">-- Hotspots
 </span>SPECTRE.ZONEMGR.AI_f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--- Percentage of total units (adjust based on your use case).
 </span><span class="comment">-- Hotspots
@@ -319,7 +320,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR self
 </span><span class="comment">-- @param enabled A boolean value (true or false) to enable or disable the system respectively. Defaults to true if not specified.
-</span><a id="241"></a><span class="comment">-- @return #ZONEMGR self
+</span><a id="242"></a><span class="comment">-- @return #ZONEMGR self
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:enableCAP(enabled)
   <span class="comment">-- Default to true if no value is provided
 </span>  enabled = enabled <span class="keyword">or</span> <span class="keyword">true</span>
@@ -341,7 +342,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param enabled A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with the updated persistence setting.
 </span><span class="comment">-- @usage zoneManager:enablePersistance(true) -- Enables the persistence system.
-</span><a id="263"></a><span class="comment">-- @usage zoneManager:enablePersistance(false) -- Disables the persistence system.
+</span><a id="264"></a><span class="comment">-- @usage zoneManager:enablePersistance(false) -- Disables the persistence system.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:enablePersistance(enabled)
   <span class="comment">-- Default to true if no value is provided
 </span>  enabled = enabled <span class="keyword">or</span> <span class="keyword">true</span>
@@ -360,7 +361,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param enabled A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with the updated persistence setting.
 </span><span class="comment">-- @usage zoneManager:enableAirfieldCaptureSpawns(true) -- Enables automatic spawns for the coalition that captures an airfield at the airfield.
-</span><a id="282"></a><span class="comment">-- @usage zoneManager:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
+</span><a id="283"></a><span class="comment">-- @usage zoneManager:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:enableAirfieldCaptureSpawns(enabled)
   <span class="comment">-- Default to true if no value is provided
 </span>  enabled = enabled <span class="keyword">or</span> <span class="keyword">true</span>
@@ -377,7 +378,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param enabled (optional) Boolean value to enable (true) or disable (false) hotspots. Defaults to true if not specified.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with hotspots enabled or disabled as specified.
-</span><a id="299"></a><span class="comment">-- @usage local zoneManagerWithHotspots = SPECTRE.ZONEMGR:enableHotspots() -- Enables hotspots in the ZoneManager.
+</span><a id="300"></a><span class="comment">-- @usage local zoneManagerWithHotspots = SPECTRE.ZONEMGR:enableHotspots() -- Enables hotspots in the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:enableHotspots(enabled)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:InitHotspots | ---------------------"</span>)
   enabled = enabled <span class="keyword">or</span> <span class="keyword">true</span>
@@ -394,7 +395,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param enabled (optional) Boolean value to enable (true) or disable (false) the hotspot intelligence feature. Defaults to true if not specified.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with the hotspot intelligence feature enabled or disabled as specified.
-</span><a id="316"></a><span class="comment">-- @usage local zoneManagerWithIntel = SPECTRE.ZONEMGR:enableHotspotIntel() -- Enables hotspot intelligence in the ZoneManager.
+</span><a id="317"></a><span class="comment">-- @usage local zoneManagerWithIntel = SPECTRE.ZONEMGR:enableHotspotIntel() -- Enables hotspot intelligence in the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:enableHotspotIntel(enabled)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:enableHotspotIntel | ---------------------"</span>)
   enabled = enabled <span class="keyword">or</span> <span class="keyword">true</span>
@@ -428,7 +429,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with live edit functionality enabled.
-</span><a id="350"></a><span class="comment">-- @usage local zoneManagerWithLiveEdit = SPECTRE.ZONEMGR:enableLiveEdit() -- Enables live editing of zones in the ZoneManager.
+</span><a id="351"></a><span class="comment">-- @usage local zoneManagerWithLiveEdit = SPECTRE.ZONEMGR:enableLiveEdit() -- Enables live editing of zones in the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:enableLiveEdit()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:enableLiveEdit | ---------------------"</span>)
   <span class="comment">--  self.LIVEEDIT:Init(self)
@@ -450,13 +451,13 @@ SPECTRE.ZONEMGR._CAPspawns = {
 
       <span class="comment">-- Set up event handler for changes in markers
 </span>      self.MARKERS.TRACKERS[editType].OnAfterMarkChanged = <span class="keyword">function</span>(From, Event, To, Text, Keywords, Coord)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR | LIVEEDIT | "</span>.. editType .. <span class="string">":OnAfterMarkChanged | ------------------------"</span>)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | From   | "</span>, From)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | Event  | "</span>, Event)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | To     | "</span>, To)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | Text   | "</span>, Text)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | Keywords| "</span>, Keywords)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | coord   | "</span>, Coord)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | LIVEEDIT | "</span>.. editType .. <span class="string">":OnAfterMarkChanged | ------------------------"</span>)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | From   | "</span>, From)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | Event  | "</span>, Event)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | To     | "</span>, To)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | Text   | "</span>, Text)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | Keywords| "</span>, Keywords)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | coord   | "</span>, Coord)
 
         <span class="keyword">local</span> origText = Keywords
         <span class="keyword">local</span> sanitizedText = Keywords:gsub(<span class="string">"/"</span>, <span class="string">""</span>):upper()
@@ -464,8 +465,8 @@ SPECTRE.ZONEMGR._CAPspawns = {
         <span class="keyword">for</span> word <span class="keyword">in</span> sanitizedText:gmatch(<span class="string">"%w+"</span>) <span class="keyword">do</span> <span class="global">table</span>.insert(MarkerType, word) <span class="keyword">end</span>
         <span class="keyword">local</span> MarkInfo = SPECTRE.MARKERS.World.FindByText(origText)
 
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | MarkerType   | "</span>, MarkerType)
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | MarkInfo     | "</span>, MarkInfo)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | MarkerType   | "</span>, MarkerType)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | MarkInfo     | "</span>, MarkInfo)
         <span class="keyword">local</span> Packet = {
           From = From,
           Event = Event,
@@ -502,7 +503,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param zoneName The name of the zone whose coalition ownership is to be determined.
 </span><span class="comment">-- @return ownedBy The current coalition (Red, Blue, or None) that owns the specified zone.
-</span><a id="424"></a><span class="comment">-- @usage local owningCoalition = zoneManager:getZoneCoalition("Zone1") -- Retrieves the coalition owning "Zone1".
+</span><a id="425"></a><span class="comment">-- @usage local owningCoalition = zoneManager:getZoneCoalition("Zone1") -- Retrieves the coalition owning "Zone1".
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.getZoneCoalition(self, zoneName)
   self.Zones[zoneName]:DetermineZoneOwnership()
   <span class="keyword">local</span> ownedBy = self.Zones[zoneName].OwnedByCoalition
@@ -519,7 +520,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @return blueZones Table of zones owned by the blue coalition.
 </span><span class="comment">-- @return redAirfields Table of airfields owned by the red coalition.
 </span><span class="comment">-- @return blueAirfields Table of airfields owned by the blue coalition.
-</span><a id="441"></a><span class="comment">-- @usage local redZones, blueZones, redAirfields, blueAirfields = zoneManager:getOwnedProperty() -- Retrieves owned zones and airfields.
+</span><a id="442"></a><span class="comment">-- @usage local redZones, blueZones, redAirfields, blueAirfields = zoneManager:getOwnedProperty() -- Retrieves owned zones and airfields.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.getOwnedProperty(self)
   <span class="keyword">local</span> redZones, blueZones, redAirfields, blueAirfields = {}, {}, {}, {}
   <span class="keyword">for</span> _k, _v <span class="keyword">in</span> <span class="global">pairs</span>(self.Zones) <span class="keyword">do</span>
@@ -556,7 +557,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param max_distance The maximum distance within which the point should be from any hotspot.
 </span><span class="comment">-- @return point The calculated vector point that satisfies the given constraints.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="478"></a><span class="comment">-- @usage local strategicPoint = newZoneManager:getSmartVec2(quadBounds, hotspots, coalitionBias, minDist, maxDist) -- Calculates a strategic point within the specified parameters.
+</span><a id="479"></a><span class="comment">-- @usage local strategicPoint = newZoneManager:getSmartVec2(quadBounds, hotspots, coalitionBias, minDist, maxDist) -- Calculates a strategic point within the specified parameters.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.getSmartVec2(self, quad_bounds, hotspot_clusters, coalition_bias, min_distance, max_distance)
   coalition_bias = coalition_bias <span class="keyword">or</span> <span class="number">0</span>
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.getSmartVec2 | -------------------"</span>)
@@ -695,9 +696,9 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param t_ZOBJ The zone object within which units are to be scanned and identified.
 </span><span class="comment">-- @return temp_detectedUnits A table categorizing detected units by coalition (0 for neutral, 1 for red, 2 for blue).
-</span><a id="617"></a><span class="comment">-- @usage local detectedUnits = zoneManager:FindUnitsInZone(zoneObject) -- Scans and categorizes units within the specified zone.
+</span><a id="618"></a><span class="comment">-- @usage local detectedUnits = zoneManager:FindUnitsInZone(zoneObject) -- Scans and categorizes units within the specified zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.FindUnitsInZone(self, t_ZOBJ)
-  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG:FindUnitsInZone | -------------------------------------------- "</span>)
+  SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:FindUnitsInZone | -------------------------------------------- "</span>)
   <span class="keyword">local</span> temp_detectedUnits = {}
   temp_detectedUnits[<span class="number">0</span>] = {}
   temp_detectedUnits[<span class="number">1</span>] = {}
@@ -711,7 +712,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
         <span class="keyword">local</span> _unitCoal = unit:getCoalition()
         <span class="keyword">local</span> _unitName = unit:getName()
         <span class="keyword">local</span> _life = unit:getLife()
-        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG:FindUnitsInZone | FOUND UNIT  | _unitCoal | "</span> .. _unitCoal .. <span class="string">" | _unitName | "</span> .. _unitName)
+        SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:FindUnitsInZone | FOUND UNIT  | _unitCoal | "</span> .. _unitCoal .. <span class="string">" | _unitName | "</span> .. _unitName)
         temp_detectedUnits[_unitCoal][#temp_detectedUnits[_unitCoal] + <span class="number">1</span>] = {
           name = _unitName,
           unitObj = unit,
@@ -733,11 +734,11 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param _detectedUnits A table containing units detected within a specific zone, categorized by coalition.
 </span><span class="comment">-- @param coal The coalition identifier (1 for red, 2 for blue) used to filter the detected units.
 </span><span class="comment">-- @return _GroupNames A table containing the names of groups that belong to the specified coalition.
-</span><a id="655"></a><span class="comment">-- @usage local groupNames = zoneManager:buildGroupsFromUnits(detectedUnits, coalitionId) -- Retrieves group names for units of a specific coalition.
+</span><a id="656"></a><span class="comment">-- @usage local groupNames = zoneManager:buildGroupsFromUnits(detectedUnits, coalitionId) -- Retrieves group names for units of a specific coalition.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.buildGroupsFromUnits(self, _detectedUnits, coal)
   <span class="keyword">local</span> _GroupNames = {}
   <span class="keyword">if</span> #_detectedUnits[coal] &gt; <span class="number">0</span> <span class="keyword">then</span>
-    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | Detected Coal Units"</span>)
+    SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | Detected Coal Units"</span>)
     <span class="keyword">for</span> _, _Unit <span class="keyword">in</span> <span class="global">ipairs</span>(_detectedUnits[coal]) <span class="keyword">do</span>
       <span class="keyword">local</span> unitName  = _Unit.name
       <span class="keyword">local</span> _unit     = Unit.getByName(unitName)
@@ -746,7 +747,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
         <span class="keyword">if</span> _Group <span class="keyword">then</span>
           <span class="keyword">local</span> groupName = Group.getName(_Group)
           <span class="keyword">if</span> groupName <span class="keyword">then</span>
-            SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | group in Zone |"</span> .. groupName)
+            SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | group in Zone |"</span> .. groupName)
             SPECTRE.UTILS.safeInsert(_GroupNames,groupName)
           <span class="keyword">end</span>
         <span class="keyword">end</span>
@@ -765,14 +766,14 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param vec2 The Vec2 coordinates used to determine the relevant zone.
 </span><span class="comment">-- @return #ZONEMGR.Zone _zoneObjectRETURN The zone object that contains the specified coordinates.
-</span><a id="687"></a><span class="comment">-- @usage local zoneObject = zoneManager:findZoneForVec2(coordinates) -- Retrieves the zone object for given coordinates.
+</span><a id="688"></a><span class="comment">-- @usage local zoneObject = zoneManager:findZoneForVec2(coordinates) -- Retrieves the zone object for given coordinates.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.findZoneForVec2(self, vec2)
   <span class="keyword">local</span> markerInZone = <span class="keyword">false</span>
   <span class="keyword">local</span> _zoneObjectRETURN = {}
   <span class="keyword">for</span> _zoneName, _zoneObject <span class="keyword">in</span> <span class="global">pairs</span>(self.Zones) <span class="keyword">do</span>
     markerInZone = SPECTRE.POLY.PointWithinShape(vec2, _zoneObject.Vertices2D)
     <span class="keyword">if</span> markerInZone <span class="keyword">then</span>
-      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.FLAG  | mark in Zone |"</span> .. _zoneName)
+      SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR  | mark in Zone |"</span> .. _zoneName)
       _zoneObjectRETURN = _zoneObject
       <span class="keyword">break</span>
     <span class="keyword">end</span>
@@ -804,7 +805,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after spawning the airbase elements.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="726"></a><span class="comment">-- @usage newZoneManager:spawnAirbase("Airbase1", 2, "USA", "Zone1") -- Spawns "Airbase1" in "Zone1" for the Blue coalition and USA.
+</span><a id="727"></a><span class="comment">-- @usage newZoneManager:spawnAirbase("Airbase1", 2, "USA", "Zone1") -- Spawns "Airbase1" in "Zone1" for the Blue coalition and USA.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:spawnAirbase(_airbaseName, coalition, country, _zoneNameT, SPWNR_, SPWNRTemplate)
   _zoneNameT = _zoneNameT <span class="keyword">or</span> <span class="keyword">nil</span>
   SPWNR_ = SPWNR_ <span class="keyword">or</span> <span class="keyword">nil</span>
@@ -849,7 +850,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after spawning the airbases in the specified zone.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="771"></a><span class="comment">-- @usage newZoneManager:spawnAirbasesInZone("Zone1", 2, "USA") -- Spawns all airbases in "Zone1" for the Blue coalition and USA.
+</span><a id="772"></a><span class="comment">-- @usage newZoneManager:spawnAirbasesInZone("Zone1", 2, "USA") -- Spawns all airbases in "Zone1" for the Blue coalition and USA.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:spawnAirbasesInZone(_zoneName, _coalition, _country, SPWNRTemplate)
   SPWNRTemplate = SPWNRTemplate <span class="keyword">or</span> <span class="keyword">nil</span>
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:spawnAirbasesInZone | _zoneName | "</span> ..  _zoneName)
@@ -880,7 +881,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after spawning the fill elements.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="802"></a><span class="comment">-- @usage newZoneManager:spawnFillAtVec2({x = 1000, y = 2000}, 5000, 2, "USA", "Zone1") -- Spawns fill elements at the specified location in "Zone1".
+</span><a id="803"></a><span class="comment">-- @usage newZoneManager:spawnFillAtVec2({x = 1000, y = 2000}, 5000, 2, "USA", "Zone1") -- Spawns fill elements at the specified location in "Zone1".
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:spawnFillAtVec2(vec2_SpawnCenter, diameter_SpawnZone, coalition, country, _zoneName, SPWNR_ , SPWNRTemplate)
   SPWNR_ = SPWNR_ <span class="keyword">or</span> <span class="keyword">nil</span>
   SPWNRTemplate = SPWNRTemplate <span class="keyword">or</span> <span class="keyword">nil</span>
@@ -928,7 +929,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param SPWNRTemplate (optional) Creates a template on the fly from provided spawner, and uses that. SPWNR_ must be nil.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after spawning the fill elements in the specified zone.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="850"></a><span class="comment">-- @usage newZoneManager:spawnFillInZone("Zone1", 2, "USA") -- Spawns fill elements in "Zone1" for the Blue coalition and USA.
+</span><a id="851"></a><span class="comment">-- @usage newZoneManager:spawnFillInZone("Zone1", 2, "USA") -- Spawns fill elements in "Zone1" for the Blue coalition and USA.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:spawnFillInZone(_zoneName, coalition, country, SPWNR_, SPWNRTemplate)
   SPWNR_ = SPWNR_ <span class="keyword">or</span> <span class="keyword">nil</span>
   SPWNRTemplate = SPWNRTemplate <span class="keyword">or</span> <span class="keyword">nil</span>
@@ -983,7 +984,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param _bias (optional) A bias factor towards a specific coalition in positioning the fill elements.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after strategically spawning the fill elements in the specified zone.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="905"></a><span class="comment">-- @usage newZoneManager:spawnFillInZoneSmart("Zone1", 2, "USA", nil, 0) -- Strategically spawns fill elements in "Zone1" for the Blue coalition and USA.
+</span><a id="906"></a><span class="comment">-- @usage newZoneManager:spawnFillInZoneSmart("Zone1", 2, "USA", nil, 0) -- Strategically spawns fill elements in "Zone1" for the Blue coalition and USA.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:spawnFillInZoneSmart(_zoneName, coalition, country,  SPWNR_, _bias, SPWNRTemplate)
   SPWNR_ = SPWNR_ <span class="keyword">or</span> <span class="keyword">nil</span>
   SPWNRTemplate = SPWNRTemplate <span class="keyword">or</span> <span class="keyword">nil</span>
@@ -1038,7 +1039,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="960"></a><span class="comment">-- @usage zoneManager:clearFillSpawnerTemplates() -- Clears all fill spawner templat
+</span><a id="961"></a><span class="comment">-- @usage zoneManager:clearFillSpawnerTemplates() -- Clears all fill spawner templat
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:clearFillSpawnerTemplates()
   self.FILLSPAWNERS = {}
   <span class="keyword">return</span> self
@@ -1057,7 +1058,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param force (optional) A boolean flag to force creation of a new template, regardless of existing persistence.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after adding or updating the spawner template.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="979"></a><span class="comment">-- @usage newZoneManager:AddFillSpawnerTemplate(spawnerObject, "TemplateName", true) -- Adds or updates a template named "TemplateName".
+</span><a id="980"></a><span class="comment">-- @usage newZoneManager:AddFillSpawnerTemplate(spawnerObject, "TemplateName", true) -- Adds or updates a template named "TemplateName".
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:AddFillSpawnerTemplate(_SPWNR, name_, force)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:AddFillSpawnerTemplate | ----------- "</span> , _SPWNR )
   force = force <span class="keyword">or</span> <span class="keyword">false</span>
@@ -1082,7 +1083,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="1004"></a><span class="comment">-- @usage zoneManager:clearFillSpawnerTemplates() -- Clears all fill spawner templat
+</span><a id="1005"></a><span class="comment">-- @usage zoneManager:clearFillSpawnerTemplates() -- Clears all fill spawner templat
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:clearAirfieldSpawnerTemplates()
   self.AIRFIELDSPAWNERS = {}
   <span class="keyword">return</span> self
@@ -1101,7 +1102,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param force (optional) A boolean flag to force the creation of a new template, overriding existing persistence.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after adding or updating the airfield spawner template.
 </span><span class="comment">-- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="1023"></a><span class="comment">-- @usage newZoneManager:AddAirfieldSpawnerTemplate(spawnerObject, "AirfieldName", true) -- Adds or updates an airfield template named "AirfieldName".
+</span><a id="1024"></a><span class="comment">-- @usage newZoneManager:AddAirfieldSpawnerTemplate(spawnerObject, "AirfieldName", true) -- Adds or updates an airfield template named "AirfieldName".
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate(_SPWNR, name_, force)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:AddAirfieldSpawnerTemplate | ----------- "</span> , _SPWNR )
   force = force <span class="keyword">or</span> <span class="keyword">false</span>
@@ -1129,7 +1130,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param _SPWNR The spawner object from which the template is to be created.
 </span><span class="comment">-- @param _Object The object to be updated with the new spawner template.
 </span><span class="comment">-- @return _Object The updated object with the new spawner template.
-</span><a id="1051"></a><span class="comment">-- @usage local updatedObject = SPECTRE.ZONEMGR._CreateSpawnerTemplate(spawner, existingObject) -- Updates 'existingObject' with a template from 'spawner'.
+</span><a id="1052"></a><span class="comment">-- @usage local updatedObject = SPECTRE.ZONEMGR._CreateSpawnerTemplate(spawner, existingObject) -- Updates 'existingObject' with a template from 'spawner'.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR._CreateSpawnerTemplate(_SPWNR, _Object)
   <span class="comment">-- Update _Object with the new template and return it
 </span>  _Object = SPECTRE.UTILS.templateFromObject(_SPWNR)
@@ -1154,7 +1155,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after initialization.
-</span><a id="1076"></a><span class="comment">-- @usage local initializedZoneManager = SPECTRE.ZONEMGR:Init() -- Initializes and configures the ZoneManager with all necessary settings.
+</span><a id="1077"></a><span class="comment">-- @usage local initializedZoneManager = SPECTRE.ZONEMGR:Init() -- Initializes and configures the ZoneManager with all necessary settings.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:Init()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:Init | ---------------------"</span>)
   <span class="comment">-- Determine ownership of each zone.
@@ -1209,7 +1210,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with the update scheduler initialized.
-</span><a id="1131"></a><span class="comment">-- @usage local updatedZoneManager = SPECTRE.ZONEMGR:UpdateSchedInit() -- Initializes the update scheduler for the ZoneManager.
+</span><a id="1132"></a><span class="comment">-- @usage local updatedZoneManager = SPECTRE.ZONEMGR:UpdateSchedInit() -- Initializes the update scheduler for the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:UpdateSchedInit()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:UpdateSchedInit | ---------------------"</span>)
   self.UpdateSched = SCHEDULER:New(self, <span class="keyword">function</span>()
@@ -1261,7 +1262,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="1183"></a><span class="comment">-- @usage zoneManager:MarkerScheduleInit() -- Initializes the marker update scheduler for 'zoneManager'.
+</span><a id="1184"></a><span class="comment">-- @usage zoneManager:MarkerScheduleInit() -- Initializes the marker update scheduler for 'zoneManager'.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:MarkerScheduleInit()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:MarkerScheduleInit | ---------------------"</span>)
 
@@ -1312,7 +1313,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param enabled (optional) Boolean value to enable (true) or disable (false) the SSB property. Defaults to true if not specified.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with the SSB property initialized.
-</span><a id="1234"></a><span class="comment">-- @usage local zoneManagerWithSSB = SPECTRE.ZONEMGR:enableSSB() -- Initializes the SSB property in the ZoneManager.
+</span><a id="1235"></a><span class="comment">-- @usage local zoneManagerWithSSB = SPECTRE.ZONEMGR:enableSSB() -- Initializes the SSB property in the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:enableSSB(enabled)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:InitSSB | ---------------------"</span>)
   enabled = enabled <span class="keyword">or</span> <span class="keyword">true</span>
@@ -1328,7 +1329,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with the SSB property initialized.
-</span><a id="1250"></a><span class="comment">-- @usage local zoneManagerWithSSB = SPECTRE.ZONEMGR:InitSSB() -- Initializes the SSB property in the ZoneManager.
+</span><a id="1251"></a><span class="comment">-- @usage local zoneManagerWithSSB = SPECTRE.ZONEMGR:InitSSB() -- Initializes the SSB property in the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:InitSSB()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:InitSSB | ---------------------"</span>)
   <span class="keyword">if</span> self.SSB == <span class="keyword">true</span> <span class="keyword">then</span>
@@ -1355,7 +1356,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with hotspot schedulers initialized for relevant zones.
 </span><span class="comment">-- @usage local zoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="1277"></a><span class="comment">-- @usage zoneManager:HotspotSchedInit() -- Initializes hotspot schedulers for zones with hotspots enabled.
+</span><a id="1278"></a><span class="comment">-- @usage zoneManager:HotspotSchedInit() -- Initializes hotspot schedulers for zones with hotspots enabled.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:HotspotSchedInit()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:HotspotSchedInit | ---------------------"</span>)
   <span class="keyword">for</span> zoneName, zoneObject <span class="keyword">in</span> <span class="global">pairs</span>(self.Zones) <span class="keyword">do</span>
@@ -1406,7 +1407,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="1328"></a><span class="comment">-- @usage zoneManager:CAPschedInit() -- Initializes the CAP scheduler for 'zoneManager'.
+</span><a id="1329"></a><span class="comment">-- @usage zoneManager:CAPschedInit() -- Initializes the CAP scheduler for 'zoneManager'.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:CAPschedInit()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:CAPschedInit | ---------------------"</span>)
 
@@ -1526,8 +1527,8 @@ SPECTRE.ZONEMGR._CAPspawns = {
                 :InitCoalition(_coal)
                 :InitCountry(_spawnCountry)
                 :InitCleanUp(<span class="number">120</span>)
-                :InitAirbase(_selectedAirbase,SPAWN.Takeoff.Hot)
-                :OnSpawnGroup(
+                <span class="comment">--:InitAirbase(_selectedAirbase,SPAWN.Takeoff.Hot)
+</span>                :OnSpawnGroup(
                   <span class="keyword">function</span>(spawnGroup_)
                     <span class="comment">-- Build the CAP route using the spawn group and packet details
 </span>                    <span class="keyword">local</span> route = SPECTRE.AI.buildRoute.CAP(spawnGroup_, Packet)
@@ -1536,8 +1537,9 @@ SPECTRE.ZONEMGR._CAPspawns = {
                     <span class="comment">-- Set the route for the CAP group
 </span>                    spawnGroup_:Route(route, <span class="global">math</span>.random(<span class="number">1</span>,<span class="number">5</span>))
                   <span class="keyword">end</span>, self)
-                :Spawn()
-
+                  :SpawnAtAirbase(AIRBASE:FindByName(_selectedAirbase),SPAWN.Takeoff.Hot,<span class="number">1000</span>)
+                <span class="comment">--:Spawn()
+</span>
               _CAPgroup.WIPE_ = <span class="keyword">false</span>
               <span class="comment">-- Common function to handle both landing and dead/crash events
 </span>              <span class="keyword">local</span> <span class="keyword">function</span> handleEvent(_, eventData, message)
@@ -1610,7 +1612,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param coalition The coalition identifier (0, 1, or 2).
 </span><span class="comment">-- @param groupName The name of the CAP group to be added.
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="1532"></a><span class="comment">-- @usage zoneManager:addCAP(1, "CAPGroup1") -- Adds "CAPGroup1" to the CAP templates for coalition 1.
+</span><a id="1534"></a><span class="comment">-- @usage zoneManager:addCAP(1, "CAPGroup1") -- Adds "CAPGroup1" to the CAP templates for coalition 1.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:addCAP(coalition, groupName)
   <span class="keyword">if</span> <span class="keyword">not</span> SPECTRE.UTILS.table_hasValue( self._CAPtemplates[coalition], groupName) <span class="keyword">then</span>
     <span class="global">table</span>.insert(self._CAPtemplates[coalition],groupName )
@@ -1628,7 +1630,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param coalition The coalition identifier (0, 1, or 2).
 </span><span class="comment">-- @param groupName The name of the CAP group to be removed.
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="1550"></a><span class="comment">-- @usage zoneManager:removeCAP(1, "CAPGroup1") -- Removes "CAPGroup1" from the CAP templates for coalition 1.
+</span><a id="1552"></a><span class="comment">-- @usage zoneManager:removeCAP(1, "CAPGroup1") -- Removes "CAPGroup1" from the CAP templates for coalition 1.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:removeCAP(coalition, groupName)
   <span class="keyword">local</span> _index = SPECTRE.UTILS.getIndex(self._CAPtemplates[coalition], groupName)
   <span class="keyword">if</span> _index <span class="keyword">then</span>
@@ -1644,7 +1646,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self
 </span><span class="comment">-- @param ucid The player UCID to be added to the admin list.
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="1566"></a><span class="comment">-- @usage zoneManager:addAdmin("PlayerUCID1234") -- Adds "PlayerUCID1234" to the admin list.
+</span><a id="1568"></a><span class="comment">-- @usage zoneManager:addAdmin("PlayerUCID1234") -- Adds "PlayerUCID1234" to the admin list.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:addAdmin(ucid)
   self.AdminUCIDs[ucid] = ucid
   <span class="keyword">return</span> self
@@ -1657,7 +1659,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self
 </span><span class="comment">-- @param ucid The player UCID to be removed from the admin list.
 </span><span class="comment">-- @return #ZONEMGR self
-</span><a id="1579"></a><span class="comment">-- @usage zoneManager:removeAdmin("PlayerUCID1234") -- Removes "PlayerUCID1234" from the admin list.
+</span><a id="1581"></a><span class="comment">-- @usage zoneManager:removeAdmin("PlayerUCID1234") -- Removes "PlayerUCID1234" from the admin list.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:removeAdmin(ucid)
   self.AdminUCIDs[ucid] = <span class="keyword">nil</span>
   <span class="keyword">return</span> self
@@ -1675,7 +1677,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param nudge (optional) A nudge factor to adjust the update timing. Defaults to 0.25 if not specified.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance with the updated interval settings.
 </span><span class="comment">-- @usage local zoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
-</span><a id="1597"></a><span class="comment">-- @usage zoneManager:setUpdateInterval(30, 0.5) -- Sets the update interval to 30 seconds with a nudge factor of 0.5.
+</span><a id="1599"></a><span class="comment">-- @usage zoneManager:setUpdateInterval(30, 0.5) -- Sets the update interval to 30 seconds with a nudge factor of 0.5.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:setUpdateInterval(interval, nudge)
   interval = interval <span class="keyword">or</span> <span class="number">25</span>
   nudge = nudge <span class="keyword">or</span> <span class="number">0.25</span>
@@ -1688,7 +1690,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR  self
 </span><span class="comment">-- @param factor Adjust this factor based on desired granularity for hotspots.
-</span><a id="1610"></a><span class="comment">-- @return #ZONEMGR self
+</span><a id="1612"></a><span class="comment">-- @return #ZONEMGR self
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:setAI_granularityFactor(factor)
   self.AI_f = factor
   <span class="keyword">return</span> self
@@ -1699,7 +1701,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR self
 </span><span class="comment">-- @param factor Adjust this factor based on Percentage of total units for hotspots.
-</span><a id="1621"></a><span class="comment">-- @return #ZONEMGR self
+</span><a id="1623"></a><span class="comment">-- @return #ZONEMGR self
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:setAI_percentFactor(factor)
   self.AI_p = factor
   <span class="keyword">return</span> self
@@ -1718,7 +1720,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param SSBFarps Currently unused
 </span><span class="comment">-- @param SSBAll Currently unused
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after setup with the specified zones.
-</span><a id="1640"></a><span class="comment">-- @usage local setupZoneManager = SPECTRE.ZONEMGR:Setup({"Zone1", "Zone2"}) -- Sets up the ZoneManager with "Zone1" and "Zone2".
+</span><a id="1642"></a><span class="comment">-- @usage local setupZoneManager = SPECTRE.ZONEMGR:Setup({"Zone1", "Zone2"}) -- Sets up the ZoneManager with "Zone1" and "Zone2".
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:Setup(ZoneNames, SSBFarps, SSBAll)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:Setup | ---------------------"</span>)
   SSBFarps = SSBFarps <span class="keyword">or</span> <span class="keyword">false</span>
@@ -1766,7 +1768,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after determining the bordering zones.
-</span><a id="1688"></a><span class="comment">-- @usage local zoneManagerWithBorders = SPECTRE.ZONEMGR:determineBorderingZones() -- Determines and defines the borders between adjacent zones in the ZoneManager.
+</span><a id="1690"></a><span class="comment">-- @usage local zoneManagerWithBorders = SPECTRE.ZONEMGR:determineBorderingZones() -- Determines and defines the borders between adjacent zones in the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:determineBorderingZones()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:determineBorderingZones | ---------------------"</span>)
   <span class="keyword">for</span> zoneName1, zone1 <span class="keyword">in</span> <span class="global">pairs</span>(self.Zones) <span class="keyword">do</span>
@@ -1856,7 +1858,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after identifying the relevant airbases for the current map.
-</span><a id="1778"></a><span class="comment">-- @usage local zoneManagerWithAirbase = SPECTRE.ZONEMGR:seedAirbase() -- Identifies and sets the airbases for the current map in the ZoneManager.
+</span><a id="1780"></a><span class="comment">-- @usage local zoneManagerWithAirbase = SPECTRE.ZONEMGR:seedAirbase() -- Identifies and sets the airbases for the current map in the ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:seedAirbase()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:seedAirbase | ---------------------"</span>)
   <span class="comment">-- Define a lookup table to map map names to their respective airbases.
@@ -1895,7 +1897,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the marker event, including the marker type and player information.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the marker event.
-</span><a id="1817"></a><span class="comment">-- @usage zoneManager:_EventMarker(packetData) -- Processes the marker event based on the provided packet data.
+</span><a id="1819"></a><span class="comment">-- @usage zoneManager:_EventMarker(packetData) -- Processes the marker event based on the provided packet data.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_EventMarker(Packet)
   <span class="keyword">local</span> PlayerUCID = SPECTRE.UTILS.GetPlayerInfo(Packet.MarkInfo.author, <span class="string">"ucid"</span>) <span class="comment">-- Fetching the unique ID of the player who changed the mark
 </span>
@@ -1922,7 +1924,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the delete marker event, including the specific delete type and associated parameters.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the delete marker event.
-</span><a id="1844"></a><span class="comment">-- @usage zoneManager:_DELmarkerDispatcher(packetData) -- Dispatches the delete operation based on the marker event details.
+</span><a id="1846"></a><span class="comment">-- @usage zoneManager:_DELmarkerDispatcher(packetData) -- Dispatches the delete operation based on the marker event details.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_DELmarkerDispatcher(Packet)
   <span class="keyword">local</span> _delType = <span class="global">string</span>.upper(Packet.MarkerType[<span class="number">2</span>])
   <span class="keyword">if</span> _delType == <span class="string">"ZONE"</span> <span class="keyword">then</span>
@@ -1946,7 +1948,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the spawn marker event, including the specific spawn type and related parameters.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after executing the spawn marker event.
-</span><a id="1868"></a><span class="comment">-- @usage zoneManager:_SPAWNmarkerDispatcher(packetData) -- Executes the spawn operation according to the details in the marker event.
+</span><a id="1870"></a><span class="comment">-- @usage zoneManager:_SPAWNmarkerDispatcher(packetData) -- Executes the spawn operation according to the details in the marker event.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_SPAWNmarkerDispatcher(Packet)
   <span class="keyword">local</span> _SPAWNType = <span class="global">string</span>.upper(Packet.MarkerType[<span class="number">2</span>])
   <span class="keyword">if</span> _SPAWNType == <span class="string">"ZONE"</span> <span class="keyword">then</span>
@@ -1970,7 +1972,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the delete zone marker event, including marker type, position, and coalition.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the delete zone marker event.
-</span><a id="1892"></a><span class="comment">-- @usage zoneManager:_DELzone(packetData) -- Processes the deletion of a zone based on the marker event details.
+</span><a id="1894"></a><span class="comment">-- @usage zoneManager:_DELzone(packetData) -- Processes the deletion of a zone based on the marker event details.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_DELzone(Packet)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
   <span class="keyword">local</span> MarkInfo = Packet.MarkInfo
@@ -1992,7 +1994,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the spawn zone marker event, including marker type, position, coalition, country, and smart spawn parameters.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the spawn zone marker event.
-</span><a id="1914"></a><span class="comment">-- @usage zoneManager:_SPAWNzone(packetData) -- Processes the spawning of elements in a zone based on the marker event details.
+</span><a id="1916"></a><span class="comment">-- @usage zoneManager:_SPAWNzone(packetData) -- Processes the spawning of elements in a zone based on the marker event details.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_SPAWNzone(Packet)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:_SPAWNzone | ---------------------"</span>)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
@@ -2035,7 +2037,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the delete airfield marker event, including marker type, position, and coalition.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the delete airfield marker event.
-</span><a id="1957"></a><span class="comment">-- @usage zoneManager:_DELairfield(packetData) -- Processes the deletion of an airfield and its associated elements based on the marker event details.
+</span><a id="1959"></a><span class="comment">-- @usage zoneManager:_DELairfield(packetData) -- Processes the deletion of an airfield and its associated elements based on the marker event details.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_DELairfield(Packet)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
   <span class="keyword">local</span> MarkInfo = Packet.MarkInfo
@@ -2068,7 +2070,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the spawn airfield marker event, including marker type, position, coalition, and country.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the spawn airfield marker event.
-</span><a id="1990"></a><span class="comment">-- @usage zoneManager:_SPAWNairfield(packetData) -- Processes the spawning of an airfield based on the marker event details.
+</span><a id="1992"></a><span class="comment">-- @usage zoneManager:_SPAWNairfield(packetData) -- Processes the spawning of an airfield based on the marker event details.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_SPAWNairfield(Packet)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
   <span class="keyword">local</span> MarkInfo = Packet.MarkInfo
@@ -2107,7 +2109,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the delete all airfield marker event, including marker type, position, and coalition.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the delete all airfield marker event.
-</span><a id="2029"></a><span class="comment">-- @usage zoneManager:_DELallAirfield(packetData) -- Processes the deletion of all airfields in a specified zone based on the marker event.
+</span><a id="2031"></a><span class="comment">-- @usage zoneManager:_DELallAirfield(packetData) -- Processes the deletion of all airfields in a specified zone based on the marker event.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_DELallAirfield(Packet)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
   <span class="keyword">local</span> MarkInfo = Packet.MarkInfo
@@ -2140,7 +2142,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the spawn all airfield marker event, including marker type, position, coalition, and country.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the spawn all airfield marker event.
-</span><a id="2062"></a><span class="comment">-- @usage zoneManager:_SPAWNallAirfield(packetData) -- Processes the spawning of all airfields in a specified zone based on the marker event.
+</span><a id="2064"></a><span class="comment">-- @usage zoneManager:_SPAWNallAirfield(packetData) -- Processes the spawning of all airfields in a specified zone based on the marker event.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_SPAWNallAirfield(Packet)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:_SPAWNallAirfield | ---------------------"</span>)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
@@ -2180,7 +2182,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the delete circle marker event, including the marker type, position, coalition, and radius.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the delete circle marker event.
-</span><a id="2102"></a><span class="comment">-- @usage zoneManager:_DELcircle(packetData) -- Processes the deletion of units within a circular area based on the marker event.
+</span><a id="2104"></a><span class="comment">-- @usage zoneManager:_DELcircle(packetData) -- Processes the deletion of units within a circular area based on the marker event.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_DELcircle(Packet)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
   <span class="keyword">local</span> MarkInfo = Packet.MarkInfo
@@ -2208,7 +2210,7 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @param #ZONEMGR self The instance of the zone manager.
 </span><span class="comment">-- @param Packet Table containing details about the spawn circle marker event, including the marker type, position, coalition, radius, and country.
 </span><span class="comment">-- @return #ZONEMGR self The zone manager instance after processing the spawn circle marker event.
-</span><a id="2130"></a><span class="comment">-- @usage zoneManager:_SPAWNcircle(packetData) -- Processes the spawning of units within a circular area based on the marker event.
+</span><a id="2132"></a><span class="comment">-- @usage zoneManager:_SPAWNcircle(packetData) -- Processes the spawning of units within a circular area based on the marker event.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR:_SPAWNcircle(Packet)
   <span class="keyword">local</span> MarkerType = Packet.MarkerType
   <span class="keyword">local</span> MarkInfo = Packet.MarkInfo
@@ -2238,14 +2240,14 @@ SPECTRE.ZONEMGR._CAPspawns = {
 </span><span class="comment">-- @section SPECTRE.ZONEMGR
 </span>
 <span class="comment">--- Marker settings for the SPECTRE.ZONEMGR module.
-</span><a id="2160"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS
+</span><a id="2162"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS
 </span>SPECTRE.ZONEMGR.MARKERS = {}
 
 <span class="comment">---.
-</span><a id="2164"></a><span class="comment">--@field #SPECTRE.ZONEMGR.MARKERS.Settings
+</span><a id="2166"></a><span class="comment">--@field #SPECTRE.ZONEMGR.MARKERS.Settings
 </span>SPECTRE.ZONEMGR.MARKERS.Settings = {}
 <span class="comment">--- Marker settings for deletion commands.
-</span><a id="2167"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS.Settings.DEL
+</span><a id="2169"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS.Settings.DEL
 </span>SPECTRE.ZONEMGR.MARKERS.Settings.DEL = {}
 SPECTRE.ZONEMGR.MARKERS.Settings.DEL.TagName = <span class="string">"/del"</span>
 SPECTRE.ZONEMGR.MARKERS.Settings.DEL.KeyWords = {<span class="string">"zone"</span>, <span class="string">"airfield"</span>, <span class="string">"circle"</span>, <span class="string">"allairfield"</span>} <span class="comment">--must update event handler hard code if changed
@@ -2253,7 +2255,7 @@ SPECTRE.ZONEMGR.MARKERS.Settings.DEL.KeyWords = {<span class="string">"zone"</sp
 SPECTRE.ZONEMGR.MARKERS.Settings.DEL.MarkerEnum = <span class="string">"DEL"</span>
 
 <span class="comment">--- Marker settings for spawn commands.
-</span><a id="2175"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN
+</span><a id="2177"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN
 </span>SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN = {}
 SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN.TagName = <span class="string">"/spawn"</span>
 SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN.KeyWords = {<span class="string">"zone"</span>, <span class="string">"airfield"</span>, <span class="string">"circle"</span>, <span class="string">"allairfield"</span>} <span class="comment">--must update event handler hard code if changed
@@ -2261,12 +2263,12 @@ SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN.KeyWords = {<span class="string">"zone"</
 SPECTRE.ZONEMGR.MARKERS.Settings.SPAWN.MarkerEnum = <span class="string">"SPAWN"</span>
 
 <span class="comment">--- Tracker for marker events.
-</span><a id="2183"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS.TRACKERS
+</span><a id="2185"></a><span class="comment">-- @field #SPECTRE.ZONEMGR.MARKERS.TRACKERS
 </span>SPECTRE.ZONEMGR.MARKERS.TRACKERS = {}
 
-<a id="2186"></a><span class="comment">--- Settings for the SPECTRE.ZONEMGR module.
+<a id="2188"></a><span class="comment">--- Settings for the SPECTRE.ZONEMGR module.
 </span>SPECTRE.ZONEMGR.Settings = {}
-<a id="2188"></a><span class="comment">--- Settings for edit functionalities.
+<a id="2190"></a><span class="comment">--- Settings for edit functionalities.
 </span>SPECTRE.ZONEMGR.Settings.Edit = {}
 SPECTRE.ZONEMGR.Settings.Edit.DEL = <span class="keyword">true</span>
 SPECTRE.ZONEMGR.Settings.Edit.SPAWN = <span class="keyword">true</span>
@@ -2284,138 +2286,138 @@ SPECTRE.ZONEMGR.Settings.Edit.SPAWN = <span class="keyword">true</span>
 </span><span class="comment">-- @section SPECTRE.ZONEMGR
 </span><span class="comment">-- @field #ZONEMGR.Zone
 </span>SPECTRE.ZONEMGR.Zone = {}
-<a id="2206"></a><span class="comment">--- Flag to indicate if _AirfieldCaptureSpawns.
+<a id="2208"></a><span class="comment">--- Flag to indicate if _AirfieldCaptureSpawns.
 </span>SPECTRE.ZONEMGR.Zone._AirfieldCaptureSpawns = <span class="keyword">false</span>
-<a id="2208"></a><span class="comment">--- Specifies the name of the zone.
+<a id="2210"></a><span class="comment">--- Specifies the name of the zone.
 </span>SPECTRE.ZONEMGR.Zone.ZoneName = <span class="string">""</span>
 <span class="comment">--- Moose ZonePoly.
-</span><a id="2211"></a><span class="comment">-- @field #ZONEMGR.Zone.ZONEPOLYOBJ
+</span><a id="2213"></a><span class="comment">-- @field #ZONEMGR.Zone.ZONEPOLYOBJ
 </span>SPECTRE.ZONEMGR.Zone.ZONEPOLYOBJ = {}
 <span class="comment">--- Detected ground units in zone.
-</span><a id="2214"></a><span class="comment">-- @field #ZONEMGR.Zone._detectedUnits
+</span><a id="2216"></a><span class="comment">-- @field #ZONEMGR.Zone._detectedUnits
 </span>SPECTRE.ZONEMGR.Zone._detectedUnits = {}
 <span class="comment">--- Density-based clustering for ground units in zone.
-</span><a id="2217"></a><span class="comment">-- @field #ZONEMGR.Zone._DBScan
+</span><a id="2219"></a><span class="comment">-- @field #ZONEMGR.Zone._DBScan
 </span>SPECTRE.ZONEMGR.Zone._DBScan = {}
-<a id="2219"></a><span class="comment">---.
+<a id="2221"></a><span class="comment">---.
 </span>SPECTRE.ZONEMGR.Zone._DBScanInProg = <span class="keyword">false</span>
 <span class="comment">--- Processed DB clusters for ground units in zone.
-</span><a id="2222"></a><span class="comment">-- @field #ZONEMGR.Zone.HotspotClusters
+</span><a id="2224"></a><span class="comment">-- @field #ZONEMGR.Zone.HotspotClusters
 </span>SPECTRE.ZONEMGR.Zone.HotspotClusters = {}
 <span class="comment">--- Marker storage for DB clusters.
-</span><a id="2225"></a><span class="comment">-- @field #ZONEMGR.Zone.HotspotMarkers
+</span><a id="2227"></a><span class="comment">-- @field #ZONEMGR.Zone.HotspotMarkers
 </span>SPECTRE.ZONEMGR.Zone.HotspotMarkers = {}
 <span class="comment">--- Intel Marker storage for DB clusters.
-</span><a id="2228"></a><span class="comment">-- @field #ZONEMGR.Zone.IntelMarkers
+</span><a id="2230"></a><span class="comment">-- @field #ZONEMGR.Zone.IntelMarkers
 </span>SPECTRE.ZONEMGR.Zone.IntelMarkers = {}
-<a id="2230"></a><span class="comment">--- Added to calculated radius for hotspot, extends radius of drawn circle, meters.
+<a id="2232"></a><span class="comment">--- Added to calculated radius for hotspot, extends radius of drawn circle, meters.
 </span>SPECTRE.ZONEMGR.Zone._hotspotDrawExtension = <span class="number">1000</span>
 <span class="comment">--- Area of Zone.
-</span><a id="2233"></a><span class="comment">-- Hotspots
+</span><a id="2235"></a><span class="comment">-- Hotspots
 </span>SPECTRE.ZONEMGR.Zone.Area = <span class="number">0</span>
 <span class="comment">--- Epsilon value for DBSCAN clustering.
-</span><a id="2236"></a><span class="comment">-- Hotspots
+</span><a id="2238"></a><span class="comment">-- Hotspots
 </span>SPECTRE.ZONEMGR.Zone.epsilon = <span class="number">0</span>
 <span class="comment">--- Minimum sample size for DBSCAN clustering.
-</span><a id="2239"></a><span class="comment">-- Hotspots
+</span><a id="2241"></a><span class="comment">-- Hotspots
 </span>SPECTRE.ZONEMGR.Zone.min_samples = <span class="number">0</span>
 <span class="comment">--- Adjust this factor based on desired granularity for hotspots.
-</span><a id="2242"></a><span class="comment">-- Hotspots
+</span><a id="2244"></a><span class="comment">-- Hotspots
 </span>SPECTRE.ZONEMGR.Zone.AI_f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--- Percentage of total units (adjust based on your use case).
 </span><span class="comment">-- Hotspots
 </span>SPECTRE.ZONEMGR.Zone.AI_p = <span class="number">0.1</span> <span class="comment">-- 0.02
 </span><span class="comment">--- Flag to indicate if the zone is currently being updated.
 </span>SPECTRE.ZONEMGR.Zone.UpdatingZone = <span class="keyword">false</span>
-<a id="2249"></a><span class="comment">--- Counter to track pending updates for the zone.
+<a id="2251"></a><span class="comment">--- Counter to track pending updates for the zone.
 </span>SPECTRE.ZONEMGR.Zone.UpdateQueue = <span class="number">0</span>
 <span class="comment">--- Reference to the ZoneManager managing this Zone.
-</span><a id="2252"></a><span class="comment">-- @field #ZONEMGR.Zone.ZoneManager
+</span><a id="2254"></a><span class="comment">-- @field #ZONEMGR.Zone.ZoneManager
 </span>SPECTRE.ZONEMGR.Zone.ZoneManager = {}
-<a id="2254"></a><span class="comment">--- UpdatingHotSpots Flag indicating if hotspots are currently being updated.
+<a id="2256"></a><span class="comment">--- UpdatingHotSpots Flag indicating if hotspots are currently being updated.
 </span>SPECTRE.ZONEMGR.Zone.UpdatingHotspots = <span class="keyword">false</span>
 <span class="comment">--- HotspotSched Scheduler for periodic unit hotspot drawing updates.
-</span><a id="2257"></a><span class="comment">-- @field #ZONEMGR.Zone.HotspotSched
+</span><a id="2259"></a><span class="comment">-- @field #ZONEMGR.Zone.HotspotSched
 </span>SPECTRE.ZONEMGR.Zone.HotspotSched = {}
-<a id="2259"></a><span class="comment">--- Boolean Toggle for drawing unit hotspots (default false).
+<a id="2261"></a><span class="comment">--- Boolean Toggle for drawing unit hotspots (default false).
 </span>SPECTRE.ZONEMGR.Zone.Hotspots = <span class="keyword">false</span>
-<a id="2261"></a><span class="comment">--- Boolean Toggle for giving hotspot Intel (default false).
+<a id="2263"></a><span class="comment">--- Boolean Toggle for giving hotspot Intel (default false).
 </span>SPECTRE.ZONEMGR.Zone.Intel = <span class="keyword">false</span>
-<a id="2263"></a><span class="comment">--- Specifies the shape of the zone (Default: 7=Freeform).
+<a id="2265"></a><span class="comment">--- Specifies the shape of the zone (Default: 7=Freeform).
 </span>SPECTRE.ZONEMGR.Zone.shapeId = <span class="number">7</span>
-<a id="2265"></a><span class="comment">--- Specifies the coalition ownership of the zone (Default: All=-1).
+<a id="2267"></a><span class="comment">--- Specifies the coalition ownership of the zone (Default: All=-1).
 </span>SPECTRE.ZONEMGR.Zone.Coalition = -<span class="number">1</span>
 <span class="comment">--- RGB values defining the color of the zone (Default: Black).
-</span><a id="2268"></a><span class="comment">-- @field #ZONEMGR.Zone.Color
+</span><a id="2270"></a><span class="comment">-- @field #ZONEMGR.Zone.Color
 </span>SPECTRE.ZONEMGR.Zone.Color = {<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>}
 <span class="comment">--- Transparency of the zone (Default: 0.80).
-</span><a id="2271"></a><span class="comment">-- @field #ZONEMGR.Zone.Alpha
+</span><a id="2273"></a><span class="comment">-- @field #ZONEMGR.Zone.Alpha
 </span>SPECTRE.ZONEMGR.Zone.Alpha = <span class="number">0.80</span>
 <span class="comment">--- RGB values defining the fill color of the zone (Default: Black).
-</span><a id="2274"></a><span class="comment">-- @field #ZONEMGR.Zone.FillColor
+</span><a id="2276"></a><span class="comment">-- @field #ZONEMGR.Zone.FillColor
 </span>SPECTRE.ZONEMGR.Zone.FillColor = {<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>}
 <span class="comment">--- Lookup table for RGB values based on coalition ownership.
-</span><a id="2277"></a><span class="comment">-- @field #ZONEMGR.Zone._Colors
+</span><a id="2279"></a><span class="comment">-- @field #ZONEMGR.Zone._Colors
 </span>SPECTRE.ZONEMGR.Zone._Colors = {
   [<span class="number">0</span>] = {<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>},
   [<span class="number">1</span>] = {<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>},
   [<span class="number">2</span>] = {<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>}
 }
 <span class="comment">--- Lookup table for RGB fill colors based on coalition ownership.
-</span><a id="2284"></a><span class="comment">-- @field #ZONEMGR.Zone._FillColors
+</span><a id="2286"></a><span class="comment">-- @field #ZONEMGR.Zone._FillColors
 </span>SPECTRE.ZONEMGR.Zone._FillColors = {
   [<span class="number">0</span>] = {<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>},
   [<span class="number">1</span>] = {<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>},
   [<span class="number">2</span>] = {<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>}
 }
 <span class="comment">--- Lookup table for RGB arrow colors with transparency based on coalition ownership.
-</span><a id="2291"></a><span class="comment">-- @field #ZONEMGR.Zone._ArrowColors
+</span><a id="2293"></a><span class="comment">-- @field #ZONEMGR.Zone._ArrowColors
 </span>SPECTRE.ZONEMGR.Zone._ArrowColors = {
   [<span class="number">0</span>] = {<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.80</span>},
   [<span class="number">1</span>] = {<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.80</span>},
   [<span class="number">2</span>] = {<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0.80</span>}
 }
 <span class="comment">--- Specifies the transparency of the zone's fill color (Default: 0.20).
-</span><a id="2298"></a><span class="comment">-- @field #ZONEMGR.Zone.FillAlpha
+</span><a id="2300"></a><span class="comment">-- @field #ZONEMGR.Zone.FillAlpha
 </span>SPECTRE.ZONEMGR.Zone.FillAlpha = <span class="number">0.20</span>
 <span class="comment">--- Specifies the line type of the zone's border (Default: 4=Dot dash).
-</span><a id="2301"></a><span class="comment">-- @field #ZONEMGR.Zone.LineType
+</span><a id="2303"></a><span class="comment">-- @field #ZONEMGR.Zone.LineType
 </span>SPECTRE.ZONEMGR.Zone.LineType = <span class="number">4</span>
 <span class="comment">--- Flag indicating if the zone marker is read-only (Default: true).
-</span><a id="2304"></a><span class="comment">-- @field #ZONEMGR.Zone.ReadOnly
+</span><a id="2306"></a><span class="comment">-- @field #ZONEMGR.Zone.ReadOnly
 </span>SPECTRE.ZONEMGR.Zone.ReadOnly = <span class="keyword">true</span>
 <span class="comment">--- List of airbases contained within the zone.
-</span><a id="2307"></a><span class="comment">-- @field #ZONEMGR.Zone.Airbases
+</span><a id="2309"></a><span class="comment">-- @field #ZONEMGR.Zone.Airbases
 </span>SPECTRE.ZONEMGR.Zone.Airbases = {}
 <span class="comment">--- Event handler for the zone.
-</span><a id="2310"></a><span class="comment">-- @field #ZONEMGR.Zone.Handler_
+</span><a id="2312"></a><span class="comment">-- @field #ZONEMGR.Zone.Handler_
 </span>SPECTRE.ZONEMGR.Zone.Handler_ = EVENT:New()
 <span class="comment">--- Event handler for base capture events within the zone.
-</span><a id="2313"></a><span class="comment">-- @field #ZONEMGR.Zone.BaseCapturedHandler_
+</span><a id="2315"></a><span class="comment">-- @field #ZONEMGR.Zone.BaseCapturedHandler_
 </span>SPECTRE.ZONEMGR.Zone.BaseCapturedHandler_ = {}
 <span class="comment">--- List of Static Shore-Based (SSB) entities within the zone.
-</span><a id="2316"></a><span class="comment">-- @field #ZONEMGR.Zone.SSBList
+</span><a id="2318"></a><span class="comment">-- @field #ZONEMGR.Zone.SSBList
 </span>SPECTRE.ZONEMGR.Zone.SSBList = {}
 <span class="comment">--- Specifies the coalition that owns the zone (Default: 0=Neutral).
-</span><a id="2319"></a><span class="comment">-- @field #ZONEMGR.Zone.OwnedByCoalition
+</span><a id="2321"></a><span class="comment">-- @field #ZONEMGR.Zone.OwnedByCoalition
 </span>SPECTRE.ZONEMGR.Zone.OwnedByCoalition = <span class="number">0</span>
 <span class="comment">--- Specifies the coalition that previously owned the zone (Default: 0=Neutral).
-</span><a id="2322"></a><span class="comment">-- @field #ZONEMGR.Zone.OldOwnedByCoalition
+</span><a id="2324"></a><span class="comment">-- @field #ZONEMGR.Zone.OldOwnedByCoalition
 </span>SPECTRE.ZONEMGR.Zone.OldOwnedByCoalition = <span class="number">0</span>
 <span class="comment">--- ID representing the drawn zone marker.
-</span><a id="2325"></a><span class="comment">-- @field #ZONEMGR.Zone.DrawnZoneMarkID
+</span><a id="2327"></a><span class="comment">-- @field #ZONEMGR.Zone.DrawnZoneMarkID
 </span>SPECTRE.ZONEMGR.Zone.DrawnZoneMarkID = <span class="number">0</span>
 <span class="comment">--- Value indicating the threshold for border offsets (Default: 800).
-</span><a id="2328"></a><span class="comment">-- @field #ZONEMGR.Zone.BorderOffsetThreshold
+</span><a id="2330"></a><span class="comment">-- @field #ZONEMGR.Zone.BorderOffsetThreshold
 </span>SPECTRE.ZONEMGR.Zone.BorderOffsetThreshold = <span class="number">800</span>
 <span class="comment">--- Specifies the length of arrows for the zone (Default: 20000).
-</span><a id="2331"></a><span class="comment">-- @field #ZONEMGR.Zone.ArrowLength
+</span><a id="2333"></a><span class="comment">-- @field #ZONEMGR.Zone.ArrowLength
 </span>SPECTRE.ZONEMGR.Zone.ArrowLength = <span class="number">20000</span>
 <span class="comment">--- List of zones that share a border with the current zone.
-</span><a id="2334"></a><span class="comment">-- @field #ZONEMGR.Zone.BorderingZones
+</span><a id="2336"></a><span class="comment">-- @field #ZONEMGR.Zone.BorderingZones
 </span>SPECTRE.ZONEMGR.Zone.BorderingZones = {}
 <span class="comment">--- 2D vertices that define the boundaries of the zone.
-</span><a id="2337"></a><span class="comment">-- @field #ZONEMGR.Zone.Vertices2D
+</span><a id="2339"></a><span class="comment">-- @field #ZONEMGR.Zone.Vertices2D
 </span>SPECTRE.ZONEMGR.Zone.Vertices2D = {
   [<span class="number">1</span>] = {x = <span class="number">0</span>, y = <span class="number">0</span>},
   [<span class="number">2</span>] = {x = <span class="number">0</span>, y = <span class="number">0</span>},
@@ -2423,7 +2425,7 @@ SPECTRE.ZONEMGR.Settings.Edit.SPAWN = <span class="keyword">true</span>
   [<span class="number">4</span>] = {x = <span class="number">0</span>, y = <span class="number">0</span>},
 }
 <span class="comment">--- 3D vertices that define the boundaries of the zone.
-</span><a id="2345"></a><span class="comment">-- @field #ZONEMGR.Zone.Vertices3D
+</span><a id="2347"></a><span class="comment">-- @field #ZONEMGR.Zone.Vertices3D
 </span>SPECTRE.ZONEMGR.Zone.Vertices3D = {
   [<span class="number">1</span>] = {x = <span class="number">0</span>, y = <span class="number">0</span>, z = <span class="number">0</span>},
   [<span class="number">2</span>] = {x = <span class="number">0</span>, y = <span class="number">0</span>, z = <span class="number">0</span>},
@@ -2431,7 +2433,7 @@ SPECTRE.ZONEMGR.Settings.Edit.SPAWN = <span class="keyword">true</span>
   [<span class="number">4</span>] = {x = <span class="number">0</span>, y = <span class="number">0</span>, z = <span class="number">0</span>},
 }
 <span class="comment">--- Lines that define the boundaries of the zone in vector format.
-</span><a id="2353"></a><span class="comment">-- @field #ZONEMGR.Zone.LinesVec2
+</span><a id="2355"></a><span class="comment">-- @field #ZONEMGR.Zone.LinesVec2
 </span>SPECTRE.ZONEMGR.Zone.LinesVec2 = {}
 
 
@@ -2446,7 +2448,7 @@ SPECTRE.ZONEMGR.Settings.Edit.SPAWN = <span class="keyword">true</span>
 </span><span class="comment">-- @param ZoneName The name of the quadpoint zone to be transformed into a Zone object.
 </span><span class="comment">-- @param #ZONEMGR ZoneManager The parent ZoneManager managing this Zone.
 </span><span class="comment">-- @return #ZONEMGR.Zone self The newly created and initialized Zone object.
-</span><a id="2368"></a><span class="comment">-- @usage local newZone = SPECTRE.ZONEMGR.Zone:New("SomeZoneName", someZoneManager) -- Creates a new Zone object with the specified name and ZoneManager.
+</span><a id="2370"></a><span class="comment">-- @usage local newZone = SPECTRE.ZONEMGR.Zone:New("SomeZoneName", someZoneManager) -- Creates a new Zone object with the specified name and ZoneManager.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:New(ZoneName, ZoneManager)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:New | ---------------------"</span>)
   <span class="comment">-- Inherit properties from the BASE class.
@@ -2497,7 +2499,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone self The Zone instance handling the base capture event.
 </span><span class="comment">-- @param eventData Table containing the base captured event data.
-</span><a id="2419"></a><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after processing the base capture event.
+</span><a id="2421"></a><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after processing the base capture event.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_(eventData)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:BaseCapturedHandler_ | ---------------------"</span>)
   <span class="comment">-- Increment the UpdateQueue.
@@ -2604,7 +2606,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after binding the event handler.
-</span><a id="2526"></a><span class="comment">-- @usage local zoneWithHandler = someZone:InitHandlers() -- Binds the <code>BaseCapturedHandler_</code> to handle base capture events for the specified zone.
+</span><a id="2528"></a><span class="comment">-- @usage local zoneWithHandler = someZone:InitHandlers() -- Binds the <code>BaseCapturedHandler_</code> to handle base capture events for the specified zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:InitHandlers()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:InitHandlers | ---------------------"</span>)
   <span class="comment">-- Bind the BaseCapturedHandler_ function to the BaseCaptured event.
@@ -2621,7 +2623,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after determining its ownership.
-</span><a id="2543"></a><span class="comment">-- @usage local zoneWithOwnership = someZone:DetermineZoneOwnership() -- Determines the ownership of the specified zone.
+</span><a id="2545"></a><span class="comment">-- @usage local zoneWithOwnership = someZone:DetermineZoneOwnership() -- Determines the ownership of the specified zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DetermineZoneOwnership | ---------------------"</span>)
   <span class="comment">-- Initialize counters for each coalition.
@@ -2664,7 +2666,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after updating the ownership of its bordering zones.
-</span><a id="2586"></a><span class="comment">-- @usage local zoneWithUpdatedBorders = someZone:UpdateBorderOwnership() -- Updates the coalition ownership of each bordering zone for the specified zone.
+</span><a id="2588"></a><span class="comment">-- @usage local zoneWithUpdatedBorders = someZone:UpdateBorderOwnership() -- Updates the coalition ownership of each bordering zone for the specified zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:UpdateBorderOwnership | ---------------------"</span>)
   <span class="comment">-- Iterate over each bordering zone and update its coalition ownership.
@@ -2684,7 +2686,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after determining and setting the drawing color.
-</span><a id="2606"></a><span class="comment">-- @usage local zoneWithDrawColor = someZone:DetermineDrawColor() -- Determines the drawing color for the specified zone based on its coalition ownership.
+</span><a id="2608"></a><span class="comment">-- @usage local zoneWithDrawColor = someZone:DetermineDrawColor() -- Determines the drawing color for the specified zone based on its coalition ownership.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DetermineDrawColor()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DetermineDrawColor | ---------------------"</span>)
   <span class="comment">-- Determine the drawing color based on the coalition ownership.
@@ -2703,7 +2705,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after being drawn on the map.
-</span><a id="2625"></a><span class="comment">-- @usage local drawnZone = someZone:DrawZone() -- Draws the specified zone on the map using its color properties.
+</span><a id="2627"></a><span class="comment">-- @usage local drawnZone = someZone:DrawZone() -- Draws the specified zone on the map using its color properties.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DrawZone()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DrawZone | ---------------------"</span>)
   <span class="comment">-- If a zone marker already exists, remove it.
@@ -2738,7 +2740,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after drawing arrows to its bordering zones.
-</span><a id="2660"></a><span class="comment">-- @usage local zoneWithArrows = someZone:DrawArrows() -- Draws arrows from the specified zone to its bordering zones based on coalition differences.
+</span><a id="2662"></a><span class="comment">-- @usage local zoneWithArrows = someZone:DrawArrows() -- Draws arrows from the specified zone to its bordering zones based on coalition differences.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DrawArrows()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DrawArrows | ---------------------"</span>)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DrawArrows | Zone: "</span> .. self.ZoneName)
@@ -2798,7 +2800,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">-- @param #ZONEMGR.Zone self The Zone instance within which the airfield flags are to be updated.
 </span><span class="comment">-- @param Airfield The name of the airfield, part of the self[Airbases] table.
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after updating the SSB flags at the specified airfield.
-</span><a id="2720"></a><span class="comment">-- @usage local updatedZone = someZone:UpdateSSBAirfield("SomeAirfield") -- Updates the SSB flags for the specified airfield in the zone.
+</span><a id="2722"></a><span class="comment">-- @usage local updatedZone = someZone:UpdateSSBAirfield("SomeAirfield") -- Updates the SSB flags for the specified airfield in the zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield(Airfield)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:UpdateSSBAirfield | ---------------------"</span>)
   <span class="comment">-- Get the object associated with the specified airbase.
@@ -2856,7 +2858,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after creating the SSB airbase-client unit mapping.
-</span><a id="2778"></a><span class="comment">-- @usage local zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() -- Creates a mapping for airbases and client units for SSB handling.
+</span><a id="2780"></a><span class="comment">-- @usage local zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() -- Creates a mapping for airbases and client units for SSB handling.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups | ---------------------"</span>)
 
@@ -2979,7 +2981,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after creating the SSB airbase-client unit mapping.
-</span><a id="2901"></a><span class="comment">-- @usage local zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() -- Creates a mapping for airbases and client units for SSB handling.
+</span><a id="2903"></a><span class="comment">-- @usage local zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() -- Creates a mapping for airbases and client units for SSB handling.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DetermineAirbaseSSBGroups_All | ---------------------"</span>)
   <span class="keyword">local</span> _SSBAirfieldArrays = {}
@@ -3039,7 +3041,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after creating the SSB airbase-client unit mapping.
-</span><a id="2961"></a><span class="comment">-- @usage local zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() -- Creates a mapping for airbases and client units for SSB handling.
+</span><a id="2963"></a><span class="comment">-- @usage local zoneWithSSBGroups = someZone:DetermineAirbaseSSBGroups() -- Creates a mapping for airbases and client units for SSB handling.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups()
   <span class="comment">--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR.Zone:DetermineFARPSSBGroups | ---------------------")
 </span>  <span class="comment">--  local airbaseNames = {}
@@ -3171,7 +3173,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after identifying and listing all airbases within it.
-</span><a id="3093"></a><span class="comment">-- @usage local zoneWithIdentifiedAirbases = someZone:DetermineAirbasesInZone() -- Identifies and lists all the airbases located within the given zone.
+</span><a id="3095"></a><span class="comment">-- @usage local zoneWithIdentifiedAirbases = someZone:DetermineAirbasesInZone() -- Identifies and lists all the airbases located within the given zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:DetermineAirbasesInZone | ---------------------"</span>)
   <span class="comment">-- Get the list of airbases from the ZoneManager.
@@ -3211,7 +3213,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after identifying all units within it.
-</span><a id="3133"></a><span class="comment">-- @usage local zoneWithIdentifiedUnits = someZone:FindUnitsInZone() -- Identifies and returns all units located within the given zone.
+</span><a id="3135"></a><span class="comment">-- @usage local zoneWithIdentifiedUnits = someZone:FindUnitsInZone() -- Identifies and returns all units located within the given zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:FindUnitsInZone()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:FindUnitsInZone | -------------------------------------------- "</span>)
 
@@ -3298,7 +3300,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">-- @param #ZONEMGR.Zone self The Zone instance for which the hotspot feature is to be enabled or disabled.
 </span><span class="comment">-- @param enabled (Optional) A boolean value to enable (true) or disable (false) the hotspot feature. Defaults to false if not specified.
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after toggling the hotspot feature.
-</span><a id="3220"></a><span class="comment">-- @usage local updatedZone = someZone:enableZoneHotspot(true) -- Enables the hotspot feature for the specified zone.
+</span><a id="3222"></a><span class="comment">-- @usage local updatedZone = someZone:enableZoneHotspot(true) -- Enables the hotspot feature for the specified zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:enableZoneHotspot(enabled)
   enabled = enabled <span class="keyword">or</span> <span class="keyword">false</span>
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:enableZoneHotspot | ---------------------"</span>)
@@ -3315,7 +3317,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after initializing the hotspot scheduler.
-</span><a id="3237"></a><span class="comment">-- @usage local zoneWithScheduler = someZone:_HotspotSchedInit() -- Initializes the hotspot scheduler for the specified zone.
+</span><a id="3239"></a><span class="comment">-- @usage local zoneWithScheduler = someZone:_HotspotSchedInit() -- Initializes the hotspot scheduler for the specified zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:_HotspotSchedInit()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR:HotspotSchedInit | ---------------------"</span>)
   <span class="comment">-- Initialize a scheduler to periodically check and update zones
@@ -3362,7 +3364,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">-- @param #ZONEMGR.Zone self The Zone instance for which the hotspot intelligence feature is to be toggled.
 </span><span class="comment">-- @param enabled (Optional) A boolean value to enable (true) or disable (false) the hotspot intelligence feature. Defaults to false if not specified.
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after toggling the hotspot intelligence feature.
-</span><a id="3284"></a><span class="comment">-- @usage local zoneWithHotspotIntel = someZone:enableHotspotIntel(true) -- Enables the hotspot intelligence feature for the specified zone.
+</span><a id="3286"></a><span class="comment">-- @usage local zoneWithHotspotIntel = someZone:enableHotspotIntel(true) -- Enables the hotspot intelligence feature for the specified zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:enableHotspotIntel(enabled)
   enabled = enabled <span class="keyword">or</span> <span class="keyword">false</span>
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:enableZoneHotspotIntel | ---------------------"</span>)
@@ -3381,7 +3383,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">-- @param enabled A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
 </span><span class="comment">-- @return #ZONEMGR.Zone self The zone manager instance with the updated persistence setting.
 </span><span class="comment">-- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(true) -- Enables automatic spawns for the coalition that captures an airfield at the airfield.
-</span><a id="3303"></a><span class="comment">-- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
+</span><a id="3305"></a><span class="comment">-- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureSpawns(enabled)
   <span class="comment">-- Default to true if no value is provided
 </span>  <span class="keyword">if</span> enabled == <span class="keyword">nil</span> <span class="keyword">then</span> enabled = <span class="keyword">true</span> <span class="keyword">end</span>
@@ -3400,7 +3402,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">-- @param enabled A boolean value (true or false) to enable or disable the persistence system respectively. Defaults to true if not specified.
 </span><span class="comment">-- @return #ZONEMGR.Zone self The zone manager instance with the updated persistence setting.
 </span><span class="comment">-- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(true) -- Enables automatic spawns for the coalition that captures an airfield at the airfield.
-</span><a id="3322"></a><span class="comment">-- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
+</span><a id="3324"></a><span class="comment">-- @usage zoneManager.Zones[ZONE NAME]:enableAirfieldCaptureSpawns(false) -- Disables automatic spawns for the coalition that captures an airfield at the airfield.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:enableAirfieldCaptureClean(enabled)
   <span class="comment">-- Default to true if no value is provided
 </span>  <span class="keyword">if</span> enabled == <span class="keyword">nil</span> <span class="keyword">then</span> enabled = <span class="keyword">true</span> <span class="keyword">end</span>
@@ -3419,7 +3421,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after identifying and organizing hotspot groups.
-</span><a id="3341"></a><span class="comment">-- @usage local zoneWithHotspots = someZone:getHotspotGroups() -- Retrieves and organizes groups of units as hotspots within the zone.
+</span><a id="3343"></a><span class="comment">-- @usage local zoneWithHotspots = someZone:getHotspotGroups() -- Retrieves and organizes groups of units as hotspots within the zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:getHotspotGroups()
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:getHotspotGroups | ------------------------ "</span>)
   SPECTRE.UTILS.debugInfo(<span class="string">"SPECTRE.ZONEMGR.Zone:getHotspotGroups | FindUnitsInZone: "</span> .. self.ZoneName)
@@ -3460,7 +3462,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after drawing the hotspots on the map.
-</span><a id="3382"></a><span class="comment">-- @usage local zoneWithDrawnHotspots = someZone:DrawHotspots() -- Draws hotspot circles for each coalition in the zone.
+</span><a id="3384"></a><span class="comment">-- @usage local zoneWithDrawnHotspots = someZone:DrawHotspots() -- Draws hotspot circles for each coalition in the zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:DrawHotspots()
   <span class="comment">-- Define constants
 </span>  <span class="comment">-- local _coal = 1
@@ -3513,7 +3515,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after clearing the hotspots from the map.
-</span><a id="3435"></a><span class="comment">-- @usage local zoneWithClearedHotspots = someZone:ClearHotspots() -- Clears all hotspot markers for each coalition in the zone.
+</span><a id="3437"></a><span class="comment">-- @usage local zoneWithClearedHotspots = someZone:ClearHotspots() -- Clears all hotspot markers for each coalition in the zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:ClearHotspots()
   <span class="comment">-- local _coal = 1
 </span>  <span class="keyword">for</span> _coal = <span class="number">0</span>, <span class="number">2</span> , <span class="number">1</span> <span class="keyword">do</span>
@@ -3546,7 +3548,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">-- This information is valuable for tactical decision-making and understanding the nature of the opposition within different hotspots.
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after gathering and displaying intelligence information for its hotspots.
-</span><a id="3468"></a><span class="comment">-- @usage local zoneWithIntel = someZone:getHotspotsIntel() -- Gathers and displays intelligence data for hotspots in the zone.
+</span><a id="3470"></a><span class="comment">-- @usage local zoneWithIntel = someZone:getHotspotsIntel() -- Gathers and displays intelligence data for hotspots in the zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:getHotspotsIntel()
   <span class="keyword">local</span> _coalitionMap = {[<span class="number">0</span>] = -<span class="number">1</span>, [<span class="number">1</span>] = <span class="number">2</span>, [<span class="number">2</span>] = <span class="number">1</span>}
 
@@ -3613,7 +3615,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone
 </span><span class="comment">-- @return #ZONEMGR.Zone self The Zone instance after clearing all intelligence markers.
-</span><a id="3535"></a><span class="comment">-- @usage local zoneWithClearedIntel = someZone:ClearIntel() -- Clears all intelligence markers for each coalition in the zone.
+</span><a id="3537"></a><span class="comment">-- @usage local zoneWithClearedIntel = someZone:ClearIntel() -- Clears all intelligence markers for each coalition in the zone.
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:ClearIntel()
   <span class="comment">-- Debug information consolidated
 </span>  <span class="keyword">local</span> debugInfo = <span class="string">"SPECTRE.ZONEMGR.Zone:ClearIntel | ------------------------\n"</span>
@@ -3645,7 +3647,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone self
 </span><span class="comment">-- @param factor Adjust this factor based on desired granularity for hotspots.
-</span><a id="3567"></a><span class="comment">-- @return #ZONEMGR.Zone self
+</span><a id="3569"></a><span class="comment">-- @return #ZONEMGR.Zone self
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:setAI_granularityFactor(factor)
   self.AI_f = factor
   <span class="keyword">return</span> self
@@ -3655,7 +3657,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </span><span class="comment">--
 </span><span class="comment">-- @param #ZONEMGR.Zone self
 </span><span class="comment">-- @param factor Adjust this factor based on Percentage of total units for hotspots.
-</span><a id="3577"></a><span class="comment">-- @return #ZONEMGR.Zone self
+</span><a id="3579"></a><span class="comment">-- @return #ZONEMGR.Zone self
 </span><span class="keyword">function</span> SPECTRE.ZONEMGR.Zone:setAI_percentFactor(factor)
   self.AI_p = factor
   <span class="keyword">return</span> self
@@ -3666,7 +3668,7 @@ SPECTRE.ZONEMGR.f = <span class="number">2</span> <span class="comment">-- 1.5
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-12-14 19:20:31 </i>
+<i style="float:right;">Last updated 2024-01-06 07:03:52 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

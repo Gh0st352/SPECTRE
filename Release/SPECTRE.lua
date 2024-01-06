@@ -5,7 +5,7 @@
 -- ------------------------------------------------------------------------------------------
 -- 
 -- S. - Special         |
--- P. - Purpose         | CompileTime : Thursday, December 14, 2023 7:20:27 PM
+-- P. - Purpose         | CompileTime : Saturday, January 6, 2024 7:03:49 AM
 -- E. - Extension for   |      Commit : 6adc313af566c4a566e5aefe11b85fc2bd03d026
 -- C. - Creating        |	    Version : 0.9.9
 -- T. - Truly           |      Github : https://github.com/Gh0st352
@@ -1120,15 +1120,19 @@ function SPECTRE.AI.buildPacket.determineAICoalitionValues(Packet)
   --    alias_ = SPECTRE.MENU.Settings[Type].TemplateName.Blue or "ALIAS_"
   --  end
 
+
   -- Define specific alias values for STRIKE and AIRDROP types
   if Type == "STRIKE" then
     alias_ = PlayerSide == 1 and SPECTRE.MENU.Settings[Type].Transport.TemplateName.Red or SPECTRE.MENU.Settings[Type].Transport.TemplateName.Blue
     aliasDropped_ = PlayerSide == 1 and SPECTRE.MENU.Settings[Type].Units.TemplateName.Red or SPECTRE.MENU.Settings[Type].Units.TemplateName.Blue
   elseif Type == "AIRDROP" then
+    alias_ = PlayerSide == 1 and SPECTRE.MENU.Settings[Type].TemplateName.Red or SPECTRE.MENU.Settings[Type].TemplateName.Blue
     aliasDropped_ = PlayerSide == 1 and SPECTRE.MENU.Settings[Type].Types[Packet.subtype_].TemplateName.Red or SPECTRE.MENU.Settings[Type].Types[Packet.subtype_].TemplateName.Blue
+  else
+    alias_ = PlayerSide == 1 and SPECTRE.MENU.Settings[Type].TemplateName.Red or SPECTRE.MENU.Settings[Type].TemplateName.Blue
   end
-    coal_ = PlayerSide == 1 and SPECTRE.Coalitions.Red or SPECTRE.Coalitions.Blue
-    country_ = PlayerSide == 1 and SPECTRE.Countries.Red or SPECTRE.Countries.Blue
+  coal_ = PlayerSide == 1 and SPECTRE.Coalitions.Red or SPECTRE.Coalitions.Blue
+  country_ = PlayerSide == 1 and SPECTRE.Countries.Red or SPECTRE.Countries.Blue
   -- Update the Packet with the determined values
   Packet.coal_ = coal_
   Packet.country_ = country_
@@ -2021,7 +2025,7 @@ end
 --
 -- **Automated Zone Management:**
 --
---      Works in conjunction with ZONEMGR to automatically detect
+--      Works in conjunction with user defined Zone names to automatically detect
 --      and classify air defense units within specified zones, simplifying setup and deployment.
 --
 -- **Enhanced Air Defense Tactics:**
@@ -2064,6 +2068,7 @@ SPECTRE.IADS = {}
 -- A scheduler object that triggers periodic updates within the IADS system.
 SPECTRE.IADS.UpdateSched = {}
 SPECTRE.IADS.UpdateSchedOBJ = {}
+SPECTRE.IADS.name = ""
 --- Flag indicating if IADS is currently being updated.
 -- This boolean field signifies whether an update process for the IADS is currently active or not.
 -- A boolean flag to control and check the status of ongoing IADS updates.
@@ -2080,10 +2085,8 @@ SPECTRE.IADS.SAMs = {}
 -- A storage field dedicated to Early Warning Radars (EWRs) managed within the IADS.
 -- A collection of managed EWR systems.
 SPECTRE.IADS.EWRs = {}
---- Storage for ZONEMGR object.
--- This field contains the Zone Manager object that is utilized by the IADS for managing various zones.
--- A container for the ZONEMGR object.
-SPECTRE.IADS.ZONEMGR = {}
+--- Storage for Zones to scan for units to add to IADS.
+SPECTRE.IADS.ZONENAMES = {}
 --- Storage for built groups from detected ZONEMGR units.
 -- This field stores the names of groups that have been constructed based on units detected by the Zone Manager.
 -- A list of group names built from ZONEMGR-detected units.
@@ -2104,6 +2107,37 @@ SPECTRE.IADS.UpdateInterval = 25
 -- A modifier that adds randomness to the IADS update interval.
 -- A decimal value representing the nudge factor for the update interval.
 SPECTRE.IADS.UpdateIntervalNudge = 0.25
+SPECTRE.IADS.samTypesDB_LU = {}
+SPECTRE.IADS.samTypesDB_ = {
+  "NASAMS", "Hawk sr", "RLS_19J6", "Osa", "Straight Flush", "S_75M_Volhov",
+  "Patriot cp", "SA-9 Gaskin", "EWR P-37 BAR LOCK", "ZSU-23-4 Shilka", "SA-11 Buk LN 9A310M1",
+  "S-300PS 5P85C ln", "S-200", "Gepard", "Tor 9A331", "S-300PS 40B6MD sr_19J6",
+  "p-19 s-125 sr", "Rapier", "Hawk tr", "SA-3 Goa", "Patriot AMG", "SA-11 Gadfly",
+  "rapier_fsa_launcher", "NASAMS_Radar_MPQ64F1", "HQ-7_STR_SP", "Kub 1S91 str",
+  "Kub", "Hawk str", "SA-10 Grumble", "NASAMS_LN_B", "5p73 s-125 ln", "Tor",
+  "SA-11 Buk SR 9S18M1", "Kub 2P25 ln", "CSA-4", "SA-19 Grison", "HQ-7", "Zues",
+  "S-300", "Patriot ECS", "rapier_fsa_blindfire_radar", "Strela-10M3", "HEMTT_C-RAM_Phalanx",
+  "Phalanx", "Patriot EPP", "rapier_fsa_optical_tracker_unit", "SA-2 Guideline", "Patriot",
+  "S-300PS 5H63C 30H6_tr", "NASAMS_Command_Post", "SA-15 Gauntlet", "S-300PS 64H6E sr",
+  "snr s-125 tr", "SNR_75V", "Flat Face", "Strela-1 9P31", "S-300PS 40B6MD sr",
+  "Hawk ln", "HQ-7_LN_SP", "Roland Radar", "SA-13 Gopher", "Buk", "S-300PS 40B6M tr",
+  "S-300PS 54K6 cp", "Snow Drift", "SA-5 Gammon", "RPC_5N62V", "Osa 9A33 ln",
+  "Hawk", "S-75", "Patriot ln", "SA-8 Gecko", "S-200_Launcher", "2S6 Tunguska",
+  "Roland EWR", "Roland ADS", "S-300PS 5P85D ln", "SA-11 Buk CC 9S470M1", "NASAMS_LN_C",
+  "SA-6 Gainful", "Patriot str", "S-125"
+}
+SPECTRE.IADS.EWTypesDB_LU = {}
+SPECTRE.IADS.EWTypesDB_ = {
+  "Dog Ear", "Tall Rack", "FPS-117 Dome", "55G6 EWR",
+  "Dog Ear radar", "Box Spring", "1L13 EWR", "FPS-117"
+}
+function SPECTRE.IADS.createLookupTable(list)
+  local lookup = {}
+  for _, value in ipairs(list) do
+    lookup[value] = true
+  end
+  return lookup
+end
 
 --- Create a new instance of the Integrated Air Defense System (IADS) Manager.
 --
@@ -2112,14 +2146,17 @@ SPECTRE.IADS.UpdateIntervalNudge = 0.25
 --
 -- @param #IADS self The IADS instance.
 -- @param coal Coalition number (0, 1, or 2) to which this IADS belongs.
--- @param #ZONEMGR ZONEMGR_ The Zone Manager instance to be associated with this IADS.
+-- @param ZONENAMES table of The names of zones to scan for units to add to IADS.
 -- @return #IADS self The newly created IADS manager instance.
-function SPECTRE.IADS:New(coal,ZONEMGR_)
+function SPECTRE.IADS:New(coal,ZONENAMES)
   local self = BASE:Inherit(self, SPECTRE:New())
+  self.samTypesDB_LU = self.createLookupTable(self.samTypesDB_)
+  self.EWTypesDB_LU = self.createLookupTable(self.EWTypesDB_)
   self.coal = coal
-  self.ZONEMGR = ZONEMGR_
+  self.ZONENAMES = ZONENAMES
   return self
 end
+
 
 
 --- Create Skynet Object.
@@ -2129,6 +2166,7 @@ end
 -- @return #IADS self The IADS instance with the Skynet IADS created.
 function SPECTRE.IADS:createSkynet(name)
   self.SkynetIADS = SkynetIADS:create(name)
+  self.name = name
   return self
 end
 
@@ -2195,10 +2233,12 @@ end
 -- @return #IADS self
 function SPECTRE.IADS:Init()
   SPECTRE.UTILS.debugInfo("SPECTRE.IADS:Init | ")
+
   self:Update()
   self:UpdateSchedInit()
   return self
 end
+
 
 --- Initialize the update scheduler for the IADS.
 -- This function sets up a scheduler to periodically perform updates on the IADS. It ensures that updates are
@@ -2216,25 +2256,30 @@ function SPECTRE.IADS:UpdateSchedInit()
     if not self.UpdatingIADS then
       self.UpdatingIADS = true
       local _timer = TIMER:New(function()
-        self:Update()
-        self.UpdatingIADS = false
+
+          self:Update()
+          self.UpdatingIADS = false
       end)
       _timer:Start(math.random(1,3))
 
     end
     return self
-  end, {self}, self.UpdateInterval, self.UpdateInterval, self.UpdateIntervalNudge)
+  end, {self}, 30, self.UpdateInterval, self.UpdateIntervalNudge)
   return self
 end
 
 --- Perform an update cycle for the IADS.
--- This function executes a series of tasks including retrieving groups within the ZONEMGR, getting group attributes,
+-- This function executes a series of tasks including retrieving groups within the assigned Zone Names, getting group attributes,
 -- classifying groups, adding new SAMs, and adding new EWRs to the IADS.
 -- @param #IADS
 -- @return #IADS self
 function SPECTRE.IADS:Update()
   SPECTRE.UTILS.debugInfo("SPECTRE.IADS:Update | ")
-  self:getGroupsInZONEMGR():getGroupAttributes():classifyGroups():addNewSAMs():addNewEWRs()
+  self:getGroupsInZones()
+  self:getGroupAttributes()
+  self:classifyGroups()
+  self:addNewSAMs()
+  self:addNewEWRs()
   return self
 end
 
@@ -2385,28 +2430,46 @@ end
 -- It filters these groups based on their coalition and stores their names for further processing.
 -- @param #IADS
 -- @return #IADS self
-function SPECTRE.IADS:getGroupsInZONEMGR()
-  SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZONEMGR | ")
+function SPECTRE.IADS:getGroupsInZones()
+
+  SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | ")
   self._GroupNames = {}
 
   --Get all groups for units in zone
-  for _ZoneName, _ZoneObj in pairs(self.ZONEMGR.Zones) do
-    if _ZoneObj._detectedUnits[self.coal] then
-      for _, _Unit in ipairs(_ZoneObj._detectedUnits[self.coal]) do
-        local unitName  = _Unit.name
-        local unitType  = _Unit.matchedType
+  for _, _ZoneName in pairs(self.ZONENAMES) do
 
+    SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | _ZoneName | " .. _ZoneName)
+    local _detectedUnits = SPECTRE.WORLD.FindUnitsInZone(_ZoneName)
+
+    if _detectedUnits[self.coal] then
+      SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | _detectedUnits for coal " .. self.coal)
+      for _, _Unit in ipairs(_detectedUnits[self.coal]) do
+        SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | _Unit " , _Unit)
+        local unitName  = _Unit.name
+        SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | unitName | " .. unitName)
         local _unit     = Unit.getByName(unitName)
+
         if _unit then
-          local _Group    =  Unit.getGroup(_unit )
-          if _Group then
-            local groupName = Group.getName(_Group)
-            if groupName then
-              SPECTRE.UTILS.safeInsert(self._GroupNames,groupName)
+          SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | unit found", _unit)
+          local unitType  = _unit:getTypeName()
+          SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | unitType " .. unitType)
+
+
+          local IADSUNIT = self.samTypesDB_LU[unitType]
+          local IADSUNITEW = self.EWTypesDB_LU[unitType]
+
+          if IADSUNIT or IADSUNITEW then
+            local _Group    =  Unit.getGroup(_unit )
+            if _Group then
+              SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | group found", _Group)
+              local groupName = Group.getName(_Group)
+              if groupName and (not self.SAMs[groupName] and not self.EWRs[groupName]) then
+                SPECTRE.UTILS.debugInfo("SPECTRE.IADS:getGroupsInZones | groupName | " .. groupName)
+                SPECTRE.UTILS.safeInsert(self._GroupNames,groupName)
+              end
             end
           end
         end
-
 
       end
     end
@@ -2439,60 +2502,63 @@ function SPECTRE.IADS:classifyGroups()
     ["MR SAM"] = {},
     ["LR SAM"] = {},
     ["EWR"] = {},
+    ["SAM"] = {},
   }
 
   -- Iterate over each key in the inputTable
   for key, types in pairs(self._GroupAttributes) do
     -- Flags to check if the key contains any of the unwanted types
-    local containsRestrictedType = false
+    --local containsRestrictedType = false
 
     -- Check if the key contains any of the unwanted types
-    containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, "AAA")
-    if not containsRestrictedType then
-      containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, "IR Guided SAM")
-    end
-    if not containsRestrictedType then
-      containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, "Mobile AAA")
-    end
+    --    containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, "AAA")
+    --    if not containsRestrictedType then
+    --      containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, "IR Guided SAM")
+    --    end
+    --    if not containsRestrictedType then
+    --      containsRestrictedType = SPECTRE.UTILS.table_hasValue(types, "Mobile AAA")
+    --    end
 
 
     -- If the key doesn't contain any of the unwanted types, add it to the appropriate category in the OutputTable
-    if not containsRestrictedType then
-      -- Check if the key contains wanted types
-      local containsType = false
-      local containsTypeEWR = false
-      local containsTypeLR = false
-      local containsTypeMR = false
-      local containsTypeSR = false
+    -- if not containsRestrictedType then
+    -- Check if the key contains wanted types
+    local containsType = false
+    local containsTypeEWR = false
+    local containsTypeLR = false
+    local containsTypeMR = false
+    local containsTypeSR = false
 
+    -- Check if the key contains any of the unwanted types
+    containsTypeEWR = SPECTRE.UTILS.table_hasValue(types, "EWR")
+    containsType = containsTypeEWR
+    if not containsType then
       -- Check if the key contains any of the unwanted types
-      containsTypeEWR = SPECTRE.UTILS.table_hasValue(types, "EWR")
-      containsType = containsTypeEWR
-      if not containsType then
-        -- Check if the key contains any of the unwanted types
-        containsTypeLR = SPECTRE.UTILS.table_hasValue(types, "LR SAM")
-        containsType = containsTypeLR
-      elseif not containsType then
-        containsTypeMR = SPECTRE.UTILS.table_hasValue(types, "MR SAM")
-        containsType = containsTypeMR
-      end
-      if not containsType then
-        containsTypeSR = SPECTRE.UTILS.table_hasValue(types, "SR SAM")
-        containsType = containsTypeSR
-      end
+      containsTypeLR = SPECTRE.UTILS.table_hasValue(types, "LR SAM")
+      containsType = containsTypeLR
+    elseif not containsType then
+      containsTypeMR = SPECTRE.UTILS.table_hasValue(types, "MR SAM")
+      containsType = containsTypeMR
+    end
+    if not containsType then
+      containsTypeSR = SPECTRE.UTILS.table_hasValue(types, "SR SAM")
+      containsType = containsTypeSR
+    end
 
-      if containsType then
-        if containsTypeEWR then
-          table.insert(self._ClassifiedGroups["EWR"], key)
-        elseif containsTypeLR then
-          table.insert(self._ClassifiedGroups["LR SAM"], key)
-        elseif containsTypeMR then
-          table.insert(self._ClassifiedGroups["MR SAM"], key)
-        elseif containsTypeSR then
-          table.insert(self._ClassifiedGroups["SR SAM"], key)
-        end
+    if containsType then
+      if containsTypeEWR then
+        table.insert(self._ClassifiedGroups["EWR"], key)
+      elseif containsTypeLR then
+        table.insert(self._ClassifiedGroups["LR SAM"], key)
+      elseif containsTypeMR then
+        table.insert(self._ClassifiedGroups["MR SAM"], key)
+      elseif containsTypeSR then
+        table.insert(self._ClassifiedGroups["SR SAM"], key)
+      else
+        table.insert(self._ClassifiedGroups["SAM"], key)
       end
     end
+    --end
   end
   return self
 end
@@ -2505,10 +2571,17 @@ end
 function SPECTRE.IADS:addNewSAMs()
   SPECTRE.UTILS.debugInfo("SPECTRE.IADS:addNewSAMs | ")
   for _SAMTYPE, _GroupNames in pairs (self._ClassifiedGroups) do
+    SPECTRE.UTILS.debugInfo("SPECTRE.IADS:addNewSAMs | _SAMTYPE | " , _SAMTYPE)
     if _SAMTYPE ~= "EWR" then
       for _, _Name in ipairs (_GroupNames) do
+       --BASE:E("SPECTRE.IADS:addNewSAMs | _Name | " .. _Name)
         if not self.SAMs[_Name] then
+
+          --          local unitCOAL = GROUP:FindByName(_Name):GetCoalition()
+          --          SPECTRE.UTILS.debugInfo("SPECTRE.IADS:addNewSAMs | unitCOAL | " .. unitCOAL)
+
           self.SkynetIADS:addSAMSite(_Name)
+
           self.SAMs[_Name] = self.SAM:New(_Name, _SAMTYPE, self)
         end
       end
@@ -2516,6 +2589,7 @@ function SPECTRE.IADS:addNewSAMs()
   end
   return self
 end
+
 
 --- Add new Early Warning Radars (EWRs) to the IADS.
 -- This function iterates through the classified groups specifically tagged as "EWR" and adds each EWR to the Skynet IADS.
@@ -3963,13 +4037,18 @@ SPECTRE.MENU.Buttons.Dispatcher = function(MANAGER, Player, Type, MarkerIndex)
   local _sideText
   if  Player.side == 1 then _sideText = "Red" else _sideText = "Blue" end
 
+local flag_NOREDEEM = false
+
   if Type == "AIRDROP" and DROPTYPE then
     _ResourceCounter = MANAGER.RESOURCES[Type][DROPTYPE][_sideText]
     -- Check if resources are available
     if _ResourceCounter == 0 then
       trigger.action.outTextForGroup(Player.GroupID, SPECTRE.MENU.Text.Main.OutOfStock, 15)
+      flag_NOREDEEM = true
+      
       -- Check if player has enough points
     elseif points < SPECTRE.REWARDS.Config.PointCost[Type][DROPTYPE] then
+    flag_NOREDEEM = true
       trigger.action.outTextForGroup(Player.GroupID, SPECTRE.MENU.Text.Main.LowBalance, 15)
     else
       -- Deduct points and update resources
@@ -3982,9 +4061,11 @@ SPECTRE.MENU.Buttons.Dispatcher = function(MANAGER, Player, Type, MarkerIndex)
     _ResourceCounter = MANAGER.RESOURCES[Type][_sideText]
     -- Check if resources are available
     if _ResourceCounter == 0 then
+    flag_NOREDEEM = true
       trigger.action.outTextForGroup(Player.GroupID, SPECTRE.MENU.Text.Main.OutOfStock, 15)
       -- Check if player has enough points
     elseif points < SPECTRE.REWARDS.Config.PointCost[Type] then
+    flag_NOREDEEM = true
       trigger.action.outTextForGroup(Player.GroupID, SPECTRE.MENU.Text.Main.LowBalance, 15)
     else
       -- Deduct points and update resources
@@ -3993,7 +4074,7 @@ SPECTRE.MENU.Buttons.Dispatcher = function(MANAGER, Player, Type, MarkerIndex)
       _ResourceCounter = MANAGER.RESOURCES[Type][_sideText]
     end
   end
-
+if flag_NOREDEEM == false then
   -- Inform coalition about the dispatched CAP
   local report = REPORT:New(Type .. " has been dispatched!")
   report:Add("================================")
@@ -4010,6 +4091,7 @@ SPECTRE.MENU.Buttons.Dispatcher = function(MANAGER, Player, Type, MarkerIndex)
   SPECTRE.MARKERS.Table.RemoveByIndex(Player, Type, MarkerIndex)
   Player.Markers[Type].MenuArrays.Main:RemoveSubMenus() -- Remove the support menu for TYPE operations
   Player:setupSubMenu(Type, MANAGER) -- Build the support menu for TYPE operations
+  end
 end
 
 -- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ --
@@ -11191,6 +11273,35 @@ function SPECTRE.WORLD.Vec2inZones(possibleVec2, zoneList)
   return 1  -- If Vec2 was not found in any of the zones, return 1
 end
 
+function SPECTRE.WORLD.FindUnitsInZone(ZoneName)
+  SPECTRE.UTILS.debugInfo("SPECTRE.WORLD:FindUnitsInZone | -------------------------------------------- ")
+  local temp_detectedUnits = {}
+  temp_detectedUnits[0] = {}
+  temp_detectedUnits[1] = {}
+  temp_detectedUnits[2] = {}
+  local t_ZOBJ = ZONE:FindByName(ZoneName)
+  t_ZOBJ:Scan({Object.Category.UNIT}, {Unit.Category.GROUND_UNIT, Unit.Category.STRUCTURE, Unit.Category.SHIP})
+  local scanData = t_ZOBJ.ScanData
+  if scanData then
+    -- Units
+    if scanData.Units then
+      for _, unit in pairs(scanData.Units) do
+        local _unitCoal = unit:getCoalition()
+        local _unitName = unit:getName()
+        local _life = unit:getLife()
+        SPECTRE.UTILS.debugInfo("SPECTRE.WORLD:FindUnitsInZone | FOUND UNIT  | _unitCoal | " .. _unitCoal .. " | _unitName | " .. _unitName)
+        temp_detectedUnits[_unitCoal][#temp_detectedUnits[_unitCoal] + 1] = {
+          name = _unitName,
+          unitObj = unit,
+          coal = _unitCoal,
+          life = _life,
+        }
+      end
+    end
+  end
+  return temp_detectedUnits
+end
+
 ---Markers.
 -- ===
 --
@@ -11363,6 +11474,7 @@ end
 --
 -- @module ZONEMGR
 -- @extends SPECTRE
+
 
 --- 1 - Zone Manager.
 -- ===
@@ -11722,13 +11834,13 @@ function SPECTRE.ZONEMGR:enableLiveEdit()
 
       -- Set up event handler for changes in markers
       self.MARKERS.TRACKERS[editType].OnAfterMarkChanged = function(From, Event, To, Text, Keywords, Coord)
-        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | LIVEEDIT | ".. editType .. ":OnAfterMarkChanged | ------------------------")
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | From   | ", From)
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | Event  | ", Event)
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | To     | ", To)
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | Text   | ", Text)
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | Keywords| ", Keywords)
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | coord   | ", Coord)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | LIVEEDIT | ".. editType .. ":OnAfterMarkChanged | ------------------------")
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | From   | ", From)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | Event  | ", Event)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | To     | ", To)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | Text   | ", Text)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | Keywords| ", Keywords)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | coord   | ", Coord)
 
         local origText = Keywords
         local sanitizedText = Keywords:gsub("/", ""):upper()
@@ -11736,8 +11848,8 @@ function SPECTRE.ZONEMGR:enableLiveEdit()
         for word in sanitizedText:gmatch("%w+") do table.insert(MarkerType, word) end
         local MarkInfo = SPECTRE.MARKERS.World.FindByText(origText)
 
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | MarkerType   | ", MarkerType)
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | MarkInfo     | ", MarkInfo)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | MarkerType   | ", MarkerType)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | MarkInfo     | ", MarkInfo)
         local Packet = {
           From = From,
           Event = Event,
@@ -11969,7 +12081,7 @@ end
 -- @return temp_detectedUnits A table categorizing detected units by coalition (0 for neutral, 1 for red, 2 for blue).
 -- @usage local detectedUnits = zoneManager:FindUnitsInZone(zoneObject) -- Scans and categorizes units within the specified zone.
 function SPECTRE.ZONEMGR.FindUnitsInZone(self, t_ZOBJ)
-  SPECTRE.UTILS.debugInfo("SPECTRE.FLAG:FindUnitsInZone | -------------------------------------------- ")
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:FindUnitsInZone | -------------------------------------------- ")
   local temp_detectedUnits = {}
   temp_detectedUnits[0] = {}
   temp_detectedUnits[1] = {}
@@ -11983,7 +12095,7 @@ function SPECTRE.ZONEMGR.FindUnitsInZone(self, t_ZOBJ)
         local _unitCoal = unit:getCoalition()
         local _unitName = unit:getName()
         local _life = unit:getLife()
-        SPECTRE.UTILS.debugInfo("SPECTRE.FLAG:FindUnitsInZone | FOUND UNIT  | _unitCoal | " .. _unitCoal .. " | _unitName | " .. _unitName)
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:FindUnitsInZone | FOUND UNIT  | _unitCoal | " .. _unitCoal .. " | _unitName | " .. _unitName)
         temp_detectedUnits[_unitCoal][#temp_detectedUnits[_unitCoal] + 1] = {
           name = _unitName,
           unitObj = unit,
@@ -12009,7 +12121,7 @@ end
 function SPECTRE.ZONEMGR.buildGroupsFromUnits(self, _detectedUnits, coal)
   local _GroupNames = {}
   if #_detectedUnits[coal] > 0 then
-    SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | Detected Coal Units")
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | Detected Coal Units")
     for _, _Unit in ipairs(_detectedUnits[coal]) do
       local unitName  = _Unit.name
       local _unit     = Unit.getByName(unitName)
@@ -12018,7 +12130,7 @@ function SPECTRE.ZONEMGR.buildGroupsFromUnits(self, _detectedUnits, coal)
         if _Group then
           local groupName = Group.getName(_Group)
           if groupName then
-            SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | group in Zone |" .. groupName)
+            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | group in Zone |" .. groupName)
             SPECTRE.UTILS.safeInsert(_GroupNames,groupName)
           end
         end
@@ -12044,7 +12156,7 @@ function SPECTRE.ZONEMGR.findZoneForVec2(self, vec2)
   for _zoneName, _zoneObject in pairs(self.Zones) do
     markerInZone = SPECTRE.POLY.PointWithinShape(vec2, _zoneObject.Vertices2D)
     if markerInZone then
-      SPECTRE.UTILS.debugInfo("SPECTRE.FLAG  | mark in Zone |" .. _zoneName)
+      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR  | mark in Zone |" .. _zoneName)
       _zoneObjectRETURN = _zoneObject
       break
     end
@@ -12798,7 +12910,7 @@ function SPECTRE.ZONEMGR:CAPschedInit()
                 :InitCoalition(_coal)
                 :InitCountry(_spawnCountry)
                 :InitCleanUp(120)
-                :InitAirbase(_selectedAirbase,SPAWN.Takeoff.Hot)
+                --:InitAirbase(_selectedAirbase,SPAWN.Takeoff.Hot)
                 :OnSpawnGroup(
                   function(spawnGroup_)
                     -- Build the CAP route using the spawn group and packet details
@@ -12808,7 +12920,8 @@ function SPECTRE.ZONEMGR:CAPschedInit()
                     -- Set the route for the CAP group
                     spawnGroup_:Route(route, math.random(1,5))
                   end, self)
-                :Spawn()
+                  :SpawnAtAirbase(AIRBASE:FindByName(_selectedAirbase),SPAWN.Takeoff.Hot,1000)
+                --:Spawn()
 
               _CAPgroup.WIPE_ = false
               -- Common function to handle both landing and dead/crash events

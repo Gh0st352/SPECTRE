@@ -110,7 +110,7 @@ ensuring smooth operation <span class="keyword">and</span> coordination with oth
 
 
 <pre>
-Works <span class="keyword">in</span> conjunction with ZONEMGR to automatically detect
+Works <span class="keyword">in</span> conjunction with user defined Zone names to automatically detect
 <span class="keyword">and</span> classify air defense units within specified zones, simplifying setup <span class="keyword">and</span> deployment.
 </pre>
 
@@ -167,8 +167,8 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
 	<td class="summary">Flag indicating if IADS is currently being updated.</td>
 	</tr>
 	<tr>
-	<td class="name" ><a href="#SPECTRE.IADS.ZONEMGR">SPECTRE.IADS.ZONEMGR</a></td>
-	<td class="summary">Storage for ZONEMGR object.</td>
+	<td class="name" ><a href="#SPECTRE.IADS.ZONENAMES">SPECTRE.IADS.ZONENAMES</a></td>
+	<td class="summary">Storage for Zones to scan for units to add to IADS.</td>
 	</tr>
 	<tr>
 	<td class="name" ><a href="#SPECTRE.IADS._GroupAttributes">SPECTRE.IADS._GroupAttributes</a></td>
@@ -191,7 +191,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
 	<td class="summary">Initialize the IADS.</td>
 	</tr>
 	<tr>
-	<td class="name" ><a href="#SPECTRE.IADS:New">SPECTRE.IADS:New(IADS, coal, ZONEMGR)</a></td>
+	<td class="name" ><a href="#SPECTRE.IADS:New">SPECTRE.IADS:New(IADS, coal, ZONENAMES)</a></td>
 	<td class="summary">Create a new instance of the Integrated Air Defense System (IADS) Manager.</td>
 	</tr>
 	<tr>
@@ -296,7 +296,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
 	<td class="summary">Retrieve and store attributes of groups.</td>
 	</tr>
 	<tr>
-	<td class="name" ><a href="#SPECTRE.IADS:getGroupsInZONEMGR">SPECTRE.IADS:getGroupsInZONEMGR(IADS)</a></td>
+	<td class="name" ><a href="#SPECTRE.IADS:getGroupsInZones">SPECTRE.IADS:getGroupsInZones(IADS)</a></td>
 	<td class="summary">Retrieve and store the names of groups within ZONEMGR.</td>
 	</tr>
 </table>
@@ -355,7 +355,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.EWRs"></a>
     <strong>SPECTRE.IADS.EWRs</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#87">line 87</a>
+    <a style="float:right;" href="../source/IADS.lua.html#88">line 88</a>
     </dt>
     <dd>
     Storage for Managed EWRs.
@@ -372,7 +372,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAMs"></a>
     <strong>SPECTRE.IADS.SAMs</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#83">line 83</a>
+    <a style="float:right;" href="../source/IADS.lua.html#84">line 84</a>
     </dt>
     <dd>
     Storage for Managed SAMs.
@@ -389,7 +389,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SkynetIADS"></a>
     <strong>SPECTRE.IADS.SkynetIADS</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#79">line 79</a>
+    <a style="float:right;" href="../source/IADS.lua.html#80">line 80</a>
     </dt>
     <dd>
     Storage for SkynetIADS object.
@@ -406,7 +406,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.UpdateInterval"></a>
     <strong>SPECTRE.IADS.UpdateInterval</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#107">line 107</a>
+    <a style="float:right;" href="../source/IADS.lua.html#106">line 106</a>
     </dt>
     <dd>
     How often to update self.
@@ -423,7 +423,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.UpdateIntervalNudge"></a>
     <strong>SPECTRE.IADS.UpdateIntervalNudge</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#111">line 111</a>
+    <a style="float:right;" href="../source/IADS.lua.html#110">line 110</a>
     </dt>
     <dd>
     Nudge factor for update interval.
@@ -457,7 +457,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.UpdatingIADS"></a>
     <strong>SPECTRE.IADS.UpdatingIADS</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#75">line 75</a>
+    <a style="float:right;" href="../source/IADS.lua.html#76">line 76</a>
     </dt>
     <dd>
     Flag indicating if IADS is currently being updated.
@@ -472,14 +472,12 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
 
 </dd>
     <dt>
-    <a name = "SPECTRE.IADS.ZONEMGR"></a>
-    <strong>SPECTRE.IADS.ZONEMGR</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#91">line 91</a>
+    <a name = "SPECTRE.IADS.ZONENAMES"></a>
+    <strong>SPECTRE.IADS.ZONENAMES</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#90">line 90</a>
     </dt>
     <dd>
-    Storage for ZONEMGR object.
- This field contains the Zone Manager object that is utilized by the IADS for managing various zones.
- A container for the ZONEMGR object.
+    Storage for Zones to scan for units to add to IADS.
 
 
 
@@ -491,7 +489,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS._GroupAttributes"></a>
     <strong>SPECTRE.IADS._GroupAttributes</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#99">line 99</a>
+    <a style="float:right;" href="../source/IADS.lua.html#98">line 98</a>
     </dt>
     <dd>
     Storage for _GroupAttributes from detected ZONEMGR units.
@@ -508,7 +506,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS._GroupNames"></a>
     <strong>SPECTRE.IADS._GroupNames</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#95">line 95</a>
+    <a style="float:right;" href="../source/IADS.lua.html#94">line 94</a>
     </dt>
     <dd>
     Storage for built groups from detected ZONEMGR units.
@@ -525,7 +523,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.coal"></a>
     <strong>SPECTRE.IADS.coal</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#103">line 103</a>
+    <a style="float:right;" href="../source/IADS.lua.html#102">line 102</a>
     </dt>
     <dd>
     Coalition to build IADs for.
@@ -542,7 +540,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:DebugOn"></a>
     <strong>SPECTRE.IADS:DebugOn(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#144">line 144</a>
+    <a style="float:right;" href="../source/IADS.lua.html#178">line 178</a>
     </dt>
     <dd>
     Enable Debug Mode for IADS.
@@ -573,7 +571,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:Init"></a>
     <strong>SPECTRE.IADS:Init(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#201">line 201</a>
+    <a style="float:right;" href="../source/IADS.lua.html#235">line 235</a>
     </dt>
     <dd>
     Initialize the IADS.
@@ -603,8 +601,8 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
 </dd>
     <dt>
     <a name = "SPECTRE.IADS:New"></a>
-    <strong>SPECTRE.IADS:New(IADS, coal, ZONEMGR)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#122">line 122</a>
+    <strong>SPECTRE.IADS:New(IADS, coal, ZONENAMES)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#152">line 152</a>
     </dt>
     <dd>
     Create a new instance of the Integrated Air Defense System (IADS) Manager. </p>
@@ -621,8 +619,8 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
         <li><span class="parameter">coal</span>
          Coalition number (0, 1, or 2) to which this IADS belongs.
         </li>
-        <li><span class="parameter">ZONEMGR</span>
-         ZONEMGR_ The Zone Manager instance to be associated with this IADS.
+        <li><span class="parameter">ZONENAMES</span>
+         table of The names of zones to scan for units to add to IADS.
         </li>
     </ul>
 
@@ -641,11 +639,11 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:Update"></a>
     <strong>SPECTRE.IADS:Update(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#240">line 240</a>
+    <a style="float:right;" href="../source/IADS.lua.html#277">line 277</a>
     </dt>
     <dd>
     Perform an update cycle for the IADS.
- This function executes a series of tasks including retrieving groups within the ZONEMGR, getting group attributes,
+ This function executes a series of tasks including retrieving groups within the assigned Zone Names, getting group attributes,
  classifying groups, adding new SAMs, and adding new EWRs to the IADS.
 
 
@@ -673,7 +671,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:UpdateSchedInit"></a>
     <strong>SPECTRE.IADS:UpdateSchedInit(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#213">line 213</a>
+    <a style="float:right;" href="../source/IADS.lua.html#249">line 249</a>
     </dt>
     <dd>
     Initialize the update scheduler for the IADS.
@@ -705,7 +703,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:createSkynet"></a>
     <strong>SPECTRE.IADS:createSkynet(IADS, name)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#135">line 135</a>
+    <a style="float:right;" href="../source/IADS.lua.html#168">line 168</a>
     </dt>
     <dd>
     Create Skynet Object.
@@ -737,7 +735,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:deactivateSkynet"></a>
     <strong>SPECTRE.IADS:deactivateSkynet(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#167">line 167</a>
+    <a style="float:right;" href="../source/IADS.lua.html#201">line 201</a>
     </dt>
     <dd>
     Deactivate Skynet Object in IADS.
@@ -768,7 +766,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:setSkynetUpdateInterval"></a>
     <strong>SPECTRE.IADS:setSkynetUpdateInterval(IADS, interval)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#177">line 177</a>
+    <a style="float:right;" href="../source/IADS.lua.html#211">line 211</a>
     </dt>
     <dd>
     Set Skynet update interval in IADS.
@@ -800,7 +798,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:setUpdateInterval"></a>
     <strong>SPECTRE.IADS:setUpdateInterval(IADS, interval, nudge)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#189">line 189</a>
+    <a style="float:right;" href="../source/IADS.lua.html#223">line 223</a>
     </dt>
     <dd>
     Set the update interval and nudge factor for IADS.
@@ -842,7 +840,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM.ActAsEW"></a>
     <strong>SPECTRE.IADS.SAM.ActAsEW</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#266">line 266</a>
+    <a style="float:right;" href="../source/IADS.lua.html#307">line 307</a>
     </dt>
     <dd>
     Act As Early Warning.
@@ -859,7 +857,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM.CanEngageAirWeapons"></a>
     <strong>SPECTRE.IADS.SAM.CanEngageAirWeapons</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#278">line 278</a>
+    <a style="float:right;" href="../source/IADS.lua.html#319">line 319</a>
     </dt>
     <dd>
     Can Engage Air Weapons.
@@ -876,7 +874,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM.CanEngageHARMS"></a>
     <strong>SPECTRE.IADS.SAM.CanEngageHARMS</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#282">line 282</a>
+    <a style="float:right;" href="../source/IADS.lua.html#323">line 323</a>
     </dt>
     <dd>
     Can Engage HARM Missiles.
@@ -893,7 +891,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM.SkynetObj"></a>
     <strong>SPECTRE.IADS.SAM.SkynetObj</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#262">line 262</a>
+    <a style="float:right;" href="../source/IADS.lua.html#303">line 303</a>
     </dt>
     <dd>
     Skynet SAM Object.
@@ -910,7 +908,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM.goLiveZone"></a>
     <strong>SPECTRE.IADS.SAM.goLiveZone</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#270">line 270</a>
+    <a style="float:right;" href="../source/IADS.lua.html#311">line 311</a>
     </dt>
     <dd>
     Go Live Zone.
@@ -927,7 +925,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM.groupName"></a>
     <strong>SPECTRE.IADS.SAM.groupName</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#258">line 258</a>
+    <a style="float:right;" href="../source/IADS.lua.html#299">line 299</a>
     </dt>
     <dd>
     SAM Group Name.
@@ -944,7 +942,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM.type"></a>
     <strong>SPECTRE.IADS.SAM.type</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#254">line 254</a>
+    <a style="float:right;" href="../source/IADS.lua.html#295">line 295</a>
     </dt>
     <dd>
     SAM Type.
@@ -961,7 +959,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.SAM:New"></a>
     <strong>SPECTRE.IADS.SAM:New(_Name, _SAMTYPE, IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#292">line 292</a>
+    <a style="float:right;" href="../source/IADS.lua.html#333">line 333</a>
     </dt>
     <dd>
     Create a new SAM object.
@@ -1007,7 +1005,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.EWR.SkynetObj"></a>
     <strong>SPECTRE.IADS.EWR.SkynetObj</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#341">line 341</a>
+    <a style="float:right;" href="../source/IADS.lua.html#382">line 382</a>
     </dt>
     <dd>
     Skynet EWR Object.
@@ -1024,7 +1022,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.EWR.goLiveZone"></a>
     <strong>SPECTRE.IADS.EWR.goLiveZone</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#345">line 345</a>
+    <a style="float:right;" href="../source/IADS.lua.html#386">line 386</a>
     </dt>
     <dd>
     Go Live Zone.
@@ -1041,7 +1039,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.EWR.groupName"></a>
     <strong>SPECTRE.IADS.EWR.groupName</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#333">line 333</a>
+    <a style="float:right;" href="../source/IADS.lua.html#374">line 374</a>
     </dt>
     <dd>
     EWR Group Name.
@@ -1058,7 +1056,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.EWR.unitName"></a>
     <strong>SPECTRE.IADS.EWR.unitName</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#337">line 337</a>
+    <a style="float:right;" href="../source/IADS.lua.html#378">line 378</a>
     </dt>
     <dd>
     EWR Unit Name.
@@ -1075,7 +1073,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS.EWR:New"></a>
     <strong>SPECTRE.IADS.EWR:New(_groupName, _unitName, IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#359">line 359</a>
+    <a style="float:right;" href="../source/IADS.lua.html#400">line 400</a>
     </dt>
     <dd>
     Create a new EWR object.
@@ -1128,7 +1126,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:addNewEWRs"></a>
     <strong>SPECTRE.IADS:addNewEWRs(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#530">line 530</a>
+    <a style="float:right;" href="../source/IADS.lua.html#600">line 600</a>
     </dt>
     <dd>
     Add new Early Warning Radars (EWRs) to the IADS.
@@ -1160,7 +1158,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:addNewSAMs"></a>
     <strong>SPECTRE.IADS:addNewSAMs(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#510">line 510</a>
+    <a style="float:right;" href="../source/IADS.lua.html#572">line 572</a>
     </dt>
     <dd>
     Add new SAM sites to the IADS.
@@ -1192,7 +1190,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:classifyGroups"></a>
     <strong>SPECTRE.IADS:classifyGroups(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#440">line 440</a>
+    <a style="float:right;" href="../source/IADS.lua.html#499">line 499</a>
     </dt>
     <dd>
     Classify groups based on their attributes.
@@ -1223,7 +1221,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
     <dt>
     <a name = "SPECTRE.IADS:getGroupAttributes"></a>
     <strong>SPECTRE.IADS:getGroupAttributes(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#426">line 426</a>
+    <a style="float:right;" href="../source/IADS.lua.html#485">line 485</a>
     </dt>
     <dd>
     Retrieve and store attributes of groups.
@@ -1252,9 +1250,9 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
 
 </dd>
     <dt>
-    <a name = "SPECTRE.IADS:getGroupsInZONEMGR"></a>
-    <strong>SPECTRE.IADS:getGroupsInZONEMGR(IADS)</strong>
-    <a style="float:right;" href="../source/IADS.lua.html#393">line 393</a>
+    <a name = "SPECTRE.IADS:getGroupsInZones"></a>
+    <strong>SPECTRE.IADS:getGroupsInZones(IADS)</strong>
+    <a style="float:right;" href="../source/IADS.lua.html#434">line 434</a>
     </dt>
     <dd>
     Retrieve and store the names of groups within ZONEMGR.
@@ -1290,7 +1288,7 @@ expanding the scope <span class="keyword">and</span> interoperability of air def
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-12-14 19:20:31 </i>
+<i style="float:right;">Last updated 2024-01-06 07:03:52 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

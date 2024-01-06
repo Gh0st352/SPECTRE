@@ -848,15 +848,19 @@
 </span>  <span class="comment">--    alias_ = SPECTRE.MENU.Settings[Type].TemplateName.Blue or "ALIAS_"
 </span>  <span class="comment">--  end
 </span>
+
   <span class="comment">-- Define specific alias values for STRIKE and AIRDROP types
 </span>  <span class="keyword">if</span> Type == <span class="string">"STRIKE"</span> <span class="keyword">then</span>
     alias_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.MENU.Settings[Type].Transport.TemplateName.Red <span class="keyword">or</span> SPECTRE.MENU.Settings[Type].Transport.TemplateName.Blue
     aliasDropped_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.MENU.Settings[Type].Units.TemplateName.Red <span class="keyword">or</span> SPECTRE.MENU.Settings[Type].Units.TemplateName.Blue
   <span class="keyword">elseif</span> Type == <span class="string">"AIRDROP"</span> <span class="keyword">then</span>
+    alias_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.MENU.Settings[Type].TemplateName.Red <span class="keyword">or</span> SPECTRE.MENU.Settings[Type].TemplateName.Blue
     aliasDropped_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.MENU.Settings[Type].Types[Packet.subtype_].TemplateName.Red <span class="keyword">or</span> SPECTRE.MENU.Settings[Type].Types[Packet.subtype_].TemplateName.Blue
+  <span class="keyword">else</span>
+    alias_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.MENU.Settings[Type].TemplateName.Red <span class="keyword">or</span> SPECTRE.MENU.Settings[Type].TemplateName.Blue
   <span class="keyword">end</span>
-    coal_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.Coalitions.Red <span class="keyword">or</span> SPECTRE.Coalitions.Blue
-    country_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.Countries.Red <span class="keyword">or</span> SPECTRE.Countries.Blue
+  coal_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.Coalitions.Red <span class="keyword">or</span> SPECTRE.Coalitions.Blue
+  country_ = PlayerSide == <span class="number">1</span> <span class="keyword">and</span> SPECTRE.Countries.Red <span class="keyword">or</span> SPECTRE.Countries.Blue
   <span class="comment">-- Update the Packet with the determined values
 </span>  Packet.coal_ = coal_
   Packet.country_ = country_
@@ -877,7 +881,7 @@
 </span><span class="comment">-- @param Player The player object.
 </span><span class="comment">-- @param MarkerIndex Index of the marker for which the CAP packet is to be built.
 </span><span class="comment">-- @return route The constructed CAP data packet.
-</span><a id="799"></a><span class="comment">-- @usage local capPacket = SPECTRE.AI.buildPacket.CAP(somePlayer, markerIdx)
+</span><a id="803"></a><span class="comment">-- @usage local capPacket = SPECTRE.AI.buildPacket.CAP(somePlayer, markerIdx)
 </span><span class="keyword">function</span> SPECTRE.AI.buildPacket.CAP(Player, MarkerIndex)
   <span class="comment">-- Initial default values for the Packet
 </span>  <span class="keyword">local</span> Packet = {
@@ -925,7 +929,7 @@
 </span><span class="comment">-- @param Player The player object.
 </span><span class="comment">-- @param MarkerIndex Index of the marker for which the TOMAHAWK packet is to be built.
 </span><span class="comment">-- @return route The constructed TOMAHAWK data packet.
-</span><a id="847"></a><span class="comment">-- @usage local tomahawkPacket = SPECTRE.AI.buildPacket.TOMAHAWK(somePlayer, markerIdx)
+</span><a id="851"></a><span class="comment">-- @usage local tomahawkPacket = SPECTRE.AI.buildPacket.TOMAHAWK(somePlayer, markerIdx)
 </span><span class="keyword">function</span> SPECTRE.AI.buildPacket.TOMAHAWK(Player, MarkerIndex)
   <span class="comment">-- Initial default value for the Packet
 </span>  <span class="keyword">local</span> Packet = {
@@ -949,7 +953,7 @@
 </span><span class="comment">-- @param Player The player object.
 </span><span class="comment">-- @param MarkerIndex Index of the marker for which the BOMBER packet is to be built.
 </span><span class="comment">-- @return route The constructed BOMBER data packet.
-</span><a id="871"></a><span class="comment">-- @usage local bomberPacket = SPECTRE.AI.buildPacket.BOMBER(somePlayer, markerIdx)
+</span><a id="875"></a><span class="comment">-- @usage local bomberPacket = SPECTRE.AI.buildPacket.BOMBER(somePlayer, markerIdx)
 </span><span class="keyword">function</span> SPECTRE.AI.buildPacket.BOMBER(Player, MarkerIndex)
 
 
@@ -1010,7 +1014,7 @@
 </span><span class="comment">-- @param Player The player object.
 </span><span class="comment">-- @param MarkerIndex Index of the marker for which the STRIKE packet is to be built.
 </span><span class="comment">-- @return route The constructed STRIKE data packet.
-</span><a id="932"></a><span class="comment">-- @usage local strikePacket = SPECTRE.AI.buildPacket.STRIKE(somePlayer, markerIdx)
+</span><a id="936"></a><span class="comment">-- @usage local strikePacket = SPECTRE.AI.buildPacket.STRIKE(somePlayer, markerIdx)
 </span><span class="keyword">function</span> SPECTRE.AI.buildPacket.STRIKE(Player, MarkerIndex)
   <span class="comment">-- Initial default value for the Packet
 </span>  <span class="keyword">local</span> Packet = {
@@ -1057,7 +1061,7 @@
 </span><span class="comment">-- @param Player The player object.
 </span><span class="comment">-- @param MarkerIndex Index of the marker for which the AIRDROP packet is to be constructed.
 </span><span class="comment">-- @return route The constructed AIRDROP data packet.
-</span><a id="979"></a><span class="comment">-- @usage local airdropPacket = SPECTRE.AI.buildPacket.AIRDROP(somePlayer, markerIdx)
+</span><a id="983"></a><span class="comment">-- @usage local airdropPacket = SPECTRE.AI.buildPacket.AIRDROP(somePlayer, markerIdx)
 </span><span class="keyword">function</span> SPECTRE.AI.buildPacket.AIRDROP(Player, MarkerIndex)
   <span class="comment">-- Initialize default values for the Packet
 </span>  <span class="keyword">local</span> Packet = {
@@ -1126,7 +1130,7 @@
 </span><span class="comment">-- @param spawnGroup_ The group for which the CAP route is to be constructed.
 </span><span class="comment">-- @param Packet The data packet containing details for route construction.
 </span><span class="comment">-- @return route The constructed CAP route.
-</span><a id="1048"></a><span class="comment">-- @usage local capRoute = SPECTRE.AI.buildRoute.CAP(someGroup, somePacket)
+</span><a id="1052"></a><span class="comment">-- @usage local capRoute = SPECTRE.AI.buildRoute.CAP(someGroup, somePacket)
 </span><span class="keyword">function</span> SPECTRE.AI.buildRoute.CAP(spawnGroup_, Packet)
 
   <span class="comment">-- Define altitude based on the inbound waypoint's altitude
@@ -1170,7 +1174,7 @@
 </span><span class="comment">-- @param spawnGroup_ The group for which the bomber route is to be constructed.
 </span><span class="comment">-- @param Packet The data packet containing details for route construction.
 </span><span class="comment">-- @return route The constructed bomber route.
-</span><a id="1092"></a><span class="comment">-- @usage local bomberRoute = SPECTRE.AI.buildRoute.BOMBER(someGroup, somePacket)
+</span><a id="1096"></a><span class="comment">-- @usage local bomberRoute = SPECTRE.AI.buildRoute.BOMBER(someGroup, somePacket)
 </span><span class="keyword">function</span> SPECTRE.AI.buildRoute.BOMBER(spawnGroup_, Packet)
 
   <span class="comment">-- Define the waypoints for the route
@@ -1191,7 +1195,7 @@
 </span><span class="comment">-- @param spawnGroup_ The group for which the strike route is to be constructed.
 </span><span class="comment">-- @param Packet The data packet containing details for route construction.
 </span><span class="comment">-- @return route The constructed strike route.
-</span><a id="1113"></a><span class="comment">-- @usage local strikeRoute = SPECTRE.AI.buildRoute.STRIKE(someGroup, somePacket)
+</span><a id="1117"></a><span class="comment">-- @usage local strikeRoute = SPECTRE.AI.buildRoute.STRIKE(someGroup, somePacket)
 </span><span class="keyword">function</span> SPECTRE.AI.buildRoute.STRIKE(spawnGroup_, Packet)
 
   <span class="comment">-- Define the waypoints for the strike route
@@ -1214,7 +1218,7 @@
 </span><span class="comment">-- @param spawnGroup_ The group that will execute the airdrop operation.
 </span><span class="comment">-- @param Packet The data packet containing details for route construction.
 </span><span class="comment">-- @return route The constructed airdrop route.
-</span><a id="1136"></a><span class="comment">-- @usage local airdropRoute = SPECTRE.AI.buildRoute.AIRDROP(someGroup, somePacket)
+</span><a id="1140"></a><span class="comment">-- @usage local airdropRoute = SPECTRE.AI.buildRoute.AIRDROP(someGroup, somePacket)
 </span><span class="keyword">function</span> SPECTRE.AI.buildRoute.AIRDROP(spawnGroup_, Packet)
 
   <span class="comment">-- Define the waypoints for the airdrop route
@@ -1235,7 +1239,7 @@
 </div> <!-- id="main" -->
 <div id="about">
 <i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2023-12-14 19:20:31 </i>
+<i style="float:right;">Last updated 2024-01-06 07:03:52 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>
