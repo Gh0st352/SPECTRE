@@ -5,7 +5,7 @@
 -- ------------------------------------------------------------------------------------------
 -- 
 -- S. - Special         |
--- P. - Purpose         | CompileTime : Saturday, June 29, 2024 1:04:15 PM
+-- P. - Purpose         | CompileTime : Saturday, July 27, 2024 5:53:43 PM
 -- E. - Extension for   |      Commit : 6adc313af566c4a566e5aefe11b85fc2bd03d026
 -- C. - Creating        |	    Version : 0.9.9
 -- T. - Truly           |      Github : https://github.com/Gh0st352
@@ -161,7 +161,9 @@ SPECTRE._masterProfileFile = "SPECTRE.lua"
 
 --- User-defined storage within SPECTRE.
 SPECTRE.USERSTORAGE = {}
-
+SPECTRE._SPECTREAUTOSAVEZONES = {}
+SPECTRE._SPECTREAUTOSAVEARRAY = {}
+SPECTRE._SPECTREAUTOSAVEARRAYOBJ = {}
 SPECTRE.SaveData = {
   _persistence = "",
   _loaded = "",
@@ -264,6 +266,14 @@ end
 -- @return #SPECTRE self
 function SPECTRE:setTerrainTheChannel()
   self.MAPNAME = "TheChannel"
+  return self
+end
+
+-- Sets SPECTRE to use the proper terrain info.
+-- @param #SPECTRE
+-- @return #SPECTRE self
+function SPECTRE:setTerrainAfghanistan()
+  self.MAPNAME = "Afghanistan"
   return self
 end
 
@@ -413,15 +423,128 @@ function SPECTRE:EndMissionSave()
   SPECTRE.UTILS.debugInfo("SPECTRE:_EndMission | PERSISTENCE | _missionInProgress: " .. tostring(self._missionInProgress))
   SPECTRE.UTILS.debugInfo("SPECTRE:_EndMission | PERSISTENCE | _firstRun:          " .. tostring(self._firstRun))
   SPECTRE.IO.PersistenceToFile(self._masterProfileFile, SPECTRE_SaveData, true)
+  trigger.action.outText("Saving Engine State Complete.", 2)
+  -- trigger.action.outText("Autosaving campaign state complete.", 10)
+  return self
+end
+
+function SPECTRE:AutoMissionSave(USERSTORAGE)
+  USERSTORAGE = USERSTORAGE or false
+
+  if self._firstRun == true then self._firstRun = false end
+  if self._missionInProgress == false then self._firstRun = true end
+  -- Collect self and center thoughts for the next go.
+  SPECTRE.UTILS.debugInfo("SPECTRE:_EndMission | PERSISTENCE | Saving Data... ")
+
+  local SPECTRE_SaveData = {}
 
 
+  SPECTRE_SaveData = {
+    _persistence = self._persistence,
+    _loaded = self._loaded,
+    _firstRun = self._firstRun,
+    _missionInProgress = self._missionInProgress,
+    _persistenceLocations = self._persistenceLocations,
+    COUNTER = self.COUNTER,
+    Coalitions = self.Coalitions,
+    Countries = self.Countries,
+  --USERSTORAGE = self.USERSTORAGE
+  }
+  if USERSTORAGE then
+    SPECTRE_SaveData.USERSTORAGE = {}
+    SPECTRE_SaveData.USERSTORAGE = self.USERSTORAGE
+  end
+
+--self.SaveData =  SPECTRE_SaveData
+
+  --  self.SaveData = {
+  --    _persistence = self._persistence,
+  --    _loaded = self._loaded,
+  --    _firstRun = self._firstRun,
+  --    _missionInProgress = self._missionInProgress,
+  --    _persistenceLocations = self._persistenceLocations,
+  --    COUNTER = self.COUNTER,
+  --    Coalitions = self.Coalitions,
+  --    Countries = self.Countries,
+  --    --USERSTORAGE = self.USERSTORAGE
+  --  }
+  --if USERSTORAGE then
+  --self.SaveData.USERSTORAGE = {}
+  --self.SaveData.USERSTORAGE = self.USERSTORAGE
+  --end
+  --
+  --  local SPECTRE_SaveData = self.SaveData
+
+
+  --SPECTRE_SaveData.ZONEMGR = {}
+  --SPECTRE_SaveData.ZONEMGR = SPECTRE.UTILS.templateFromObject(self.ZONEMGR)
+
+
+
+  --SPECTRE.UTILS.templateFromObject(self.SaveData)
+
+  SPECTRE.UTILS.debugInfo("SPECTRE:_EndMission | PERSISTENCE | Exporting self... ")
+  SPECTRE.UTILS.debugInfo("SPECTRE:_EndMission | PERSISTENCE | Saving To:          " .. self._masterProfileFile)
+  SPECTRE.UTILS.debugInfo("SPECTRE:_EndMission | PERSISTENCE | _missionInProgress: " .. tostring(self._missionInProgress))
+  SPECTRE.UTILS.debugInfo("SPECTRE:_EndMission | PERSISTENCE | _firstRun:          " .. tostring(self._firstRun))
+  SPECTRE.IO.PersistenceToFile(self._masterProfileFile, SPECTRE_SaveData, true)
+  --trigger.action.outText("Saving Engine State Complete.", 2)
+  --trigger.action.outText("Autosaving campaign state complete.", 10)
   return self
 end
 
 
+function SPECTRE:InitAutoSave(autosaveInterval, zoneSaves)
+  zoneSaves = zoneSaves or nil
+  SPECTRE._SPECTREAUTOSAVEZONES = zoneSaves
+
+  if zoneSaves == nil then
+    SPECTRE_AUTOSAVE_SCHEDULEROBJ = SCHEDULER:New()
+    SPECTRE_AUTOSAVE_SCHEDULER = SPECTRE_AUTOSAVE_SCHEDULEROBJ:Schedule(nil, function()
+      trigger.action.outText("Autosaving campaign state | Server may lag.", 15)
+      trigger.action.outText("Saving unit states...", 5)
+      SPECTRE.MISSION.SaveState()
+      trigger.action.outText("Saving unit states complete.", 5)
+      trigger.action.outText("Saving Engine State...", 10)
+      SPECTRE:EndMissionSave()
+      trigger.action.outText("Saving Engine State Complete.", 2)
+      trigger.action.outText("Autosaving campaign state complete. Server may lag for a bit.", 10)
+    end, {}, autosaveInterval, autosaveInterval)
+  else
+    local _counter = 1
+    for _,zoneName_ in ipairs(zoneSaves) do
+      local _saveInterval = (autosaveInterval/#zoneSaves) * _counter--(autosaveInterval/#zoneSaves)+(#zoneSaves*_counter)
+      SPECTRE._SPECTREAUTOSAVEARRAYOBJ[zoneName_] = SCHEDULER:New()
+      SPECTRE._SPECTREAUTOSAVEARRAY[zoneName_] = SPECTRE._SPECTREAUTOSAVEARRAYOBJ[zoneName_]:Schedule(nil, function()
+        SPECTRE.MISSION.SaveState(zoneName_)
+      end, {}, _saveInterval, autosaveInterval)
+      _counter = _counter + 1
+    end
 
 
+    local _saveInterval = (((autosaveInterval/#zoneSaves) * #zoneSaves)*.975)
+    SPECTRE._SPECTREAUTOSAVEARRAYOBJ["self"] = SCHEDULER:New()
+    SPECTRE._SPECTREAUTOSAVEARRAY["self"] = SPECTRE._SPECTREAUTOSAVEARRAYOBJ["self"]:Schedule(nil, function()
+      SPECTRE:AutoMissionSave()
+    end, {}, _saveInterval, autosaveInterval)
 
+    --    local _saveInterval = (((autosaveInterval/#zoneSaves) * #zoneSaves)*.975)
+    --    SPECTRE._SPECTREAUTOSAVEARRAYOBJ["self"] = SCHEDULER:New()
+    --    SPECTRE._SPECTREAUTOSAVEARRAY["self"] = SPECTRE._SPECTREAUTOSAVEARRAYOBJ["self"]:Schedule(nil, function()
+    --      SPECTRE:AutoMissionSave()
+    --    end, {}, _saveInterval, autosaveInterval)
+
+    -- trigger.action.outText("Autosaving campaign state | Server may lag.", 15)
+    -- trigger.action.outText("Saving unit states...", 5)
+    --trigger.action.outText("Saving unit states complete.", 5)
+    --trigger.action.outText("Saving Engine State...", 10)
+
+    --        local SPECTRE_AUTOSAVE_SCHEDULER_TIMER_SELF = TIMER:New(function()
+    --          SPECTRE:AutoMissionSave()
+    --        end)
+    --SPECTRE_AUTOSAVE_SCHEDULER_TIMER_SELF:Start(65)
+  end
+end
 --- **AI**
 --
 -- Automated AI Handling.
@@ -1544,9 +1667,9 @@ function SPECTRE.AI.buildRoute.BOMBER(spawnGroup_, Packet)
   -- Define the waypoints for the route
   local route = {
     -- Initial Point (IP) or ingress point for the bomber to begin its attack run
-    Packet.wptIP:WaypointAirTurningPoint(COORDINATE.WaypointAltType.BARO, UTILS.KnotsToKmph(550), {Packet.bombTask}, "Attack Ingress"),
+    Packet.wptIP:WaypointAirTurningPoint(COORDINATE.WaypointAltType.BARO, UTILS.KnotsToKmph(1000), {Packet.bombTask}, "Attack Ingress"),
     -- Outbound waypoint or end point after the attack is completed
-    Packet.wptOutboundToD:WaypointAirTurningPoint(COORDINATE.WaypointAltType.BARO, UTILS.KnotsToKmph(550), {}, "End Mission")
+    Packet.wptOutboundToD:WaypointAirTurningPoint(COORDINATE.WaypointAltType.BARO, UTILS.KnotsToKmph(1000), {}, "End Mission")
   }
 
   return route
@@ -4602,12 +4725,12 @@ function SPECTRE.MISSION.RestartTimer(timeToRestart_Seconds, restartUserFlag)
         -- __group.TaskEmptyTask()--:ClearTasks()
         local Command = __group:CommandStopRoute( true )
         __group:RouteStop()
---        __group:SetCommand(Command)
---        __group:TaskHold()
---        __group:PopCurrentTask()
---        __group:TaskEmptyTask()
---        __group:ClearTasks()
---        __group:Destroy(true)
+        --        __group:SetCommand(Command)
+        --        __group:TaskHold()
+        --        __group:PopCurrentTask()
+        --        __group:TaskEmptyTask()
+        --        __group:ClearTasks()
+        --        __group:Destroy(true)
       end
       if SPECTRE.AI._taskSchedFlag == true then SPECTRE.AI._taskSched:Stop() end
       SET_GROUP:New():FilterAlive():ForEachGroup(StopTasks)
@@ -4621,7 +4744,14 @@ function SPECTRE.MISSION.RestartTimer(timeToRestart_Seconds, restartUserFlag)
       -- GROUP:PopCurrentTask()
       -- GROUP:TaskEmptyTask()
       if SPECTRE.MISSION.SaveUnits_ then
-        SPECTRE.MISSION.SaveState()
+        if SPECTRE._SPECTREAUTOSAVEZONES == nil then
+          SPECTRE.MISSION.SaveState()
+        else
+          for _,zoneName_ in ipairs(SPECTRE._SPECTREAUTOSAVEZONES) do
+            SPECTRE._SPECTREAUTOSAVEARRAYOBJ[zoneName_]:Stop()
+            SPECTRE.MISSION.SaveState(zoneName_)
+          end
+        end
         --        local function StopTasks (__group)
         --          -- __group.TaskEmptyTask()--:ClearTasks()
         --          local Command = __group:CommandStopRoute( true )
@@ -4674,190 +4804,76 @@ function SPECTRE.MISSION.RestartTimer(timeToRestart_Seconds, restartUserFlag)
   end):Start(timeToRestart_Seconds)
 end
 
-function SPECTRE.MISSION.SaveGroups(category, storagePath)
-  local _GroupsRed = SPECTRE.WORLD.getGroupsForCoalition(coalition.side.RED, category)
-  local _GroupsBlue = SPECTRE.WORLD.getGroupsForCoalition(coalition.side.BLUE, category)
-  SPECTRE.IO.PersistenceToFile(storagePath .. "groupsRed.lua", _GroupsRed, true)
-  SPECTRE.IO.PersistenceToFile(storagePath .. "groupsBlue.lua", _GroupsBlue, true)
-end
+function SPECTRE.MISSION.SaveGroups(category, storagePath, zoneName)
+  zoneName = zoneName or nil
 
-
-function SPECTRE.MISSION.SpawnSavedGroups()
-  -- Ground
-  local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "ground/"
-  local _GroupsRed = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsRed.lua")
-  local _GroupsBlue = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsBlue.lua")
-
-  SPECTRE.SPAWNER.SpawnSavedGroups(_GroupsRed)
-  SPECTRE.SPAWNER.SpawnSavedGroups(_GroupsBlue)
-
-  -- Naval
-  local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "naval/"
-  local _NavalGroupsRed = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsRed.lua")
-  local _NavalGroupsBlue = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsBlue.lua")
-
-  SPECTRE.SPAWNER.SpawnSavedGroups(_NavalGroupsRed)
-  SPECTRE.SPAWNER.SpawnSavedGroups(_NavalGroupsBlue)
+  if zoneName == nil then
+    local _GroupsRed = SPECTRE.WORLD.getGroupsForCoalition(coalition.side.RED, category)
+    local _GroupsBlue = SPECTRE.WORLD.getGroupsForCoalition(coalition.side.BLUE, category)
+    SPECTRE.IO.PersistenceToFile(storagePath .. "groupsRed.lua", _GroupsRed, true)
+    SPECTRE.IO.PersistenceToFile(storagePath .. "groupsBlue.lua", _GroupsBlue, true)
+  else
+    local _GroupsRed = SPECTRE.WORLD.getGroupsForCoalition_Zone(coalition.side.RED, category,zoneName)
+    local _GroupsBlue = SPECTRE.WORLD.getGroupsForCoalition_Zone(coalition.side.BLUE, category,zoneName)
+    SPECTRE.IO.PersistenceToFile(storagePath .. zoneName .. "_groupsRed.lua", _GroupsRed, true)
+    SPECTRE.IO.PersistenceToFile(storagePath .. zoneName .. "_groupsBlue.lua", _GroupsBlue, true)
+  end
 
 end
 
-function SPECTRE.MISSION.SaveState()
-  trigger.action.outText("Saving mission...", 30)
-  -- Ground
-  local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "ground/"
-  local category = Group.Category.GROUND
-  SPECTRE.MISSION.SaveGroups(category, groundPath)
 
-  -- Naval
-  local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "naval/"
-  local category = Group.Category.SHIP
-  SPECTRE.MISSION.SaveGroups(category, groundPath)
-  trigger.action.outText("Saving complete.", 30)
+function SPECTRE.MISSION.SpawnSavedGroups(zoneNames)
+  zoneNames = zoneNames or nil
+
+  if zoneNames == nil then
+    -- Ground
+    local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "ground/"
+    local _GroupsRed = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsRed.lua")
+    local _GroupsBlue = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsBlue.lua")
+
+    SPECTRE.SPAWNER.SpawnSavedGroups(_GroupsRed)
+    SPECTRE.SPAWNER.SpawnSavedGroups(_GroupsBlue)
+
+  else
+    for _,zoneName_ in ipairs(zoneNames) do
+      -- Ground
+      local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "ground/"
+      local _GroupsRed = SPECTRE.IO.PersistenceFromFile(groundPath .. zoneName_ .. "_groupsRed.lua")
+      local _GroupsBlue = SPECTRE.IO.PersistenceFromFile(groundPath .. zoneName_ .."_groupsBlue.lua")
+      SPECTRE.SPAWNER.SpawnSavedGroups(_GroupsRed)
+      SPECTRE.SPAWNER.SpawnSavedGroups(_GroupsBlue)
+    end
+
+  end
+  --  -- Naval
+  --  local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "naval/"
+  --  local _NavalGroupsRed = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsRed.lua")
+  --  local _NavalGroupsBlue = SPECTRE.IO.PersistenceFromFile(groundPath .. "groupsBlue.lua")
+  --
+  --  SPECTRE.SPAWNER.SpawnSavedGroups(_NavalGroupsRed)
+  --  SPECTRE.SPAWNER.SpawnSavedGroups(_NavalGroupsBlue)
+
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function SPECTRE.MISSION.SaveState(zoneName)
+  zoneName = zoneName or nil
+  if zoneName == nil then
+    -- Ground
+    local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "ground/"
+    local category = Group.Category.GROUND
+    SPECTRE.MISSION.SaveGroups(category, groundPath)
+  else
+    local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "ground/"
+    local category = Group.Category.GROUND
+    SPECTRE.MISSION.SaveGroups(category, groundPath, zoneName)
+    --trigger.action.outText("Saving unit states for:" .. zoneName .. " complete.", 5)
+
+  end
+  --  -- Naval
+  --  local groundPath = SPECTRE._persistenceLocations._SavedState.path .. "naval/"
+  --  local category = Group.Category.SHIP
+  --  SPECTRE.MISSION.SaveGroups(category, groundPath)
+end
 
 -- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ --
 
@@ -5744,7 +5760,7 @@ function SPECTRE.PLYRMGR:EndMission_(eventData)
   -- Store the ground resource data
   SPECTRE.IO.PersistenceToFile(SPECTRE._persistenceLocations.PLYRMGR.path .. "SupportResources/GroundResources.lua", self.RESOURCES.AIRDROP, true)
   return self
-  
+
 end
 
 --- Event handler for the "PlayerEnterAircraft" event.
@@ -5758,25 +5774,35 @@ end
 -- @param eventData Data associated with the "PlayerEnterAircraft" event, including the player's details.
 -- @return #PLYRMGR self The player manager instance after handling the "PlayerEnterAircraft" event.
 function SPECTRE.PLYRMGR:PlayerEnterAircraft_(eventData)
-if eventData.IniPlayerName ~= nil then
-  -- Retrieve the player's information using their name from the event data
-  local PlayerInfo = SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName)
-  local PlayerUCID = PlayerInfo.ucid
+  SPECTRE.UTILS.debugInfo("SPECTRE.PLYRMGR:PlayerEnterAircraft_",eventData)
+  if eventData.IniPlayerName ~= nil then
+    SPECTRE.UTILS.debugInfo("eventData.IniPlayerName",eventData.IniPlayerName)
+    -- Retrieve the player's information using their name from the event data
+    local PlayerInfo = SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName)
 
-  -- If the player doesn't already exist in the manager's player table, create a new entry for them
-  if not self.Players[PlayerUCID] then
-    self.Players[PlayerUCID] = self.Player:New(PlayerInfo, self):ImportData()
+    if PlayerInfo == nil then SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName) end
+    if PlayerInfo == nil then SPECTRE.UTILS.GetPlayerInfo(eventData.initiatorPilotName) end
+    if PlayerInfo == nil then return self end
+
+    SPECTRE.UTILS.debugInfo("PlayerInfo",PlayerInfo)
+
+    local PlayerUCID = PlayerInfo.ucid
+    SPECTRE.UTILS.debugInfo("PlayerUCID",PlayerUCID)
+
+    -- If the player doesn't already exist in the manager's player table, create a new entry for them
+    if not self.Players[PlayerUCID] then
+      self.Players[PlayerUCID] = self.Player:New(PlayerInfo, self):ImportData()
+    end
+
+    -- Update the player's slot data and send them a welcome message
+    self.Players[PlayerUCID]:SlotDataUpdate(eventData)
+    self.Players[PlayerUCID]:WelcomeMessage()
+
+    -- If any support options are enabled, set up the support menu for the player
+    if self:anySupportOn() then
+      self.Players[PlayerUCID]:setupMenu(self)
+    end
   end
-
-  -- Update the player's slot data and send them a welcome message
-  self.Players[PlayerUCID]:SlotDataUpdate(eventData)
-  self.Players[PlayerUCID]:WelcomeMessage()
-
-  -- If any support options are enabled, set up the support menu for the player
-  if self:anySupportOn() then
-    self.Players[PlayerUCID]:setupMenu(self)
-  end
-end
   return self
 end
 
@@ -5795,6 +5821,9 @@ function SPECTRE.PLYRMGR:PlayerLeaveUnit_(eventData)
   if eventData.IniPlayerName ~= nil then
     -- Retrieve the player's information using their name from the event data
     local PlayerInfo = SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName)
+    if PlayerInfo == nil then SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName) end
+    if PlayerInfo == nil then SPECTRE.UTILS.GetPlayerInfo(eventData.initiatorPilotName) end
+    if PlayerInfo == nil then return self end
     local PlayerUCID = PlayerInfo.ucid
 
     -- If the player exists in the manager's player table
@@ -5824,6 +5853,9 @@ function SPECTRE.PLYRMGR:CrashEvent_(eventData)
   if eventData.IniPlayerName ~= nil then
     -- Retrieve the player's information using their name from the event data
     local PlayerInfo = SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName)
+    if PlayerInfo == nil then SPECTRE.UTILS.GetPlayerInfo(eventData.IniPlayerName) end
+    if PlayerInfo == nil then SPECTRE.UTILS.GetPlayerInfo(eventData.initiatorPilotName) end
+    if PlayerInfo == nil then return self end
     local PlayerUCID = PlayerInfo.ucid
 
     -- If the player exists in the manager's player table, store their data
@@ -5863,8 +5895,8 @@ function SPECTRE.PLYRMGR:EndMizResourceCollate()
       -- If the support type is not AIRDROP, update the Red and Blue resources directly
       if supportType ~= "AIRDROP" then
 
---        self.RESOURCES[supportType].Red = self.RESOURCES[supportType].Red + self.COUNTERS.RESTOCK[supportType].Red
---        self.RESOURCES[supportType].Blue = self.RESOURCES[supportType].Blue + self.COUNTERS.RESTOCK[supportType].Blue
+      --        self.RESOURCES[supportType].Red = self.RESOURCES[supportType].Red + self.COUNTERS.RESTOCK[supportType].Red
+      --        self.RESOURCES[supportType].Blue = self.RESOURCES[supportType].Blue + self.COUNTERS.RESTOCK[supportType].Blue
       else
         SPECTRE.UTILS.debugInfo("SPECTRE.PLYRMGR:EndMizResourceCollate | AIRDROP.Types: " , self.MARKERS.Settings.AIRDROP.Types)
         -- If the support type is AIRDROP, iterate over the airdrop types and update their counts
@@ -6084,6 +6116,7 @@ function SPECTRE.PLYRMGR.SPAWNER:BOMBER(Player, MarkerIndex)
     :InitCoalition(Packet.coal_)
     :InitCountry(Packet.country_)
     :InitCleanUp(120)
+    :InitSpeedKnots(1000)
     :InitSkill("Excellent")
     :OnSpawnGroup(
       function(spawnGroup_, MANAGER)
@@ -11594,20 +11627,20 @@ function SPECTRE.UTILS.getIndex(tab, val)
 end
 
 function SPECTRE.UTILS.deepcopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-      copy = {}
-      for orig_key, orig_value in next, orig, nil do
-        copy[SPECTRE.UTILS.deepcopy(orig_key)] = SPECTRE.UTILS.deepcopy(orig_value)
-      end
-      setmetatable(copy, SPECTRE.UTILS.deepcopy(getmetatable(orig)))
-    else -- number, string, boolean, etc
-      copy = orig
+  local orig_type = type(orig)
+  local copy
+  if orig_type == 'table' then
+    copy = {}
+    for orig_key, orig_value in next, orig, nil do
+      copy[SPECTRE.UTILS.deepcopy(orig_key)] = SPECTRE.UTILS.deepcopy(orig_value)
     end
-    return copy
+    setmetatable(copy, SPECTRE.UTILS.deepcopy(getmetatable(orig)))
+  else -- number, string, boolean, etc
+    copy = orig
   end
-  
+  return copy
+end
+
 --- Removes a specified substring from a given string.
 --
 -- This function eliminates all occurrences of 'substr' from 'str'. It handles special characters in the substring by escaping them before removal. The removal process uses Lua's string.gsub function.
@@ -11629,8 +11662,8 @@ end
 --- Removes numerical identifiers from the end of a given string.
 --
 -- This function eliminates '#xxxxx' from the end of a string. Where 'xxxxx' are numbers.
--- 
--- 
+--
+--
 --
 -- @param str The original string from which the substring is to be removed.
 -- @return modifiedStr The modified string with '#xxxxx' removed.
@@ -11645,18 +11678,18 @@ end
 
 ---.
 function SPECTRE.UTILS.isTableValueInTable(tableA, tableB)
-    local setB = {}
-    for _, value in pairs(tableB) do
-        setB[value] = true
-    end
+  local setB = {}
+  for _, value in pairs(tableB) do
+    setB[value] = true
+  end
 
-    for _, value in pairs(tableA) do
-        if setB[value] then
-            return true
-        end
+  for _, value in pairs(tableA) do
+    if setB[value] then
+      return true
     end
+  end
 
-    return false
+  return false
 end
 
 --- Game Manipulation.
@@ -11747,12 +11780,20 @@ end
 -- @return information The requested information or nil if the player is not found.
 -- @usage local playerScore = SPECTRE.UTILS.GetPlayerInfo("JohnDoe", "ucid") -- Retrieves the ucid for the player "JohnDoe".
 function SPECTRE.UTILS.GetPlayerInfo(PlayerName, attribute)
+  SPECTRE.UTILS.debugInfo("SPECTRE.UTILS.GetPlayerInfo")
+  SPECTRE.UTILS.debugInfo("PlayerName",PlayerName)
+  SPECTRE.UTILS.debugInfo("attribute",attribute)
+
   if not PlayerName then return nil end
 
   local playerList = net.get_player_list()
-
+  
+  SPECTRE.UTILS.debugInfo("playerList",playerList)
+  
   for i=1, #playerList do
     local playerInfo = net.get_player_info(i)
+    SPECTRE.UTILS.debugInfo("playerInfo",playerInfo)
+    
     if playerInfo then
       if playerInfo.name then
         if playerInfo.name == PlayerName then
@@ -11821,10 +11862,10 @@ end
 
 --- Generates a nudge value based on a provided factor.
 --
--- This function calculates a nudge value within a dynamic range based on the 'NudgeFactor'. 
--- If 'NudgeFactor' is 1 or 0, it returns the 'NudgeFactor' itself. 
--- Otherwise, it calculates a random decimal between a lower and an upper bound, derived from 'NudgeFactor'. 
--- The lower bound is the greater of 'NudgeFactor' minus its square, and 0.01. 
+-- This function calculates a nudge value within a dynamic range based on the 'NudgeFactor'.
+-- If 'NudgeFactor' is 1 or 0, it returns the 'NudgeFactor' itself.
+-- Otherwise, it calculates a random decimal between a lower and an upper bound, derived from 'NudgeFactor'.
+-- The lower bound is the greater of 'NudgeFactor' minus its square, and 0.01.
 -- The upper bound is the lesser of 'NudgeFactor' plus its square, and 0.99.
 --
 -- @param NudgeFactor The factor based on which the nudge value is generated.
@@ -11850,8 +11891,8 @@ end
 
 --- Generates a random decimal number between two values.
 --
--- This function returns a random decimal number within the range of two specified values 'a' and 'b'. 
--- If 'a' is greater than 'b', their values are swapped to ensure a valid range. 
+-- This function returns a random decimal number within the range of two specified values 'a' and 'b'.
+-- If 'a' is greater than 'b', their values are swapped to ensure a valid range.
 -- It ensures randomness by calling 'math.random()' twice before calculation.
 --
 -- @param a The lower bound of the range.
@@ -11870,20 +11911,20 @@ end
 
 ---.
 function SPECTRE.UTILS.rollChance_TrueFalse(chance)
-    -- Generate a random number between 1 and 100
-    local roll = math.random(1, 100)
-    -- Convert the chance to a percentage
-    local threshold = chance * 100
-    -- Return true if the roll is less than or equal to the threshold
-    return roll <= threshold
+  -- Generate a random number between 1 and 100
+  local roll = math.random(1, 100)
+  -- Convert the chance to a percentage
+  local threshold = chance * 100
+  -- Return true if the roll is less than or equal to the threshold
+  return roll <= threshold
 end
 
 
 --- Generates a nominal value based on a given range, nudged by a specified factor.
 --
--- This function calculates a value within a range around 'Nominal', nudged by 'NudgeFactor'. 
--- If 'NudgeFactor' is 1, it returns 'Nominal'. 
--- If 'NudgeFactor' is 0, it randomly returns either 'Min' or 'Max'. 
+-- This function calculates a value within a range around 'Nominal', nudged by 'NudgeFactor'.
+-- If 'NudgeFactor' is 1, it returns 'Nominal'.
+-- If 'NudgeFactor' is 0, it randomly returns either 'Min' or 'Max'.
 -- Otherwise, it calculates a 'nudged' range around 'Nominal' and returns a random decimal within this range.
 --
 -- @param Nominal The central value around which the range is calculated.
@@ -11956,7 +11997,7 @@ end
 
 --- Creates a template from a given object.
 --
--- This function serializes an object into a string using 'SPECTRE.IO.persistence.serializeNoFunc' and then deserializes it back into a table. 
+-- This function serializes an object into a string using 'SPECTRE.IO.persistence.serializeNoFunc' and then deserializes it back into a table.
 -- The resulting table serves as a template for the original object.
 --
 -- @param OBJECT_ The object to be converted into a template.
@@ -11970,8 +12011,8 @@ end
 
 --- Sets values in one table based on a template table.
 --
--- Updates the 'output_' table with values from the 'template_' table. 
--- It skips overwriting any functions and the '__index' key. 
+-- Updates the 'output_' table with values from the 'template_' table.
+-- It skips overwriting any functions and the '__index' key.
 -- The function handles nested tables recursively, ensuring deep copying of table values.
 --
 -- @param template_ The template table providing the values.
@@ -12004,7 +12045,7 @@ end
 
 --- Log debug information if debugging is enabled.
 --
--- Logs a given message when the SPECTRE.DebugEnabled flag is set to 1. 
+-- Logs a given message when the SPECTRE.DebugEnabled flag is set to 1.
 -- If additional data is provided, it's also logged.
 --
 -- @param message The debug message to be logged.
@@ -12446,6 +12487,85 @@ function SPECTRE.WORLD.getGroupsForCoalition(coalitionSide, groupType)
 end
 
 ---.
+function SPECTRE.WORLD.getGroupsForCoalition_Zone(coalitionSide, groupType, zoneName)
+  local coalition_ = "neutral"
+  if coalitionSide == 1 then coalition_ = "red" end
+  if coalitionSide == 2 then coalition_ = "blue" end
+local ZoneObj = ZONE:FindByName(zoneName)
+  local _Groups = {}
+  --  local Zone_ = ZONE:FindByName(ZoneName)
+  local ZoneSet = SET_GROUP:New()
+    --   :FilterZones({Zone_})
+    :FilterCoalitions(coalition_)
+    :FilterCategoryGround()
+    :FilterZones({ZoneObj})
+    :FilterOnce()
+
+  local function DelGroup (__group)
+    _Groups[#_Groups + 1] = __group
+  end
+
+  ZoneSet:ForEachGroup(DelGroup)
+
+
+
+  --local allGroundUnits = {} -- Table to store all ground units
+  -- local _Groups = coalition.getGroups(coalitionSide, groupType)
+  local exportGroups = {}
+
+  for _,_group in ipairs(_Groups) do
+    local index = #exportGroups+1
+    exportGroups[index] = {}
+    local workingGroup = exportGroups[index]
+
+    workingGroup.Name = _group:GetName()--Group.getName(_group)
+
+    local MOOSEGROUP = _group--GROUP:FindByName(workingGroup.Name)
+
+    if MOOSEGROUP then
+
+      workingGroup.MOOSEGROUP = MOOSEGROUP
+
+      workingGroup.attributes = {}
+      workingGroup.attributes.Coalition = coalitionSide
+      workingGroup.attributes.Country = MOOSEGROUP:GetCountry()
+      workingGroup.attributes.DCSUnits =  MOOSEGROUP:GetDCSUnits()
+      workingGroup.attributes.TaskMission = MOOSEGROUP:GetTaskMission()
+      workingGroup.attributes.TaskRoute = MOOSEGROUP:GetTaskRoute()
+      workingGroup.attributes.DynamicRoute = SPECTRE.MISSION.dB.GroupTaskings[workingGroup.Name]
+      workingGroup.attributes.Template = MOOSEGROUP:GetTemplate()
+      workingGroup.attributes.TemplateDonor = MOOSEGROUP.TemplateDonor
+      workingGroup.attributes.Units = MOOSEGROUP:GetUnits()
+      workingGroup.attributes.WayPoints = MOOSEGROUP:GetWayPoints()
+      --workingGroup.attributes.Types = SPECTRE.UTILS.GetGroupAttributes(workingGroup.Name)
+
+      workingGroup.Units = {}
+
+      for _,_unit in ipairs(workingGroup.attributes.DCSUnits) do
+        local MOOSEUNIT = UNIT:Find(_unit)
+        if MOOSEUNIT then
+          workingGroup.Units[_] = {}
+          workingGroup.Units[_].MOOSEUNIT = MOOSEUNIT
+          workingGroup.Units[_].Name = MOOSEUNIT:GetName()
+          workingGroup.Units[_].Coordinate = MOOSEUNIT:GetCoordinate()
+          workingGroup.Units[_].Heading = MOOSEUNIT:GetHeading()
+          workingGroup.Units[_].LaserCode = MOOSEUNIT:GetLaserCode()
+          --workingGroup.Units[_].Prefix = MOOSEUNIT:GetPrefix()
+          workingGroup.Units[_].Skill = MOOSEUNIT:GetSkill()
+          --workingGroup.Units[_].TaskMission = MOOSEUNIT:GetTaskMission()
+          --workingGroup.Units[_].TaskRoute = MOOSEUNIT:GetTaskRoute()
+          workingGroup.Units[_].Template = MOOSEUNIT:GetTemplate()
+          workingGroup.Units[_].TypeName = MOOSEUNIT:GetTypeName()
+          --workingGroup.Units[_].WayPoints = MOOSEUNIT:GetWayPoints()
+        end
+      end
+    end
+  end
+
+  return exportGroups
+end
+
+---.
 function SPECTRE.WORLD.getGroupsForCoalition2(coalitionSide, groupType)
   --local allGroundUnits = {} -- Table to store all ground units
   local _Groups = coalition.getGroups(coalitionSide, groupType)
@@ -12618,60 +12738,135 @@ SPECTRE.ZONEMGR._HotspotSched = {}
 -- Flag for enabling CAP functionality.
 -- Indicates if CAP Defense is active in ZONEMGR.
 SPECTRE.ZONEMGR._enableCAP = false
-SPECTRE.ZONEMGR.UpdatingCAP = false
+--SPECTRE.ZONEMGR.UpdatingCAP = false
 SPECTRE.ZONEMGR.COUNTER = 1
 SPECTRE.ZONEMGR.Handler_ = EVENT:New()
-SPECTRE.ZONEMGR.schedulerCAPMin = 20
-SPECTRE.ZONEMGR.schedulerCAPMax = 30
-SPECTRE.ZONEMGR.schedulerCAPFactor = 0.25
+
+
+SPECTRE.ZONEMGR.refreshScheduler = {}
+
+--SPECTRE.ZONEMGR.schedulerCAPMin = 20
+--SPECTRE.ZONEMGR.schedulerCAPMax = 30
+--SPECTRE.ZONEMGR.schedulerCAPFactor = 0.25
 
 --- WIP.
 -- Flag for enabling CAP functionality.
 -- Indicates if CAP Defense is active in ZONEMGR.
-SPECTRE.ZONEMGR._schedlerCAP = {}
+--SPECTRE.ZONEMGR._schedlerCAP = {}
 
 --- WIP.
 -- Storage for CAP template group names.
 -- ipair, key = coalition, value = ipair string table of CAP template group names
-SPECTRE.ZONEMGR._CAPtemplates = {
-  [0] = {},
-  [1] = {},
-  [2] = {}
-}
+--SPECTRE.ZONEMGR._CAPtemplates = {
+--  [0] = {},
+--  [1] = {},
+--  [2] = {}
+--}
 
 --- WIP.
-SPECTRE.ZONEMGR.settingsCAP = {
-  [0] = {
-    RestockTime = 999999,
-    Min = 0,
-    Nominal = 0,
-    Max = 0,
-    PlayerRatio = 1,
-    NudgeFactor = 0.5,
+--SPECTRE.ZONEMGR.settingsCAP = {
+--  [0] = {
+--    RestockTime = 999999,
+--    Min = 0,
+--    Nominal = 0,
+--    Max = 0,
+--    PlayerRatio = 1,
+--    NudgeFactor = 0.5,
+--  },
+--  [1] = {
+--    RestockTime = 30,
+--    Min = 2,
+--    Nominal = 6,
+--    Max = 12,
+--    PlayerRatio = 1,
+--    NudgeFactor = 0.5,
+--  },
+--  [2] = {
+--    RestockTime = 30,
+--    Min = 1,
+--    Nominal = 3,
+--    Max = 4,
+--    PlayerRatio = 1,
+--    NudgeFactor = 0.5,
+--  },
+--}
+
+--SPECTRE.ZONEMGR.settingsCAPFlights = {
+--  speed = 485, --knots
+--  altitude = 30000, --ft
+--  altitudeNudge = 0.15,
+--}
+
+--SPECTRE.ZONEMGR._CAPspawns = {
+--  [0] = {},
+--  [1] = {},
+--  [2] = {},
+--}
+
+SPECTRE.ZONEMGR.CAP = {
+  Scheduler = {
+    Settings = {
+      TimeMin = 300,
+      TimeMax = 420,
+      TimeNudge = 0.25,
+    },
+    SpawnScheduler = {},
+    SpawnSchedulerActive = false,
+    RestockScheduler = {},
+    RestockSchedulerActive = false,
   },
-  [1] = {
-    RestockTime = 30,
-    Min = 2,
-    Nominal = 6,
-    Max = 12,
-    PlayerRatio = 1,
-    NudgeFactor = 0.5,
+  Templates = {
+    Coalition = {
+      [0] = {},
+      [1] = {},
+      [2] = {},
+    },
   },
-  [2] = {
-    RestockTime = 30,
-    Min = 1,
-    Nominal = 3,
-    Max = 4,
-    PlayerRatio = 1,
-    NudgeFactor = 0.5,
+  Settings = {
+    flightSpeed = 485, --knots
+    flightSpeedNudge = 0.15,
+    flightAlt = 30000, --ft
+    flightAltNudge = 0.15,
+    Coalition = {
+      [0] = {
+        RestockTime = 999999,
+        Min = 0,
+        Nominal = 0,
+        Max = 0,
+        PlayerRatio = 1,
+        NudgeFactor = 0.5,
+      },
+      [1] = {
+        RestockTime = 999999,
+        Min = 0,
+        Nominal = 0,
+        Max = 0,
+        PlayerRatio = 1,
+        NudgeFactor = 0.5,
+      },
+      [2] = {
+        RestockTime = 999999,
+        Min = 0,
+        Nominal = 0,
+        Max = 0,
+        PlayerRatio = 1,
+        NudgeFactor = 0.5,
+      },
+    },
+  },
+  ActiveSpawns = {
+    [0] = {},
+    [1] = {},
+    [2] = {},
   },
 }
 
-SPECTRE.ZONEMGR._CAPspawns = {
-  [0] = {},
-  [1] = {},
-  [2] = {},
-}
+
+
+--SPECTRE.ZONEMGR.CAP.RespawnQueue = {[0] = {}, [1] = {}, [2] = {},}
+--SPECTRE.ZONEMGR.CAP.ActivePlaneGroups = {[0] = {},[1] = {},[2] = {},}
+--SPECTRE.ZONEMGR.CAP.CheckScheduler = {}
+
 
 --- Flag for enabling _AirfieldCaptureSpawns functionality.
 SPECTRE.ZONEMGR._AirfieldCaptureSpawns = false
@@ -12794,6 +12989,26 @@ function SPECTRE.ZONEMGR:enableCAP(enabled)
 
   -- Set the persistence setting based on the 'enabled' parameter
   self._enableCAP = enabled
+
+  return self
+end
+
+function SPECTRE.ZONEMGR:updateSelfZonesPlusDraw()
+    for zoneName, zoneObject in pairs(self.Zones) do
+      zoneObject:DetermineZoneOwnership()
+    end
+
+    -- Update the border ownership for each zone.
+    for zoneName, zoneObject in pairs(self.Zones) do
+      zoneObject:UpdateBorderOwnership()
+    end
+
+    -- Determine the drawing color, draw the zone, and draw arrows for each zone.
+    for zoneName, zoneObject in pairs(self.Zones) do
+      zoneObject:DetermineDrawColor()
+      zoneObject:DrawZone()
+      zoneObject:DrawArrows()
+    end
 
   return self
 end
@@ -13273,7 +13488,8 @@ end
 -- @return #ZONEMGR self The zone manager instance after spawning the airbase elements.
 -- @usage local newZoneManager = SPECTRE.ZONEMGR:New() -- Creates a new ZoneManager instance.
 -- @usage newZoneManager:spawnAirbase("Airbase1", 2, "USA", "Zone1") -- Spawns "Airbase1" in "Zone1" for the Blue coalition and USA.
-function SPECTRE.ZONEMGR:spawnAirbase(_airbaseName, coalition, country, _zoneNameT, SPWNR_, SPWNRTemplate)
+function SPECTRE.ZONEMGR:spawnAirbase(_airbaseName, coalition, country, _zoneNameT, SPWNR_, SPWNRTemplate, airbaseSizeScaleFactor)
+  airbaseSizeScaleFactor = airbaseSizeScaleFactor or 1.5
   _zoneNameT = _zoneNameT or nil
   SPWNR_ = SPWNR_ or nil
   SPWNRTemplate = SPWNRTemplate or nil
@@ -13288,7 +13504,7 @@ function SPECTRE.ZONEMGR:spawnAirbase(_airbaseName, coalition, country, _zoneNam
 
       SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbase | Airbase Object | ", _airbaseObject)
       local _vec2 = _airbaseObject.Object:GetVec2()
-      local _airbaseSize = (_airbaseObject.Object.AirbaseZone.Radius * 1.5) * 2
+      local _airbaseSize = (_airbaseObject.Object.AirbaseZone.Radius * airbaseSizeScaleFactor) * 2
       SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbase | Vec2.x | " .. _vec2.x)
       SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbase | Vec2.y | " .. _vec2.y)
       SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:spawnAirbase | Airbase Size | " .. _airbaseSize)
@@ -13665,6 +13881,12 @@ function SPECTRE.ZONEMGR:Init()
   --    end)
   --  end
 
+self.refreshScheduler = SCHEDULER:New(self,function()
+self:updateSelfZonesPlusDraw()
+return self
+end,self, self.UpdateInterval, self.UpdateInterval, self.UpdateIntervalNudge)
+
+
   return self
 end
 
@@ -13876,190 +14098,724 @@ end
 -- @return #ZONEMGR self
 -- @usage zoneManager:CAPschedInit() -- Initializes the CAP scheduler for 'zoneManager'.
 function SPECTRE.ZONEMGR:CAPschedInit()
-  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | ---------------------")
+  local engineCAP = self.CAP
+  local schedulerCAP = engineCAP.Scheduler
+  local settingsCAP = engineCAP.Settings
+  local templatesCAP = engineCAP.Templates
+  local activeSpawnsCAP = engineCAP.ActiveSpawns
 
-  self._schedlerCAP = SCHEDULER:New(self, function()
-    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:self.CAPsched | ")
-    -- Only proceed if zones are not already being updated
-    if not self.UpdatingCAP then
-      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | UPDATES NOT IN PROG, STARTING")
-      self.UpdatingCAP = true
-
-      local _Timer = TIMER:New(function()
-        for _coal = 1, 2, 1 do
-          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _coal: " .. _coal .. " ~~~~~~~~~~")
-          local ownedZones = {}
-          local _numTotal = 0
-          for _k, _v in pairs(self.Zones) do
-            _numTotal = _numTotal + 1
-            if _v.OwnedByCoalition == _coal then ownedZones[_k] = _k end
-          end
-          local _numOwned = SPECTRE.UTILS.sumTable(ownedZones)
-
-          local _percentOwned = _numOwned / _numTotal
-
-
-
-          local _Templates = self._CAPtemplates[_coal]
-          local _Settings = self.settingsCAP[_coal]
-          local _Spawns = self._CAPspawns[_coal]
-          local _genNom = SPECTRE.UTILS.generateNominal(_Settings.Nominal*_percentOwned > _Settings.Min and _Settings.Nominal*_percentOwned or _Settings.Min, _Settings.Min, _Settings.Max*_percentOwned, _Settings.NudgeFactor)
-          local _FreeSpawns = _genNom - #_Spawns
-
-          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | activeSpawns : " .. #_Spawns )
-          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _genNom      : " .. _genNom )
-          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _FreeSpawns  : " .. _FreeSpawns )
-
-          local _SPAWNNAME = "CAP_" .. _coal
-          local _spawnCountry = _coal == 1 and SPECTRE.Countries.Red or _coal == 2 and SPECTRE.Countries.Blue
-          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _spawnCountry   : " .. tostring(_spawnCountry) )
-
-          while _FreeSpawns > 0 do
-            local _spawnTemplate = SPECTRE.UTILS.PickRandomFromTable(_Templates)
-            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _spawnTemplate  : " .. tostring(_spawnTemplate ))
-
-            local _selectedZone = SPECTRE.UTILS.PickRandomFromKVTable(ownedZones)
-            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | UPDATING | _selectedZone  : " .. tostring(_selectedZone ))
-
-            local _selectedAirbase
-            if _selectedZone then
-              local ownedAirbases = {}
-              for _k, _v in pairs(self.Zones[_selectedZone].Airbases) do
-                local _airbaseCoal = AIRBASE:FindByName(_k):GetCoalition()
-                if _airbaseCoal == _coal then ownedAirbases[_k] = _k end
-              end
-              _selectedAirbase = SPECTRE.UTILS.PickRandomFromKVTable(ownedAirbases)
-            end
-            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _selectedAirbase  : " .. tostring(_selectedAirbase ))
-
-            if _selectedAirbase then
-
-              local typeCounter = SPECTRE.COUNTER--self.COUNTER
-              local tempCode = typeCounter
-              local FoundGroup
-
-              repeat
-                FoundGroup = GROUP:FindByName(_SPAWNNAME .. "_" .. tempCode .. "#001")
-                if FoundGroup then
-                  tempCode = tempCode + 1
-                else
-                  FoundGroup = false
-                end
-              until (FoundGroup == false)
-              typeCounter = tempCode
-              SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | typeCounter     : " .. tostring(typeCounter) )
-
-              local _specZoneObj = self.Zones[_selectedZone]
-              local _initialMinDist, _initialMaxDist = SPECTRE.POLY.getMinMaxDistances(_specZoneObj.Vertices2D)
-
-              local _bias = (math.random() > 0.5 and (_specZoneObj.HotspotClusters[1] and 1)) or ((_specZoneObj.HotspotClusters[2] and 2) or (_specZoneObj.HotspotClusters[1] and 1) ) or 0
-              local _min = _bias == _coal and 0 or _initialMinDist*self._smartFillMinDistFactor
-              local _max = _initialMinDist
-              local _vec2SMART = self:getSmartVec2(_specZoneObj.Vertices2D, _specZoneObj.HotspotClusters, _bias , _min, _max)
-              local _defenseCOORD = COORDINATE:NewFromVec2(_vec2SMART)
-
-
-              local Packet = {
-                Zone_Engage = _initialMinDist/2 > 92600 and _initialMinDist/2 or 92600,
-                OFFSET = 1,
-                Coordinate_ = _defenseCOORD,
-                Alt = UTILS.FeetToMeters(UTILS.Randomize(30000, 0.15)),
-                speed = UTILS.KnotsToMps(485),
-                heading = nil,
-                distance = nil,
-                airbaseCoord = AIRBASE:FindByName(_selectedAirbase):GetCoordinate(),
-              }
-              Packet = SPECTRE.AI.buildWaypoints.CAP(Packet)
-
-              if SPECTRE.DebugEnabled == 1 then
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | GROUP NAME   : " ..  _SPAWNNAME .. "_" .. tempCode)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _bias        : " ..  _bias)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _min         : " ..  _min)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _max         : " ..  _max)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | Zone_Engage  : " ..  Packet.Zone_Engage)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | Alt          : " ..  Packet.Alt)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | speed        : " ..  Packet.speed)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _vec2SMART   : x = " ..  _vec2SMART.x .. " | y = " ..  _vec2SMART.y)
-                --                local oppcoalt_ = {[0] = -1, [1] = 2, [2] = 1,} --2
-                --                local color = {0.7, 0.46, 0.48, 0.9}
-                --                local fillColor = {0.6, 0.66, 0.78, 0.5}
-                --                local oppcoal = oppcoalt_[_coal]
-                --                local _t = self.codeMarker_ + 1
-                --                local _markID = _t
-                --                self.codeMarker_= _markID
-                --                trigger.action.circleToAll(-1 ,_markID , _defenseCOORD:GetVec3(),
-                --                  (Packet.Zone_Engage), color, fillColor, 2, self.ReadOnly)
-              end
-              local _CAPgroup = SPAWN:NewWithAlias(_spawnTemplate, _SPAWNNAME .. "_" .. tempCode)
-                :InitCoalition(_coal)
-                :InitCountry(_spawnCountry)
-                :InitCleanUp(120)
-                --:InitAirbase(_selectedAirbase,SPAWN.Takeoff.Hot)
-                :OnSpawnGroup(
-                  function(spawnGroup_)
-                    -- Build the CAP route using the spawn group and packet details
-                    local route = SPECTRE.AI.buildRoute.CAP(spawnGroup_, Packet)
-                    -- Configure the spawn group for the CAP
-                    spawnGroup_ = SPECTRE.AI.configureCommonOptions(spawnGroup_)
-                    -- Set the route for the CAP group
-                    spawnGroup_:Route(route, math.random(1,5))
-                  end, self)
-                  :SpawnAtAirbase(AIRBASE:FindByName(_selectedAirbase),SPAWN.Takeoff.Hot,1000)
-                --:Spawn()
-
-              _CAPgroup.WIPE_ = false
-              -- Common function to handle both landing and dead/crash events
-              local function handleEvent(_, eventData, message)
-                local coal = eventData.IniCoalition
-                if _CAPgroup:CountAliveUnits() == 0 and not _CAPgroup.WIPE_ then
-                  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | GROUP WIPE  : " ..  _SPAWNNAME .. "_" .. tempCode )
-                  _CAPgroup.WIPE_ = true
-                  local _spawnIndex = SPECTRE.UTILS.getIndex(_Spawns, _CAPgroup)
-                  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup.handleEvent | UPDATING | _spawnIndex  : " ..  tostring(_spawnIndex) )
-                  local _Restocktimer = TIMER:New(function()
-                    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | _Restocktimer  : " ..  tostring(_SPAWNNAME) .. "_" .. tempCode )
-                    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | REMOVING INDEX  : " .. tostring( _spawnIndex) .. " from " .. _coal, _Spawns )
-                    table.remove(_Spawns,_spawnIndex)
-                  end, self)
-                  _Restocktimer:Start(_Settings.RestockTime)
-
-                end
-              end
-
-              _CAPgroup.onGroupLand = function(_, eventData)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup.onGroupLand | UPDATING | eventData  : " , eventData )
-                handleEvent(_, eventData)
-              end
-
-              _CAPgroup.onGroupCrashOrDead = function(_, eventData)
-                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup.onGroupCrashOrDead | UPDATING | eventData  : " , eventData )
-                handleEvent(_, eventData)
-              end
-
-              _CAPgroup:HandleEvent(EVENTS.Land, _CAPgroup.onGroupLand)
-              _CAPgroup:HandleEvent(EVENTS.Crash, _CAPgroup.onGroupCrashOrDead)
-              _CAPgroup:HandleEvent(EVENTS.Dead, _CAPgroup.onGroupCrashOrDead)
-
-              table.insert(_Spawns, _CAPgroup)
-              _FreeSpawns = _FreeSpawns - 1
-            else
-              _FreeSpawns = 0
-            end
-          end
-          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | END UPDATING | _coal: " .. _coal .. " ~~~~~~~~~~")
+  local function removeWipedUnits(spawns)
+    for _, v in ipairs(spawns) do
+      if v then
+        if v.WIPE_ == true then
+          table.remove(spawns,_)
         end
-        self.UpdatingCAP = false
-        --return self
-      end, self)
-      _Timer:Start(math.random(1,5))
-    else
-      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | UPDATES ALREADY IN PROG")
+      end
     end
-    return self
-  end, {self}, math.random(1,5), math.random(self.schedulerCAPMin,self.schedulerCAPMax), self.schedulerCAPFactor)
+  end
 
+
+
+  local function handleWipeStatus(spawns, respawnTime)
+    for _, v in ipairs(spawns) do
+      if v then
+        local numAlive_ = v:CountAliveUnits()
+        if numAlive_ == 0 then
+          if v.WIPE_TIME_ == 0 then
+            v.WIPE_TIME_ = os.time()
+          else
+            if (os.time() - v.WIPE_TIME_) >= respawnTime then
+              v.WIPE_ = true
+            end
+          end
+        else
+          v.WIPE_TIME_ = 0
+          v.WIPE_ = false
+        end
+      end
+    end
+  end
+
+  local function countActiveUnits(spawns)
+    local numActive = 0
+    for _, v in ipairs(spawns) do
+      if v and (v:CountAliveUnits() > 0 or v.WIPE_ == false) then
+        numActive = numActive + 1
+      end
+    end
+    return numActive
+  end
+
+  local function countActiveUnits2(prefixCAP,coal)
+  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler |countActiveUnits | coal: " .. coal .. " | prefixCAP          : " .. prefixCAP )
+    local numActive = 0
+    local coal_ = coal == 1 and "red" or coal == 2 and "blue" or "neutral"
+    local scans_ = SET_GROUP:New():FilterCategoryAirplane():FilterPrefixes(prefixCAP):FilterCoalitions(coal_):FilterOnce()
+    scans_:ForEachGroupAlive(function()
+    numActive = numActive + 1
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler |countActiveUnits | FOUND GROUP - " .. numActive )
+
+    end,numActive)
+    --numActive = #scans_
+    return numActive
+  end
+
+  local function calculateOwnership(zoneManager, coalition)
+    local ownedZones = {}
+    local numTotal = 0
+    for k, v in pairs(zoneManager.Zones) do
+      numTotal = numTotal + 1
+      if v.OwnedByCoalition == coalition then
+        ownedZones[k] = k
+      end
+    end
+    return ownedZones, numTotal
+  end
+
+  local function getSpawnCountry(coalition)
+    if coalition == 1 then
+      return SPECTRE.Countries.Red
+    elseif coalition == 2 then
+      return SPECTRE.Countries.Blue
+    end
+    return nil
+  end
+
+  local function generateSpawnName(baseName, counter)
+    local tempCode = counter
+    while GROUP:FindByName(baseName .. "_" .. tempCode .. "#001") do
+      tempCode = tempCode + 1
+    end
+    return tempCode
+  end
+
+  local function getRandomZone(zoneManager, ownedZones, coalition)
+    local selectedZone = SPECTRE.UTILS.PickRandomFromKVTable(ownedZones)
+    if not selectedZone then return nil, nil end
+    local ownedAirbases = {}
+    for k, _ in pairs(zoneManager.Zones[selectedZone].Airbases) do
+      if AIRBASE:FindByName(k):GetCoalition() == coalition then
+        ownedAirbases[k] = k
+      end
+    end
+    return selectedZone, SPECTRE.UTILS.PickRandomFromKVTable(ownedAirbases)
+  end
+
+  local function spawnCAP(zoneManager, spawnTemplate, spawnName, spawnCountry, selectedAirbase, packet, spawns)
+    SPAWN:NewWithAlias(spawnTemplate, spawnName)
+      :InitCoalition(spawnCountry)
+      :InitCountry(spawnCountry)
+      :InitCleanUp(120)
+      :OnSpawnGroup(function(spawnGroup)
+        local route = SPECTRE.AI.buildRoute.CAP(spawnGroup, packet)
+        spawnGroup = SPECTRE.AI.configureCommonOptions(spawnGroup)
+        spawnGroup:Route(route, math.random(1, 5))
+        spawnGroup.WIPE_ = false
+        spawnGroup.WIPE_TIME_ = 0
+        table.insert(spawns, spawnGroup)
+      end, zoneManager)
+      :SpawnAtAirbase(AIRBASE:FindByName(selectedAirbase), SPAWN.Takeoff.Hot, 1000)
+  end
+
+  schedulerCAP.SpawnScheduler = SCHEDULER:New(self, function()
+    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler |")
+    if schedulerCAP.SpawnSchedulerActive then
+      return
+    end
+    schedulerCAP.SpawnSchedulerActive = true
+    local _workTimer = TIMER:New(function()
+      for _coal = 1, 2, 1 do
+        local _Templates = templatesCAP.Coalition[_coal]
+        local _Settings = settingsCAP.Coalition[_coal]
+        local respawnTime = _Settings.RestockTime
+        local _Spawns = activeSpawnsCAP[_coal]
+
+        local _numOwned
+        local _percentOwned
+        local _genNom
+        local _FreeSpawns
+        local ownedZones = {}
+        local _numTotal = 0
+        local _SPAWNNAME
+        local _spawnCountry
+        local numActive = 0
+
+        --        local ownedZones, _numTotal = calculateOwnership(self, _coal)
+        --        local _numOwned = #ownedZones
+        --        local _percentOwned = ((_numOwned / _numTotal) <= 0.55) and ((_numOwned / _numTotal) + 0.25) or (_numOwned / _numTotal)
+        --        _percentOwned = (_percentOwned > 1) and 1 or _percentOwned
+        --
+        --        local _genNom = SPECTRE.UTILS.generateNominal(_Settings.Nominal * _percentOwned, _Settings.Min * _percentOwned, _Settings.Max * _percentOwned, _Settings.NudgeFactor)
+
+        for _k, _v in pairs(self.Zones) do
+          _numTotal = _numTotal + 1
+          if _v.OwnedByCoalition == _coal then ownedZones[_k] = _k end
+        end
+        _numOwned = SPECTRE.UTILS.sumTable(ownedZones)
+        _percentOwned = ((_numOwned / _numTotal))
+        if _percentOwned <= .55 then _percentOwned = _percentOwned + .25 end
+        if _percentOwned > 1 then _percentOwned = 1 end
+        _genNom = SPECTRE.UTILS.generateNominal(_Settings.Nominal*_percentOwned, _Settings.Min*_percentOwned, _Settings.Max*_percentOwned, _Settings.NudgeFactor)
+
+        local _SPAWNNAME = "CAP_" .. _coal
+
+
+        --handleWipeStatus(_Spawns, respawnTime)
+        --numActive = countActiveUnits(_Spawns)
+        numActive = countActiveUnits2("CAP_" .. _coal, _coal)
+        local _FreeSpawns = _genNom - numActive
+
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _Settings.Min          : " .. _Settings.Min )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _Settings.Nominal      : " .. _Settings.Nominal )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _Settings.Max          : " .. _Settings.Max )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _Settings.NudgeFactor  : " .. _Settings.NudgeFactor )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _numTotal              : " .. _numTotal )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _numOwned              : " .. _numOwned )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _percentOwned          : " .. _percentOwned )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | activeSpawns           : " .. numActive )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _genNom                : " .. _genNom )
+        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | coal: " .. _coal .. " | _FreeSpawns            : " .. _FreeSpawns )
+
+
+
+
+        local _spawnCountry = getSpawnCountry(_coal)
+
+        while _FreeSpawns > 0 do
+          local _spawnTemplate = SPECTRE.UTILS.PickRandomFromTable(_Templates)
+          local _selectedZone, _selectedAirbase = getRandomZone(self, ownedZones, _coal)
+          if _selectedAirbase then
+            local typeCounter = generateSpawnName(_SPAWNNAME, SPECTRE.COUNTER)
+
+            --            local _specZoneObj = self.Zones[_selectedZone]
+            --            local _initialMinDist, _initialMaxDist = SPECTRE.POLY.getMinMaxDistances(_specZoneObj.Vertices2D)
+            --            local _bias = (_specZoneObj.HotspotClusters[1] and 1) or ((_specZoneObj.HotspotClusters[2] and 2) or (_specZoneObj.HotspotClusters[1] and 1) ) or 0
+            --            local _min = (_bias == _coal) and 0 or _initialMinDist * self._smartFillMinDistFactor
+            --            local _max = _initialMinDist
+            --            local _vec2SMART = self:getSmartVec2(_specZoneObj.Vertices2D, _specZoneObj.HotspotClusters, _bias , _min, _max)
+            local _specZoneObj = self.Zones[_selectedZone]
+            local _initialMinDist, _initialMaxDist = SPECTRE.POLY.getMinMaxDistances(_specZoneObj.Vertices2D)
+            local _bias = (math.random() > 0.5 and (_specZoneObj.HotspotClusters[1] and 1)) or ((_specZoneObj.HotspotClusters[2] and 2) or (_specZoneObj.HotspotClusters[1] and 1) ) or 0
+            local _min = _bias == _coal and 0 or _initialMinDist*self._smartFillMinDistFactor
+            local _max = _initialMinDist
+            local _vec2SMART = self:getSmartVec2(_specZoneObj.Vertices2D, _specZoneObj.HotspotClusters, _bias , _min, _max)
+            local _defenseCOORD = COORDINATE:NewFromVec2(_vec2SMART)
+            local Packet = {
+              Zone_Engage = (_initialMinDist / 2 > 92600) and (_initialMinDist / 2) or 92600,
+              OFFSET = 1,
+              Coordinate_ = _defenseCOORD,
+              Alt = UTILS.FeetToMeters(UTILS.Randomize(settingsCAP.flightAlt, settingsCAP.flightAltNudge)),
+              speed = UTILS.KnotsToMps(settingsCAP.flightSpeed),
+              heading = nil,
+              distance = nil,
+              airbaseCoord = AIRBASE:FindByName(_selectedAirbase):GetCoordinate(),
+            }
+            Packet = SPECTRE.AI.buildWaypoints.CAP(Packet)
+
+            spawnCAP(self, _spawnTemplate, _SPAWNNAME .. "_" .. typeCounter, _spawnCountry, _selectedAirbase, Packet, _Spawns)
+            _FreeSpawns = _FreeSpawns - 1
+          else
+            _FreeSpawns = 0
+          end
+        end
+        removeWipedUnits(_Spawns)
+      end
+      schedulerCAP.SpawnSchedulerActive = false
+      return self
+    end, self)
+    _workTimer:Start(math.random(1, 5))
+    return self
+  end, {self}, math.random(1, 5), math.random(schedulerCAP.Settings.TimeMin, schedulerCAP.Settings.TimeMax), schedulerCAP.Settings.TimeNudge)
   return self
 end
+
+--function SPECTRE.ZONEMGR:CAPschedInit()
+--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Init")
+--
+--  local engineCAP = self.CAP
+--  local schedulerCAP = engineCAP.Scheduler
+--  local settingsCAP = engineCAP.Settings
+--  local templatesCAP = engineCAP.Templates
+--  local activeSpawnsCAP = engineCAP.ActiveSpawns
+--
+--  schedulerCAP.SpawnScheduler = SCHEDULER:New(self, function()
+--    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler |")
+--    -- Only proceed if zones are not already being updated
+--    if schedulerCAP.SpawnSchedulerActive then
+--      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | Already In Progress, SKIP")
+--      return
+--    end
+--    schedulerCAP.SpawnSchedulerActive = true
+--
+--    local _workTimer = TIMER:New(function()
+--      for _coal = 1, 2, 1 do
+--        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | Updating Coalition: " .. _coal)
+--        local _numOwned
+--        local _percentOwned
+--        local _genNom
+--        local _FreeSpawns
+--        local _Templates = templatesCAP.Coalition[_coal]
+--        local _Settings = settingsCAP.Coalition[_coal]
+--        local respawnTime = _Settings.RestockTime
+--        local _Spawns = activeSpawnsCAP[_coal]
+--        local ownedZones = {}
+--        local _numTotal = 0
+--        local _SPAWNNAME
+--        local _spawnCountry
+--        local numActive = 0
+--        for _k, _v in pairs(self.Zones) do
+--          _numTotal = _numTotal + 1
+--          if _v.OwnedByCoalition == _coal then ownedZones[_k] = _k end
+--        end
+--        _numOwned = SPECTRE.UTILS.sumTable(ownedZones)
+--        _percentOwned = ((_numOwned / _numTotal))
+--        if _percentOwned <= .55 then _percentOwned = _percentOwned + .25 end
+--        if _percentOwned > 1 then _percentOwned = 1 end
+--        _genNom = SPECTRE.UTILS.generateNominal(_Settings.Nominal*_percentOwned, _Settings.Min*_percentOwned, _Settings.Max*_percentOwned, _Settings.NudgeFactor)
+--
+--
+--
+--        -- First loop to update WIPE_ status based on the number of alive units and WIPE_TIME_
+--        for k, v in ipairs(_Spawns) do
+--          if v then
+--            local numAlive_ = v:CountAliveUnits()
+--            if numAlive_ == 0 then
+--              if v.WIPE_TIME_ == 0 then
+--                v.WIPE_TIME_ = os.time()
+--              else
+--                local timeWiped = os.time() - v.WIPE_TIME_
+--                if timeWiped >= respawnTime then
+--                  v.WIPE_ = true
+--                end
+--              end
+--            else
+--              v.WIPE_TIME_ = 0 -- Reset WIPE_TIME_ if there are alive units
+--              v.WIPE_ = false  -- Ensure WIPE_ is set to false if there are alive units
+--            end
+--          end
+--        end
+--
+--        -- Second loop to count the active units
+--        numActive = 0
+--        for k, v in ipairs(_Spawns) do
+--          if v then
+--            if v:CountAliveUnits() > 0 or v.WIPE_ == false then
+--              numActive = numActive + 1
+--            end
+--          end
+--        end
+--
+--
+--        --        for k,v in ipairs(_Spawns) do
+--        --          if v then
+--        --            local numAlive_ = v:CountAliveUnits()
+--        --            if numAlive_ == 0 then
+--        --              if v.WIPE_TIME_ == 0 then
+--        --                if numAlive_ == 0 then
+--        --                  v.WIPE_TIME_ = os.time()
+--        --                end
+--        --              else
+--        --                if numAlive_ == 0 then
+--        --                  local timeWiped = os.time() - v.WIPE_TIME_
+--        --                  if timeWiped >= respawnTime then
+--        --                    v.WIPE_ = true
+--        --                  end
+--        --                end
+--        --              end
+--        --            end
+--        --          end
+--        --        end
+--        --        for k,v in ipairs(_Spawns) do
+--        --          if v then
+--        --            if v:CountAliveUnits() > 0 or v.WIPE_ == false then
+--        --              numActive = numActive + 1
+--        --            end
+--        --          end
+--        --        end
+--
+--        --            if v:CountAliveUnits() > 0 then
+--        --              numActive = numActive + 1
+--        --            end
+--        --          local numAlive
+--        --          if v then
+--        --            if v.WIPE == true then
+--        --              numAlive = v:CountAliveUnits()
+--        --              SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler | NumAlive | " , numAlive)
+--        --              if numAlive == 0 then
+--        --                v.WIPE = true
+--        --                v.WIPE_TIME_ = os.time()
+--        --              end
+--        --            end
+--        --          end
+--
+--
+--        _FreeSpawns = _genNom - numActive--#_Spawns
+--
+--        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | activeSpawns : " .. numActive )
+--        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | _genNom      : " .. _genNom )
+--        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | _FreeSpawns  : " .. _FreeSpawns )
+--
+--        _SPAWNNAME = "CAP_" .. _coal
+--        _spawnCountry = _coal == 1 and SPECTRE.Countries.Red or _coal == 2 and SPECTRE.Countries.Blue
+--
+--        while _FreeSpawns > 0 do
+--          local _spawnTemplate = SPECTRE.UTILS.PickRandomFromTable(_Templates)
+--          local _selectedZone = SPECTRE.UTILS.PickRandomFromKVTable(ownedZones)
+--          local _selectedAirbase
+--          if _selectedZone then
+--            local ownedAirbases = {}
+--            for _k, _v in pairs(self.Zones[_selectedZone].Airbases) do
+--              local _airbaseCoal = AIRBASE:FindByName(_k):GetCoalition()
+--              if _airbaseCoal == _coal then ownedAirbases[_k] = _k end
+--            end
+--            _selectedAirbase = SPECTRE.UTILS.PickRandomFromKVTable(ownedAirbases)
+--          end
+--
+--          if _selectedAirbase then
+--
+--            local typeCounter = SPECTRE.COUNTER
+--            local tempCode = typeCounter
+--            local FoundGroup
+--            repeat
+--              FoundGroup = GROUP:FindByName(_SPAWNNAME .. "_" .. tempCode .. "#001")
+--              if FoundGroup then
+--                tempCode = tempCode + 1
+--              else
+--                FoundGroup = false
+--              end
+--            until (FoundGroup == false)
+--            typeCounter = tempCode
+--
+--            local _specZoneObj = self.Zones[_selectedZone]
+--            local _initialMinDist, _initialMaxDist = SPECTRE.POLY.getMinMaxDistances(_specZoneObj.Vertices2D)
+--            local _bias = (math.random() > 0.5 and (_specZoneObj.HotspotClusters[1] and 1)) or ((_specZoneObj.HotspotClusters[2] and 2) or (_specZoneObj.HotspotClusters[1] and 1) ) or 0
+--            local _min = _bias == _coal and 0 or _initialMinDist*self._smartFillMinDistFactor
+--            local _max = _initialMinDist
+--            local _vec2SMART = self:getSmartVec2(_specZoneObj.Vertices2D, _specZoneObj.HotspotClusters, _bias , _min, _max)
+--            local _defenseCOORD = COORDINATE:NewFromVec2(_vec2SMART)
+--            local Packet = {
+--              Zone_Engage = _initialMinDist/2 > 92600 and _initialMinDist/2 or 92600,
+--              OFFSET = 1,
+--              Coordinate_ = _defenseCOORD,
+--              Alt = UTILS.FeetToMeters(UTILS.Randomize(settingsCAP.flightAlt, settingsCAP.flightAltNudge)),
+--              speed = UTILS.KnotsToMps(UTILS.Randomize(settingsCAP.flightSpeed,settingsCAP.flightSpeedNudge)),
+--              heading = nil,
+--              distance = nil,
+--              airbaseCoord = AIRBASE:FindByName(_selectedAirbase):GetCoordinate(),
+--            }
+--            Packet = SPECTRE.AI.buildWaypoints.CAP(Packet)
+--
+--            local _CAPgroup = SPAWN:NewWithAlias(_spawnTemplate, _SPAWNNAME .. "_" .. tempCode)
+--              :InitCoalition(_coal)
+--              :InitCountry(_spawnCountry)
+--              :InitCleanUp(120)
+--              --:InitAirbase(_selectedAirbase,SPAWN.Takeoff.Hot)
+--              :OnSpawnGroup(
+--                function(spawnGroup_)
+--                  -- Build the CAP route using the spawn group and packet details
+--                  local route = SPECTRE.AI.buildRoute.CAP(spawnGroup_, Packet)
+--                  -- Configure the spawn group for the CAP
+--                  spawnGroup_ = SPECTRE.AI.configureCommonOptions(spawnGroup_)
+--                  -- Set the route for the CAP group
+--                  spawnGroup_:Route(route, math.random(1,5))
+--                  spawnGroup_.WIPE_ = false
+--                  spawnGroup_.WIPE_TIME_ = 0
+--                  table.insert(_Spawns, spawnGroup_)
+--                end, self)
+--              :SpawnAtAirbase(AIRBASE:FindByName(_selectedAirbase),SPAWN.Takeoff.Hot,1000)
+--
+--
+--
+--            --            _CAPgroup.WIPE_ = false
+--            --            _CAPgroup.WIPE_TIME_ = {}
+--            --_Spawns[#_Spawns+1] = _CAPgroup
+--
+--
+--
+--            --table.insert(_Spawns, _SPAWNNAME .. "_" .. tempCode)--_CAPgroup)
+--            _FreeSpawns = _FreeSpawns - 1
+--          else
+--            _FreeSpawns = 0
+--          end
+--        end
+--        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | END UPDATE | _coal: " .. _coal)
+--      end
+--      schedulerCAP.SpawnSchedulerActive = false
+--      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Spawn Scheduler | END WORK ")
+--      return self
+--    end, self)
+--    _workTimer:Start(math.random(1,5))
+--    return self
+--  end, {self}, math.random(1,5), math.random(schedulerCAP.Settings.TimeMin,schedulerCAP.Settings.TimeMax), schedulerCAP.Settings.TimeNudge)
+--
+--
+--
+--
+--  --  schedulerCAP.RestockScheduler = SCHEDULER:New(self, function()
+--  --    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler |")
+--  --    -- Only proceed if zones are not already being updated
+--  --    if schedulerCAP.RestockSchedulerActive then
+--  --      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler | Already In Progress, SKIP")
+--  --      return
+--  --    end
+--  --    schedulerCAP.RestockSchedulerActive = true
+--  --
+--  --    local _workTimer = TIMER:New(function()
+--  --      for _coal = 1, 2, 1 do
+--  --        SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler | Updating Coalition: " .. _coal)
+--  --        local _Spawns = activeSpawnsCAP[_coal]
+--  --        local _Settings = settingsCAP.Coalition[_coal]
+--  --        for k,v in ipairs(_Spawns) do
+--  --          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler | Group | " .. v .. "#001")
+--  --          local Group = GROUP:FindByName(v .. "#001")
+--  --          local numAlive
+--  --          if Group then
+--  --            numAlive = Group:CountAliveUnits()
+--  --            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler | NumAlive | " , numAlive)
+--  --            if numAlive == 0 then
+--  --              SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler | Group Dead, init restock timer | " .. v .. "#001")
+--  --
+--  --              --
+--  --              --              local DeleteTimer = TIMER:New(function()
+--  --              --                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR | CAP ENGINE | Restock Scheduler | Group Dead, restock increment | " .. v .. "#001")
+--  --              --                --_Spawns[k] = nil
+--  --              --                table.remove(_Spawns, k)
+--  --              --                return self
+--  --              --              end, _Spawns)
+--  --              --
+--  --              --
+--  --              --              DeleteTimer:Start(_Settings.RestockTime)
+--  --            end
+--  --          end
+--  --        end
+--  --      end
+--  --      schedulerCAP.RestockSchedulerActive = false
+--  --      return self
+--  --    end, self)
+--  --    _workTimer:Start(math.random(1,5))
+--  --
+--  --    return self
+--  --  end, {self}, math.random(1,5), math.random(schedulerCAP.Settings.TimeMin,schedulerCAP.Settings.TimeMax), schedulerCAP.Settings.TimeNudge)
+--  return self
+--end
+
+
+
+
+
+
+
+
+--function SPECTRE.ZONEMGR:_CAPschedInit()
+--  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | ---------------------")
+--
+--  self._schedlerCAP = SCHEDULER:New(self, function()
+--    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:self.CAPsched | ")
+--    -- Only proceed if zones are not already being updated
+--    if not self.UpdatingCAP then
+--      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | UPDATES NOT IN PROG, STARTING")
+--      self.UpdatingCAP = true
+--
+--      local _Timer = TIMER:New(function()
+--        for _coal = 1, 2, 1 do
+--          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _coal: " .. _coal .. " ~~~~~~~~~~")
+--          local ownedZones = {}
+--          local _numTotal = 0
+--          for _k, _v in pairs(self.Zones) do
+--            _numTotal = _numTotal + 1
+--            if _v.OwnedByCoalition == _coal then ownedZones[_k] = _k end
+--          end
+--          local _numOwned = SPECTRE.UTILS.sumTable(ownedZones)
+--
+--          local _percentOwned = ((_numOwned / _numTotal))
+--
+--
+--          if _percentOwned <= .55 then _percentOwned = _percentOwned + .25 end
+--          if _percentOwned > 1 then _percentOwned = 1 end
+--
+--
+--          local _Templates = self._CAPtemplates[_coal]
+--          local _Settings = self.settingsCAP[_coal]
+--          local _Spawns = self._CAPspawns[_coal]
+--          --local _genNom = SPECTRE.UTILS.generateNominal(_Settings.Nominal*_percentOwned > _Settings.Min and _Settings.Nominal*_percentOwned or _Settings.Min, _Settings.Min, _Settings.Max*_percentOwned, _Settings.NudgeFactor)
+--          local _genNom = SPECTRE.UTILS.generateNominal(_Settings.Nominal*_percentOwned, _Settings.Min*_percentOwned, _Settings.Max*_percentOwned, _Settings.NudgeFactor)
+--
+--          local _FreeSpawns = _genNom - #_Spawns
+--
+--          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | activeSpawns : " .. #_Spawns )
+--          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _genNom      : " .. _genNom )
+--          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _FreeSpawns  : " .. _FreeSpawns )
+--
+--          local _SPAWNNAME = "CAP_" .. _coal
+--          local _spawnCountry = _coal == 1 and SPECTRE.Countries.Red or _coal == 2 and SPECTRE.Countries.Blue
+--          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _spawnCountry   : " .. tostring(_spawnCountry) )
+--
+--          while _FreeSpawns > 0 do
+--            local _spawnTemplate = SPECTRE.UTILS.PickRandomFromTable(_Templates)
+--            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _spawnTemplate  : " .. tostring(_spawnTemplate ))
+--
+--            local _selectedZone = SPECTRE.UTILS.PickRandomFromKVTable(ownedZones)
+--            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | UPDATING | _selectedZone  : " .. tostring(_selectedZone ))
+--
+--            local _selectedAirbase
+--            if _selectedZone then
+--              local ownedAirbases = {}
+--              for _k, _v in pairs(self.Zones[_selectedZone].Airbases) do
+--                local _airbaseCoal = AIRBASE:FindByName(_k):GetCoalition()
+--                if _airbaseCoal == _coal then ownedAirbases[_k] = _k end
+--              end
+--              _selectedAirbase = SPECTRE.UTILS.PickRandomFromKVTable(ownedAirbases)
+--            end
+--            SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | _selectedAirbase  : " .. tostring(_selectedAirbase ))
+--
+--            if _selectedAirbase then
+--
+--              local typeCounter = SPECTRE.COUNTER--self.COUNTER
+--              local tempCode = typeCounter
+--              local FoundGroup
+--
+--              repeat
+--                FoundGroup = GROUP:FindByName(_SPAWNNAME .. "_" .. tempCode .. "#001")
+--                if FoundGroup then
+--                  tempCode = tempCode + 1
+--                else
+--                  FoundGroup = false
+--                end
+--              until (FoundGroup == false)
+--              typeCounter = tempCode
+--              SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | UPDATING | typeCounter     : " .. tostring(typeCounter) )
+--
+--              local _specZoneObj = self.Zones[_selectedZone]
+--              local _initialMinDist, _initialMaxDist = SPECTRE.POLY.getMinMaxDistances(_specZoneObj.Vertices2D)
+--
+--              local _bias = (math.random() > 0.5 and (_specZoneObj.HotspotClusters[1] and 1)) or ((_specZoneObj.HotspotClusters[2] and 2) or (_specZoneObj.HotspotClusters[1] and 1) ) or 0
+--              local _min = _bias == _coal and 0 or _initialMinDist*self._smartFillMinDistFactor
+--              local _max = _initialMinDist
+--              local _vec2SMART = self:getSmartVec2(_specZoneObj.Vertices2D, _specZoneObj.HotspotClusters, _bias , _min, _max)
+--              local _defenseCOORD = COORDINATE:NewFromVec2(_vec2SMART)
+--
+--
+--              local Packet = {
+--                Zone_Engage = _initialMinDist/2 > 92600 and _initialMinDist/2 or 92600,
+--                OFFSET = 1,
+--                Coordinate_ = _defenseCOORD,
+--                Alt = UTILS.FeetToMeters(UTILS.Randomize(self.settingsCAPFlights.altitude, self.settingsCAPFlights.altitudeNudge)),
+--                speed = UTILS.KnotsToMps(self.settingsCAPFlights.speed),
+--                heading = nil,
+--                distance = nil,
+--                airbaseCoord = AIRBASE:FindByName(_selectedAirbase):GetCoordinate(),
+--              }
+--              Packet = SPECTRE.AI.buildWaypoints.CAP(Packet)
+--
+--              if SPECTRE.DebugEnabled == 1 then
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | GROUP NAME   : " ..  _SPAWNNAME .. "_" .. tempCode)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _bias        : " ..  _bias)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _min         : " ..  _min)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _max         : " ..  _max)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | Zone_Engage  : " ..  Packet.Zone_Engage)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | Alt          : " ..  Packet.Alt)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | speed        : " ..  Packet.speed)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched PACKET | UPDATING | _vec2SMART   : x = " ..  _vec2SMART.x .. " | y = " ..  _vec2SMART.y)
+--                --                local oppcoalt_ = {[0] = -1, [1] = 2, [2] = 1,} --2
+--                --                local color = {0.7, 0.46, 0.48, 0.9}
+--                --                local fillColor = {0.6, 0.66, 0.78, 0.5}
+--                --                local oppcoal = oppcoalt_[_coal]
+--                --                local _t = self.codeMarker_ + 1
+--                --                local _markID = _t
+--                --                self.codeMarker_= _markID
+--                --                trigger.action.circleToAll(-1 ,_markID , _defenseCOORD:GetVec3(),
+--                --                  (Packet.Zone_Engage), color, fillColor, 2, self.ReadOnly)
+--              end
+--              local _CAPgroup = SPAWN:NewWithAlias(_spawnTemplate, _SPAWNNAME .. "_" .. tempCode)
+--                :InitCoalition(_coal)
+--                :InitCountry(_spawnCountry)
+--                :InitCleanUp(120)
+--                --:InitAirbase(_selectedAirbase,SPAWN.Takeoff.Hot)
+--                :OnSpawnGroup(
+--                  function(spawnGroup_)
+--                    -- Build the CAP route using the spawn group and packet details
+--                    local route = SPECTRE.AI.buildRoute.CAP(spawnGroup_, Packet)
+--                    -- Configure the spawn group for the CAP
+--                    spawnGroup_ = SPECTRE.AI.configureCommonOptions(spawnGroup_)
+--                    -- Set the route for the CAP group
+--                    spawnGroup_:Route(route, math.random(1,5))
+--                  end, self)
+--                :SpawnAtAirbase(AIRBASE:FindByName(_selectedAirbase),SPAWN.Takeoff.Hot,1000)
+--              --:Spawn()
+--
+--              _CAPgroup.WIPE_ = false
+--              -- Common function to handle both landing and dead/crash events
+--              local function handleEvent(_, eventData, message)
+--                local coal = eventData.IniCoalition
+--                if _CAPgroup:CountAliveUnits() == 0 and not _CAPgroup.WIPE_ then
+--                  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | GROUP WIPE  : " ..  _SPAWNNAME .. "_" .. tempCode )
+--                  _CAPgroup.WIPE_ = true
+--                  local _spawnIndex = SPECTRE.UTILS.getIndex(_Spawns, _CAPgroup)
+--                  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup.handleEvent | UPDATING | _spawnIndex  : " ..  tostring(_spawnIndex) )
+--                  local _Restocktimer = TIMER:New(function()
+--                    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | _Restocktimer  : " ..  tostring(_SPAWNNAME) .. "_" .. tempCode )
+--                    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | REMOVING INDEX  : " .. tostring( _spawnIndex) .. " from " .. _coal, _Spawns )
+--                    table.remove(_Spawns,_spawnIndex)
+--                  end, self)
+--                  _Restocktimer:Start(_Settings.RestockTime)
+--
+--                end
+--              end
+--
+--              local function handleEventLand(_, eventData, message)
+--                local coal = eventData.IniCoalition
+--                if not _CAPgroup.WIPE_ then--_CAPgroup:CountAliveUnits() == 0 and not _CAPgroup.WIPE_ then
+--                  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | GROUP WIPE  : " ..  _SPAWNNAME .. "_" .. tempCode )
+--                  _CAPgroup.WIPE_ = true
+--                  local _spawnIndex = SPECTRE.UTILS.getIndex(_Spawns, _CAPgroup)
+--                  SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup.handleEvent | UPDATING | _spawnIndex  : " ..  tostring(_spawnIndex) )
+--                  local _Restocktimer = TIMER:New(function()
+--                    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | _Restocktimer  : " ..  tostring(_SPAWNNAME) .. "_" .. tempCode )
+--                    SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup handleEvent | UPDATING | REMOVING INDEX  : " .. tostring( _spawnIndex) .. " from " .. _coal, _Spawns )
+--                    table.remove(_Spawns,_spawnIndex)
+--                  end, self)
+--                  _Restocktimer:Start(_Settings.RestockTime)
+--
+--                end
+--              end
+--
+--              _CAPgroup.onGroupLand = function(_, eventData)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup.onGroupLand | UPDATING | eventData  : " , eventData )
+--                handleEventLand(_, eventData)
+--              end
+--
+--              _CAPgroup.onGroupCrashOrDead = function(_, eventData)
+--                SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:_CAPgroup.onGroupCrashOrDead | UPDATING | eventData  : " , eventData )
+--                handleEvent(_, eventData)
+--              end
+--
+--              _CAPgroup:HandleEvent(EVENTS.Land, _CAPgroup.onGroupLand)
+--              _CAPgroup:HandleEvent(EVENTS.Crash, _CAPgroup.onGroupCrashOrDead)
+--              _CAPgroup:HandleEvent(EVENTS.Dead, _CAPgroup.onGroupCrashOrDead)
+--              _CAPgroup:HandleEvent(EVENTS.EmergencyLanding, _CAPgroup.onGroupLand)
+--
+--
+--
+--              table.insert(_Spawns, _CAPgroup)
+--              _FreeSpawns = _FreeSpawns - 1
+--            else
+--              _FreeSpawns = 0
+--            end
+--          end
+--          SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPsched | END UPDATING | _coal: " .. _coal .. " ~~~~~~~~~~")
+--        end
+--        self.UpdatingCAP = false
+--        --return self
+--      end, self)
+--      _Timer:Start(math.random(1,5))
+--    else
+--      SPECTRE.UTILS.debugInfo("SPECTRE.ZONEMGR:CAPschedInit | UPDATES ALREADY IN PROG")
+--    end
+--    return self
+--  end, {self}, math.random(1,5), math.random(self.schedulerCAPMin,self.schedulerCAPMax), self.schedulerCAPFactor)
+--
+--  return self
+--end
 
 
 --- x - Setup.
@@ -14081,10 +14837,15 @@ end
 -- @return #ZONEMGR self
 -- @usage zoneManager:addCAP(1, "CAPGroup1") -- Adds "CAPGroup1" to the CAP templates for coalition 1.
 function SPECTRE.ZONEMGR:addCAP(coalition, groupName)
-  if not SPECTRE.UTILS.table_hasValue( self._CAPtemplates[coalition], groupName) then
-    table.insert(self._CAPtemplates[coalition],groupName )
-    -- self._CAPtemplates[coalition][#self._CAPtemplates[coalition] + 1] = groupName
+
+  local coalCAP = self.CAP.Templates.Coalition[coalition]
+  if not SPECTRE.UTILS.table_hasValue( coalCAP, groupName) then
+    table.insert(coalCAP,groupName )
   end
+  --  if not SPECTRE.UTILS.table_hasValue( self._CAPtemplates[coalition], groupName) then
+  --    table.insert(self._CAPtemplates[coalition],groupName )
+  -- self._CAPtemplates[coalition][#self._CAPtemplates[coalition] + 1] = groupName
+  -- end
   return self
 end
 
@@ -14099,13 +14860,53 @@ end
 -- @return #ZONEMGR self
 -- @usage zoneManager:removeCAP(1, "CAPGroup1") -- Removes "CAPGroup1" from the CAP templates for coalition 1.
 function SPECTRE.ZONEMGR:removeCAP(coalition, groupName)
-  local _index = SPECTRE.UTILS.getIndex(self._CAPtemplates[coalition], groupName)
+  local coalCAP = self.CAP.Templates.Coalition[coalition]
+
+  local _index = SPECTRE.UTILS.getIndex(coalCAP, groupName)
   if _index then
-    table.remove(self._CAPtemplates[coalition], _index)
+    table.remove(coalCAP, _index)
   end
+
+
+  --  local _index = SPECTRE.UTILS.getIndex(self._CAPtemplates[coalition], groupName)
+  --  if _index then
+  --    table.remove(self._CAPtemplates[coalition], _index)
+  --  end
   return self
 end
 
+---.
+function SPECTRE.ZONEMGR:settingsCAP(coalition, RestockTime, Min, Nominal, Max, NudgeFactor, PlayerRatio)
+  PlayerRatio = PlayerRatio or 1
+  RestockTime = RestockTime or 999999
+  Min = Min or 0
+  Nominal = Nominal or 0
+  Max = Max or 0
+  NudgeFactor = NudgeFactor or 0.5
+
+  self.CAP.Settings.Coalition[coalition].PlayerRatio = PlayerRatio
+  self.CAP.Settings.Coalition[coalition].RestockTime = RestockTime
+  self.CAP.Settings.Coalition[coalition].Min = Min
+  self.CAP.Settings.Coalition[coalition].Nominal = Nominal
+  self.CAP.Settings.Coalition[coalition].Max = Max
+  self.CAP.Settings.Coalition[coalition].NudgeFactor = NudgeFactor
+
+  return self
+end
+
+function SPECTRE.ZONEMGR:settingsFlightCAP(flightSpeed, flightSpeedNudge, flightAlt, flightAltNudge)
+  flightSpeed = flightSpeed or 485
+  flightSpeedNudge = flightSpeedNudge or 0.15
+  flightAlt = flightAlt or 30000
+  flightAltNudge = flightAltNudge or 0.15
+
+  self.CAP.Settings.flightSpeed = flightSpeed
+  self.CAP.Settings.flightSpeedNudge = flightSpeedNudge
+  self.CAP.Settings.flightAlt = flightAlt
+  self.CAP.Settings.flightAltNudge = flightAltNudge
+
+  return self
+end
 --- Adds a player UCID to the admin list.
 --
 -- This function adds a specified player's UCID to the zone manager's admin list, allowing for administrative control or privileges within the game.
@@ -14338,7 +15139,8 @@ function SPECTRE.ZONEMGR:seedAirbase()
     ["Nevada"] = AIRBASE.Nevada,
     ["Normandy"] = AIRBASE.Normandy,
     ["SouthAtlantic"] = AIRBASE.SouthAtlantic,
-    ["TheChannel"] = AIRBASE.TheChannel
+    ["TheChannel"] = AIRBASE.TheChannel,
+    ["Afghanistan"] = AIRBASE.Afghanistan
   }
 
   -- Set the AirbaseSeed property based on the current map name.
@@ -14930,14 +15732,14 @@ function SPECTRE.ZONEMGR.Zone:New(ZoneName, ZoneManager)
   self.Area = SPECTRE.POLY.polygonArea(self.Vertices2D)
   -- Convert the 2D vertices to lines.
   self.LinesVec2 = SPECTRE.POLY.convertZoneToLines(self.Vertices2D)
-  
+
   self.AI_p = ZoneManager.AI_p
   self.AI_f = ZoneManager.AI_f
-  
-SPECTRE.ZONEMGR.f = 2 -- 1.5
---- Percentage of total units (adjust based on your use case).
--- Hotspots
-SPECTRE.ZONEMGR.p = 0.1 -- 0.02
+
+  SPECTRE.ZONEMGR.f = 2 -- 1.5
+  --- Percentage of total units (adjust based on your use case).
+  -- Hotspots
+  SPECTRE.ZONEMGR.p = 0.1 -- 0.02
 
 
   -- Convert the 2D vertices to 3D coordinates.
@@ -16112,9 +16914,9 @@ end
 
 --- Sets the desired granularity for hotspots.
 --
--- @param #ZONEMGR.Zone self 
+-- @param #ZONEMGR.Zone self
 -- @param factor Adjust this factor based on desired granularity for hotspots.
--- @return #ZONEMGR.Zone self 
+-- @return #ZONEMGR.Zone self
 function SPECTRE.ZONEMGR.Zone:setAI_granularityFactor(factor)
   self.AI_f = factor
   return self
@@ -16122,9 +16924,9 @@ end
 
 --- Sets the Percentage of total units for hotspots.
 --
--- @param #ZONEMGR.Zone self 
+-- @param #ZONEMGR.Zone self
 -- @param factor Adjust this factor based on Percentage of total units for hotspots.
--- @return #ZONEMGR.Zone self 
+-- @return #ZONEMGR.Zone self
 function SPECTRE.ZONEMGR.Zone:setAI_percentFactor(factor)
   self.AI_p = factor
   return self
